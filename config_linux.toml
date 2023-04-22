@@ -1,0 +1,19 @@
+[build]
+compiler = "gcc"
+
+[[targets]]
+name = "libheimdall-engine"
+src = "engine/src/"
+include_dir = "engine/src/include/"
+type = 'dll'
+cflags = " -g -Wall"
+libs = "-lGLEW -lglfw -lm"
+
+[[targets]]
+name = "testbed"
+src = "testbed/src/"
+include_dir = "testbed/src/include"
+type = "exe"
+cflags = "-g -Wall"
+libs = ""
+deps = ["libheimdall-engine"]
