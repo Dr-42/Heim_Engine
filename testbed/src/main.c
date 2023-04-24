@@ -1,9 +1,13 @@
-#include <core/engine.h>
+#include <core/heim_engine.h>
 
 int main(int argc, char** argv){
-	engine_create();
-	engine_start();
-	engine_stop();
-	engine_destroy();
+	HeimEngine* heim = heim_engine_new("Heim Engine");
+	heim_engine_set_window_size(800, 600);
+	heim_engine_set_window_top_left(100, 100);
+
+	heim_engine_init(heim);
+	heim_engine_run(heim);
+	heim_engine_cleanup(heim);
+	heim_engine_free(heim);
 	return 0;
 }
