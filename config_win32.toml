@@ -6,8 +6,8 @@ name = "libheimdall-engine"
 src = "engine/src"
 include_dir = "engine/src/include"
 type = 'dll'
-cflags = " -g -Wall -Wunused"
-libs = "-lGLEW -lglfw -lm"
+cflags = " -g -Wall"
+libs = "-lglew32 -lglfw3 -lopengl32 -lm"
 
 [[targets]]
 name = "testbed"
