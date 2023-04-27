@@ -6,17 +6,20 @@
 #include <stdbool.h>
 
 #include "math/heim_vector.h"
+#include "core/heim_logger.h"
 
 typedef struct {
-				GLFWwindow *window;
-				char *title;
-				heim_vec2ui window_size;
-				heim_vec2ui window_top_left;
-				float delta_time;
-				float last_frame;
+	GLFWwindow *window;
+	char *title;
+	heim_vec2ui window_size;
+	heim_vec2ui window_top_left;
+	float delta_time;
+	float last_frame;
+	
+	HeimLogger *logger;	
 } HeimRenderer;
 
-HeimRenderer *heim_renderer_new(char *title);
+HeimRenderer *heim_renderer_new(char *title, HeimLogger *logger);
 bool heim_renderer_init(HeimRenderer *renderer);
 void heim_renderer_update(HeimRenderer *renderer);
 void heim_renderer_free(HeimRenderer *renderer);

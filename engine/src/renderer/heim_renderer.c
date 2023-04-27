@@ -5,20 +5,21 @@
 
 float currentFrame = 0.0f;
 
-HeimRenderer* heim_renderer_new(char* title){
+HeimRenderer* heim_renderer_new(char* title, HeimLogger *logger){
     HeimRenderer *renderer = HEIM_MALLOC(HeimRenderer);
     renderer->title = title;
     renderer->window_size = (heim_vec2ui){800, 600};
     renderer->window_top_left = (heim_vec2ui){0, 0};
     renderer->delta_time = 0.0f;
     renderer->last_frame = 0.0f;
+    renderer->logger = logger;
     return renderer;
 }
 
 bool heim_renderer_init(HeimRenderer *renderer){
     if (!glfwInit())
     {
-    printf("Failed to initialize GLFW\n");
+        HEIM_LOG_ERROR(renderer->logger, "Failed to initialize GLFW\n");
         return false;
     }
 
@@ -34,8 +35,7 @@ bool heim_renderer_init(HeimRenderer *renderer){
     GLenum err = glewInit();
     if (glewInit() != GLEW_OK)
     {
-    printf("Failed to initialize GLEW error\n");
-        glewGetErrorString(err);
+        HEIM_LOG_ERROR(renderer->logger, "Failed to initialize GLEW \n %s\n", glewGetErrorString(err));
         return false;
     }
 

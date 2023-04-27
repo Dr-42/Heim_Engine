@@ -1,5 +1,4 @@
 #include "core/heim_memory.h"
-
 #include <memory.h>
 
 void *heim_malloc(size_t size){

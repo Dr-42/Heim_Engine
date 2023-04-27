@@ -8,6 +8,7 @@
 
 #include "math/heim_vector.h"
 #include "renderer/heim_renderer.h"
+#include "core/heim_logger.h"
 
 typedef struct HeimEngine{
 	GLFWwindow *window;
@@ -22,6 +23,7 @@ typedef struct HeimEngine{
 	float delta_time;
 	float last_frame;
 	HeimRenderer *renderer;
+	HeimLogger *logger;
 } HeimEngine;
 
 HeimEngine* heim_engine_new(char* title);
