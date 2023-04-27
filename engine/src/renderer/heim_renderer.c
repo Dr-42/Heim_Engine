@@ -1,7 +1,19 @@
 #include "renderer/heim_renderer.h"
 #include <stdio.h>
 
+#include "core/heim_memory.h"
+
 float currentFrame = 0.0f;
+
+HeimRenderer* heim_renderer_new(char* title){
+    HeimRenderer *renderer = HEIM_MALLOC(HeimRenderer);
+    renderer->title = title;
+    renderer->window_size = (heim_vec2ui){800, 600};
+    renderer->window_top_left = (heim_vec2ui){0, 0};
+    renderer->delta_time = 0.0f;
+    renderer->last_frame = 0.0f;
+    return renderer;
+}
 
 bool heim_renderer_init(HeimRenderer *renderer){
     if (!glfwInit())
@@ -66,4 +78,9 @@ void heim_renderer_set_window_top_left(HeimRenderer *renderer, heim_vec2ui top_l
 }
 void heim_renderer_set_window_title(HeimRenderer *renderer, char *title){
     renderer->title = title;
+}
+
+void heim_renderer_free(HeimRenderer *renderer){
+    glfwTerminate();
+    HEIM_FREE(renderer);
 }

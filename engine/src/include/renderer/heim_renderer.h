@@ -16,8 +16,10 @@ typedef struct {
 				float last_frame;
 } HeimRenderer;
 
+HeimRenderer *heim_renderer_new(char *title);
 bool heim_renderer_init(HeimRenderer *renderer);
 void heim_renderer_update(HeimRenderer *renderer);
+void heim_renderer_free(HeimRenderer *renderer);
 
 void heim_renderer_set_window_size(HeimRenderer *renderer, heim_vec2ui size);
 void heim_renderer_set_window_top_left(HeimRenderer *renderer, heim_vec2ui top_left);

@@ -5,7 +5,9 @@
 #include <stdbool.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include "math/heim_vector.h"
+#include "renderer/heim_renderer.h"
 
 typedef struct HeimEngine{
 	GLFWwindow *window;
@@ -19,6 +21,7 @@ typedef struct HeimEngine{
 
 	float delta_time;
 	float last_frame;
+	HeimRenderer *renderer;
 } HeimEngine;
 
 HeimEngine* heim_engine_new(char* title);
