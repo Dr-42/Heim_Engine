@@ -5,7 +5,7 @@
 
 #include "core/heim_memory.h"
 #include "math/heim_vector.h"
-#include "renderer/heim_renderer.h"
+#include "core/heim_windowing.h"
 
 HeimEngine* heim_engine_new(char* title){
 	HeimEngine *heim = malloc(sizeof(HeimEngine));
@@ -22,7 +22,7 @@ HeimEngine* heim_engine_new(char* title){
 
 	heim->logger = heim_logger_create(HEIM_LOG_LEVEL_DEBUG, stdout);
 	heim->memory = heim_memory_create(heim->logger);
-	heim->renderer = heim_renderer_new("Heim Engine", heim->logger, heim->memory);
+	heim->heim_window = heim_window_new("Heim Engine", heim->logger, heim->memory);
 
 	HEIM_LOG_INFO(heim->logger, "Created new Heim Engine");
 	return heim;
@@ -40,20 +40,20 @@ void heim_engine_set_window_top_left(HeimEngine *heim, uint32_t x, uint32_t y){
 }
 
 void heim_engine_init(HeimEngine *heim){
-	if(!heim_renderer_init(heim->renderer)){
-		HEIM_LOG_ERROR(heim->logger, "Failed to initialize renderer");
+	if(!heim_window_init(heim->heim_window)){
+		HEIM_LOG_ERROR(heim->logger, "Failed to initialize window");
 	}
 
 	HEIM_LOG_INFO(heim->logger, "Initialized Heim Engine");
 }
 
 void heim_engine_run(HeimEngine *heim){
-	heim_renderer_update(heim->renderer);
+	heim_window_update(heim->heim_window);
 }
 
 void heim_engine_cleanup(HeimEngine *heim){
 	HEIM_LOG_INFO(heim->logger, "Cleaned up Heim Engine");
-	heim_renderer_free(heim->renderer);
+	heim_window_free(heim->heim_window);
 	heim_memory_free(heim->memory);
 	heim_logger_free(heim->logger);
 }

@@ -8,7 +8,7 @@
 
 #include "core/heim_memory.h"
 #include "math/heim_vector.h"
-#include "renderer/heim_renderer.h"
+#include "core/heim_windowing.h"
 #include "core/heim_logger.h"
 
 typedef struct HeimEngine{
@@ -25,7 +25,7 @@ typedef struct HeimEngine{
 	float last_frame;
 	HeimLogger *logger;
 	HeimMemory *memory;
-	HeimRenderer *renderer;
+	HeimWindow *heim_window;
 } HeimEngine;
 
 HeimEngine* heim_engine_new(char* title);
