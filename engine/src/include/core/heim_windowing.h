@@ -22,12 +22,12 @@ typedef struct {
 } HeimWindow;
 
 HeimWindow *heim_window_new(char *title, HeimLogger *logger, HeimMemory *memory);
-bool heim_window_init(HeimWindow *window);
-void heim_window_update(HeimWindow *window);
-void heim_window_free(HeimWindow *window);
+bool heim_window_init(HeimWindow *heim_window);
+void heim_window_update(HeimWindow *heim_window);
+void heim_window_free(HeimWindow *heim_window);
 
-void heim_window_set_window_size(HeimWindow *window, heim_vec2ui size);
-void heim_window_set_window_top_left(HeimWindow *window, heim_vec2ui top_left);
-void heim_window_set_window_title(HeimWindow *window, char *title);
+void heim_window_set_window_size(HeimWindow *heim_window, heim_vec2ui size);
+void heim_window_set_window_top_left(HeimWindow *heim_window, heim_vec2ui top_left);
+void heim_window_set_window_title(HeimWindow *heim_window, char *title);
 
 #endif // HEIM_WINDOWING_H
