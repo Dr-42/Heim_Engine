@@ -1,25 +1,26 @@
 #include "renderer/heim_renderer.h"
+#include "core/heim_logger.h"
 #include <stdio.h>
 
-#include "core/heim_memory.h"
 
 float currentFrame = 0.0f;
 
-HeimRenderer* heim_renderer_new(char* title, HeimLogger *logger){
-    HeimRenderer *renderer = HEIM_MALLOC(HeimRenderer);
+HeimRenderer* heim_renderer_new(char* title, HeimLogger *logger, HeimMemory *memory){
+    HeimRenderer *renderer = HEIM_MALLOC(memory, HeimRenderer, HEIM_MEMORY_TYPE_RENDERER);
     renderer->title = title;
     renderer->window_size = (heim_vec2ui){800, 600};
     renderer->window_top_left = (heim_vec2ui){0, 0};
     renderer->delta_time = 0.0f;
     renderer->last_frame = 0.0f;
     renderer->logger = logger;
+    renderer->memory = memory;
     return renderer;
 }
 
 bool heim_renderer_init(HeimRenderer *renderer){
     if (!glfwInit())
     {
-        HEIM_LOG_ERROR(renderer->logger, "Failed to initialize GLFW\n");
+        HEIM_LOG_ERROR(renderer->logger, "Failed to initialize GLFW");
         return false;
     }
 
@@ -35,7 +36,7 @@ bool heim_renderer_init(HeimRenderer *renderer){
     GLenum err = glewInit();
     if (glewInit() != GLEW_OK)
     {
-        HEIM_LOG_ERROR(renderer->logger, "Failed to initialize GLEW \n %s\n", glewGetErrorString(err));
+        HEIM_LOG_ERROR(renderer->logger, "Failed to initialize GLEW \n %s", glewGetErrorString(err));
         return false;
     }
 
@@ -82,5 +83,5 @@ void heim_renderer_set_window_title(HeimRenderer *renderer, char *title){
 
 void heim_renderer_free(HeimRenderer *renderer){
     glfwTerminate();
-    HEIM_FREE(renderer);
+    HEIM_FREE(renderer->memory, renderer, HEIM_MEMORY_TYPE_RENDERER);
 }

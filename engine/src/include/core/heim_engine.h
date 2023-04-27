@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "core/heim_memory.h"
 #include "math/heim_vector.h"
 #include "renderer/heim_renderer.h"
 #include "core/heim_logger.h"
@@ -22,8 +23,9 @@ typedef struct HeimEngine{
 
 	float delta_time;
 	float last_frame;
-	HeimRenderer *renderer;
 	HeimLogger *logger;
+	HeimMemory *memory;
+	HeimRenderer *renderer;
 } HeimEngine;
 
 HeimEngine* heim_engine_new(char* title);

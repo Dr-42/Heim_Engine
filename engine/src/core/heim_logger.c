@@ -41,6 +41,7 @@ void heim_log(HeimLogger *logger, HEIM_LOG_LEVEL level, const char *fmt, ...){
 		va_start(args, fmt);
 		vfprintf(logger->file, fmt, args);
 		va_end(args);
+		fprintf(logger->file, "\n");
 	}
 }
 

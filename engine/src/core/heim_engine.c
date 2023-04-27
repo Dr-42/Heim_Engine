@@ -21,28 +21,30 @@ HeimEngine* heim_engine_new(char* title){
 	heim->last_frame = 0.0f;
 
 	heim->logger = heim_logger_create(HEIM_LOG_LEVEL_DEBUG, stdout);
-	heim->renderer = heim_renderer_new("Heim Engine", heim->logger);
-	HEIM_LOG_INFO(heim->logger, "Created new Heim Engine\n");
+	heim->memory = heim_memory_create(heim->logger);
+	heim->renderer = heim_renderer_new("Heim Engine", heim->logger, heim->memory);
+
+	HEIM_LOG_INFO(heim->logger, "Created new Heim Engine");
 	return heim;
 	
 }
 void heim_engine_set_window_size(HeimEngine *heim, uint32_t x, uint32_t y){
 	heim->window_size.x = x;
 	heim->window_size.y = y;
-	HEIM_LOG_INFO(heim->logger, "Set window size to %d, %d\n", x, y);
+	HEIM_LOG_INFO(heim->logger, "Set window size to %d, %d", x, y);
 }
 void heim_engine_set_window_top_left(HeimEngine *heim, uint32_t x, uint32_t y){
 	heim->window_top_left.x = x;
 	heim->window_top_left.y = y;
-	HEIM_LOG_INFO(heim->logger, "Set window top left to %d, %d\n", x, y);
+	HEIM_LOG_INFO(heim->logger, "Set window top left to %d, %d", x, y);
 }
 
 void heim_engine_init(HeimEngine *heim){
 	if(!heim_renderer_init(heim->renderer)){
-		HEIM_LOG_ERROR(heim->logger, "Failed to initialize renderer\n");
+		HEIM_LOG_ERROR(heim->logger, "Failed to initialize renderer");
 	}
 
-	HEIM_LOG_INFO(heim->logger, "Initialized Heim Engine\n");
+	HEIM_LOG_INFO(heim->logger, "Initialized Heim Engine");
 }
 
 void heim_engine_run(HeimEngine *heim){
@@ -50,8 +52,9 @@ void heim_engine_run(HeimEngine *heim){
 }
 
 void heim_engine_cleanup(HeimEngine *heim){
-	HEIM_LOG_INFO(heim->logger, "Cleaned up Heim Engine\n");
+	HEIM_LOG_INFO(heim->logger, "Cleaned up Heim Engine");
 	heim_renderer_free(heim->renderer);
+	heim_memory_free(heim->memory);
 	heim_logger_free(heim->logger);
 }
 
