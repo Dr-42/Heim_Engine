@@ -36,7 +36,8 @@ void heim_ecs_free(HeimEcs* ecs, HeimMemory* memory);
 HeimEntity heim_ecs_create_entity(HeimEcs* ecs);
 void heim_ecs_destroy_entity(HeimEcs* ecs, HeimEntity entity);
 
-HeimComponent heim_ecs_add_component(HeimEcs* ecs, HeimEntity entity, void* component, uint64_t size);
+HeimComponent heim_ecs_register_component(HeimEcs *ecs, uint64_t size);
+void heim_ecs_add_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component, void* data);
 void heim_ecs_remove_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component);
 
 void heim_ecs_add_system(HeimEcs* ecs, HeimSystem system);

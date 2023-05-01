@@ -2,7 +2,7 @@
 
 HeimEngine* heim;
 
-HeimEntity entity;
+HeimEntity entity, entity2;
 HeimComponent component;
 
 typedef struct {
@@ -11,17 +11,30 @@ typedef struct {
 } Position;
 
 Position position = {0.0f, 0.0f};
+Position position2 = {10.0f, 10.0f};
 
 HeimSystem test_system(HeimEcs *ecs, float dt){
-	position.x += 0.1f;
-	position.y += 0.1f;
-	//HEIM_LOG_INFO(heim->logger, "Position: %f, %f", position.x, position.y);
+	for (int i = 1; i < ecs->entity_count + 1; i++){
+		HeimEntity entity = ecs->entities[i];
+		for (int j = 1; j < ecs->component_count + 1; j++){
+			if(ecs->components[j] == component){
+				Position *pos = ecs->component_data[j][entity];
+				pos->x += 0.1f;
+				pos->y += 0.1f;
+				HEIM_LOG_INFO(heim->logger, "Position: %f, %f", pos->x, pos->y);
+			}
+		}
+	}
 }
 
 void testbed_init(){
 	HEIM_LOG_INFO(heim->logger, "Testbed init");
 	entity = heim_ecs_create_entity(heim->heim_window->ecs);
-	component = heim_ecs_add_component(heim->heim_window->ecs, entity, &position, sizeof(Position));
+	component = heim_ecs_register_component(heim->heim_window->ecs, sizeof(Position));
+	heim_ecs_add_component(heim->heim_window->ecs, entity, component, &position);
+
+	entity2 = heim_ecs_create_entity(heim->heim_window->ecs);
+	heim_ecs_add_component(heim->heim_window->ecs, entity2, component, &position2);
 
 	heim_ecs_add_system(heim->heim_window->ecs, test_system);
 }

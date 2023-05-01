@@ -39,14 +39,12 @@ HeimEntity heim_ecs_create_entity(HeimEcs* ecs){
         HEIM_LOG_ERROR(ecs->logger, "Entity count exceeded MAX_ENTITIES");
         return 0;
     }
-
-    for(uint64_t i = 0; i < MAX_ENTITIES; i++){
-        if(ecs->entities[i] == 0){
+    for (uint64_t i = 1; i < MAX_ENTITIES; i++){
+        if (ecs->entities[i] == 0){
             entity = i;
-            return entity;
+            break;
         }
     }
-
     ecs->entities[entity] = entity;
     return entity;
 }
@@ -55,22 +53,41 @@ void heim_ecs_destroy_entity(HeimEcs* ecs, HeimEntity entity){
     ecs->entities[entity] = 0;
 }
 
-HeimComponent heim_ecs_add_component(HeimEcs* ecs, HeimEntity entity, void* component, uint64_t size){
+HeimComponent heim_ecs_register_component(HeimEcs *ecs, uint64_t size){
     HeimComponent component_id = ecs->component_count++;
     if (component_id >= MAX_COMPONENTS){
         HEIM_LOG_ERROR(ecs->logger, "Component count exceeded MAX_COMPONENTS");
         return 0;
     }
-    ecs->components[component_id] = component_id;
-
-    if(ecs->component_data[component_id] == 0){
-        ecs->component_data[component_id] = HEIM_CALLOC(ecs->memory, void*, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
+    for (uint64_t i = 1; i < MAX_COMPONENTS; i++){
+        if (ecs->components[i] == 0){
+            component_id = i;
+            break;
+        }
     }
 
-    ecs->component_data[component_id][entity] = component;
-    ecs_matrix[entity][component_id] = true;
+    ecs->components[component_id] = component_id;
+
+    if(ecs->component_data[component_id] != 0){
+        HEIM_FREE(ecs->memory, ecs->component_data[component_id], HEIM_MEMORY_TYPE_ECS);
+    }
+    ecs->component_data[component_id] = HEIM_CALLOC(ecs->memory, void*, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
+
     return component_id;
 }
+
+void heim_ecs_add_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component, void* data){
+    for(uint64_t i = 0; i < MAX_COMPONENTS; i++){
+        if(ecs->components[i] == component){
+            ecs->component_data[i][entity] = data;
+            ecs_matrix[entity][i] = true;
+            return;
+        }
+    }
+
+    HEIM_LOG_WARN(ecs->logger, "Component not found");
+}
+
 
 void heim_ecs_remove_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component){
     for(uint64_t i = 0; i < MAX_COMPONENTS; i++){
