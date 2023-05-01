@@ -3,16 +3,16 @@ compiler = "gcc"
 
 [[targets]]
 name = "libheimdall-engine"
-src = "engine/src"
-include_dir = "engine/src/include"
+src = "engine"
+include_dir = "engine/include"
 type = 'dll'
 cflags = " -g -Wall"
 libs = "-lglew32 -lglfw3 -lopengl32 -lm"
 
 [[targets]]
 name = "testbed"
-src = "testbed/src"
-include_dir = "testbed/src/include"
+src = "testbed"
+include_dir = "testbed/include"
 type = "exe"
 cflags = "-g -Wall"
 libs = ""
