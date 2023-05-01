@@ -40,19 +40,6 @@ void heim_input_update(HeimInput *input){
 		HEIM_LOG_INFO(input->logger, "Input: ESC");
 		glfwSetWindowShouldClose(input->window, true);
 	}
-
-	if (input->keys[GLFW_KEY_W]){
-		HEIM_LOG_INFO(input->logger, "Input: W");
-	}
-	if (input->keys[GLFW_KEY_A]){
-		HEIM_LOG_INFO(input->logger, "Input: A");
-	}
-	if (input->keys[GLFW_KEY_S]){
-		HEIM_LOG_INFO(input->logger, "Input: S");
-	}
-	if (input->keys[GLFW_KEY_D]){
-		HEIM_LOG_INFO(input->logger, "Input: D");
-	}
 	glfwPollEvents();
 }
 
