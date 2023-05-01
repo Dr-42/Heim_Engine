@@ -29,13 +29,14 @@ void heim_engine_set_window_top_left(HeimEngine *heim, uint32_t x, uint32_t y){
 	HEIM_LOG_INFO(heim->logger, "Set window top left to %d, %d", x, y);
 }
 
-void heim_engine_init(HeimEngine *heim){
+void heim_engine_init(HeimEngine *heim, void (*init)()){
 	if(!heim_window_init(heim->heim_window)){
 		HEIM_LOG_ERROR(heim->logger, "Failed to initialize window");
 	}
 
 	heim->running = true;
 	HEIM_LOG_INFO(heim->logger, "Initialized Heim Engine");
+	init();
 }
 
 void heim_engine_run(HeimEngine *heim, void (*update)(float *dt)){

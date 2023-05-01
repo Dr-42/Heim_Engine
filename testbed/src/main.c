@@ -2,6 +2,10 @@
 
 HeimEngine* heim;
 
+void testbed_init(){
+	HEIM_LOG_INFO(heim->logger, "Testbed init");
+}
+
 void testbed_update(float *dt){
 	if(heim == NULL){
 		return;
@@ -9,7 +13,6 @@ void testbed_update(float *dt){
 	if(heim->heim_window->input->keys[GLFW_KEY_ESCAPE]){
 		heim_engine_should_close(heim, true);
 	}
-	HEIM_LOG_DEBUG(heim->logger, "FPS: %f", 1.0f / *dt);
 }
 
 int main(int argc, char** argv){
@@ -17,7 +20,7 @@ int main(int argc, char** argv){
 	heim_engine_set_window_size(heim, 1000, 600);
 	heim_engine_set_window_top_left(heim, 100, 100);
 
-	heim_engine_init(heim);
+	heim_engine_init(heim, testbed_init);
 	heim_engine_run(heim, testbed_update);
 	heim_engine_shutdown(heim);
 	return 0;

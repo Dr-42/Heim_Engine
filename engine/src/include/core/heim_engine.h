@@ -22,7 +22,7 @@ HeimEngine* heim_engine_new(char* title);
 void heim_engine_set_window_size(HeimEngine *heim, uint32_t x, uint32_t y);
 void heim_engine_set_window_top_left(HeimEngine *heim, uint32_t x, uint32_t y);
 
-void heim_engine_init(HeimEngine *heim);
+void heim_engine_init(HeimEngine *heim, void (*init)(void));
 void heim_engine_run(HeimEngine *heim, void (*update)(float *dt));
 void heim_engine_shutdown(HeimEngine *heim);
 
