@@ -36,10 +36,6 @@ void heim_input_init(HeimInput *input){
 	}
 }
 void heim_input_update(HeimInput *input){
-	if (input->keys[GLFW_KEY_ESCAPE]){
-		HEIM_LOG_INFO(input->logger, "Input: ESC");
-		glfwSetWindowShouldClose(input->window, true);
-	}
 	glfwPollEvents();
 }
 

@@ -25,7 +25,7 @@ typedef struct {
 
 HeimWindow *heim_window_new(char *title, HeimLogger *logger, HeimMemory *memory);
 bool heim_window_init(HeimWindow *heim_window);
-void heim_window_update(HeimWindow *heim_window);
+void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool *running);
 void heim_window_free(HeimWindow *heim_window);
 
 void heim_window_set_window_size(HeimWindow *heim_window, heim_vec2ui size);

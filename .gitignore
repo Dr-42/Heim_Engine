@@ -1,3 +1,4 @@
+.vscode
 .bld_cpp
 compile_commands.json
 .cache

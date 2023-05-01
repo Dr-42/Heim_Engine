@@ -9,6 +9,7 @@
 
 HeimEngine* heim_engine_new(char* title){
 	HeimEngine *heim = malloc(sizeof(HeimEngine));
+	heim->running = false;
 	heim->logger = heim_logger_create(HEIM_LOG_LEVEL_DEBUG, stdout);
 	heim->memory = heim_memory_create(heim->logger);
 	heim->heim_window = heim_window_new("Heim Engine", heim->logger, heim->memory);
@@ -33,11 +34,16 @@ void heim_engine_init(HeimEngine *heim){
 		HEIM_LOG_ERROR(heim->logger, "Failed to initialize window");
 	}
 
+	heim->running = true;
 	HEIM_LOG_INFO(heim->logger, "Initialized Heim Engine");
 }
 
-void heim_engine_run(HeimEngine *heim){
-	heim_window_update(heim->heim_window);
+void heim_engine_run(HeimEngine *heim, void (*update)(float *dt)){
+	heim_window_update(heim->heim_window, update, &(heim->running));
+}
+
+void heim_engine_should_close(HeimEngine *heim, bool should_close){
+	heim->running = !should_close;
 }
 
 void heim_engine_cleanup(HeimEngine *heim){
@@ -45,8 +51,18 @@ void heim_engine_cleanup(HeimEngine *heim){
 	heim_window_free(heim->heim_window);
 	heim_memory_free(heim->memory);
 	heim_logger_free(heim->logger);
+	glfwSetWindowShouldClose(heim->heim_window->window, GLFW_TRUE);
 }
 
 void heim_engine_free(HeimEngine *heim){
+	//End GL
+	glfwDestroyWindow(heim->heim_window->window);
+	glfwTerminate();
 	free(heim);
+}
+
+void heim_engine_shutdown(HeimEngine *heim){
+	heim_engine_cleanup(heim);
+	heim_engine_free(heim);
+	glfwSetWindowShouldClose(heim->heim_window->window, GLFW_TRUE);
 }

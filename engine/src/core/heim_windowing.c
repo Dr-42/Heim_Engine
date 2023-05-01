@@ -63,14 +63,16 @@ bool heim_window_init(HeimWindow *heim_window){
     return true;
 }
 
-void heim_window_update(HeimWindow *heim_window){
-    while (!glfwWindowShouldClose(heim_window->window))
+void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool* running){
+    while (!glfwWindowShouldClose(heim_window->window) && *running)
     {
         currentFrame = glfwGetTime();
         heim_window->delta_time = currentFrame - heim_window->last_frame;
         glfwPollEvents();
         heim_input_update(heim_window->input);
-        //mGame->Update(window->delta_time);
+
+        update(&heim_window->delta_time);
+
         glClearColor(0.2f, 0.0f, 0.2f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
         //mGame->Render();
