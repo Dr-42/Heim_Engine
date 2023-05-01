@@ -3,16 +3,16 @@
 
 #include <stdint.h>
 
-typedef struct heim_vec2ui{
+typedef struct{
 	uint32_t x, y;
-} heim_vec2ui;
+} HeimVec2ui;
 
-typedef struct heim_vec2i{
+typedef struct{
 	int32_t x, y;
-} heim_vec2i;
+} HeimVec2i;
 
-typedef struct heim_vec2f{
+typedef struct{
 	float x, y;
-} heim_vec2f;
+} HeimVec2f;
 
 #endif // HEIM_VECTOR_H 

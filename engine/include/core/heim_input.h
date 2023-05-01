@@ -12,8 +12,8 @@
 typedef struct {
 	bool *keys;
 	bool mouse_left, mouse_right;
-	heim_vec2f mouse_pos;
-	heim_vec2f mouse_delta;
+	HeimVec2f mouse_pos;
+	HeimVec2f mouse_delta;
 
 	bool mouse_grabbed;
 	bool mouse_hidden;

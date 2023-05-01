@@ -13,8 +13,8 @@
 typedef struct {
 	GLFWwindow *window;
 	char *title;
-	heim_vec2ui window_size;
-	heim_vec2ui window_top_left;
+	HeimVec2ui window_size;
+	HeimVec2ui window_top_left;
 	float delta_time;
 	float last_frame;
 	
@@ -28,8 +28,8 @@ bool heim_window_init(HeimWindow *heim_window);
 void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool *running);
 void heim_window_free(HeimWindow *heim_window);
 
-void heim_window_set_window_size(HeimWindow *heim_window, heim_vec2ui size);
-void heim_window_set_window_top_left(HeimWindow *heim_window, heim_vec2ui top_left);
+void heim_window_set_window_size(HeimWindow *heim_window, HeimVec2ui size);
+void heim_window_set_window_top_left(HeimWindow *heim_window, HeimVec2ui top_left);
 void heim_window_set_window_title(HeimWindow *heim_window, char *title);
 
 #endif // HEIM_WINDOWING_H

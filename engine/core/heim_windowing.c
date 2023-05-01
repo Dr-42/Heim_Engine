@@ -11,8 +11,8 @@ HeimWindow* heim_window_new(char* title, HeimLogger *logger, HeimMemory *memory)
     HeimWindow *heim_window = HEIM_MALLOC(memory, HeimWindow, HEIM_MEMORY_TYPE_BASE);
     heim_window->title = title;
     heim_window->window = NULL;
-    heim_window->window_size = (heim_vec2ui){800, 600};
-    heim_window->window_top_left = (heim_vec2ui){0, 0};
+    heim_window->window_size = (HeimVec2ui){800, 600};
+    heim_window->window_top_left = (HeimVec2ui){0, 0};
     heim_window->delta_time = 0.0f;
     heim_window->last_frame = 0.0f;
     heim_window->logger = logger;
@@ -82,10 +82,10 @@ void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool
     }
 }
 
-void heim_window_set_window_size(HeimWindow *heim_window, heim_vec2ui size){
+void heim_window_set_window_size(HeimWindow *heim_window, HeimVec2ui size){
     heim_window->window_size = size;
 }
-void heim_window_set_window_top_left(HeimWindow *heim_window, heim_vec2ui top_left){
+void heim_window_set_window_top_left(HeimWindow *heim_window, HeimVec2ui top_left){
     heim_window->window_top_left = top_left;
 }
 void heim_window_set_window_title(HeimWindow *heim_window, char *title){

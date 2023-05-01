@@ -17,8 +17,8 @@ HeimInput *heim_input_create(HeimLogger *logger, HeimMemory *memory, GLFWwindow 
 	input->mouse_left = false;
 	input->mouse_right = false;
 
-	input->mouse_pos = (heim_vec2f){0.0f, 0.0f};
-	input->mouse_delta = (heim_vec2f){0.0f, 0.0f};
+	input->mouse_pos = (HeimVec2f){0.0f, 0.0f};
+	input->mouse_delta = (HeimVec2f){0.0f, 0.0f};
 
 	return input;
 }
