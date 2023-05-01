@@ -1,26 +1,34 @@
 #include "ecs/heim_ecs.h"
 
-HeimEcs* heim_ecs_create(HeimMemory* memory, HeimLogger* logger){
-    HeimEcs* ecs = heim_malloc(memory, sizeof(HeimEcs), HEIM_MEMORY_TYPE_ECS);
+static uint64_t ecs_matrix[MAX_ENTITIES][MAX_COMPONENTS] = {0};
+
+HeimEcs* heim_ecs_create(HeimLogger* logger, HeimMemory* memory){
+    HeimEcs *ecs = HEIM_CALLOC(memory, HeimEcs, 1, HEIM_MEMORY_TYPE_ECS);
     ecs->memory = memory;
     ecs->logger = logger;
     ecs->entity_count = 0;
     ecs->component_count = 0;
 
     ecs->entities = HEIM_CALLOC(memory, HeimEntity, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
-    ecs->components = HEIM_CALLOC(memory, uint64_t, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
-    ecs->systems = HEIM_CALLOC(memory, HeimSystem, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
+    ecs->components = HEIM_CALLOC(memory, HeimComponent, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
+    ecs->systems = HEIM_CALLOC(memory, void*, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
-    ecs->component_data = HEIM_CALLOC(memory, void*, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
+    ecs->component_data = HEIM_CALLOC(memory, void**, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
     return ecs;
 }
 
 void heim_ecs_free(HeimEcs* ecs, HeimMemory* memory){
-    HEIM_FREE(memory, ecs->entities, HEIM_MEMORY_TYPE_ECS);
-    HEIM_FREE(memory, ecs->components, HEIM_MEMORY_TYPE_ECS);
-    HEIM_FREE(memory, ecs->systems, HEIM_MEMORY_TYPE_ECS);
+    for (uint64_t i = 0; i < MAX_COMPONENTS; i++){
+        if (ecs->component_data[i] != 0){
+            HEIM_FREE(memory, ecs->component_data[i], HEIM_MEMORY_TYPE_ECS);
+        }
+    }
+
     HEIM_FREE(memory, ecs->component_data, HEIM_MEMORY_TYPE_ECS);
+    HEIM_FREE(memory, ecs->systems, HEIM_MEMORY_TYPE_ECS);
+    HEIM_FREE(memory, ecs->components, HEIM_MEMORY_TYPE_ECS);
+    HEIM_FREE(memory, ecs->entities, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(memory, ecs, HEIM_MEMORY_TYPE_ECS);
 }
 
@@ -38,6 +46,9 @@ HeimEntity heim_ecs_create_entity(HeimEcs* ecs){
             return entity;
         }
     }
+
+    ecs->entities[entity] = entity;
+    return entity;
 }
 
 void heim_ecs_destroy_entity(HeimEcs* ecs, HeimEntity entity){
