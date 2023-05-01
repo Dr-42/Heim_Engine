@@ -40,6 +40,7 @@ void *heim_memset(void *s, int c, size_t n);
 #define heim_memzero(s, n) heim_memset(s, 0, n)
 
 #define HEIM_MALLOC(memory, type, heim_type) (type *)heim_malloc(memory, sizeof(type), heim_type)
+#define HEIM_MALLOC_ARRAY(memory, type, nmemb, heim_type) (type *)heim_malloc(memory, nmemb * sizeof(type), heim_type)
 #define HEIM_CALLOC(memory, type, nmemb, heim_type) (type *)heim_calloc(memory, nmemb, sizeof(type), heim_type)
 #define HEIM_REALLOC(memory, type, ptr, heim_type) (type *)heim_realloc(memory, ptr, sizeof(type), heim_type)
 #define HEIM_FREE(memory, ptr, heim_type) heim_free(memory, ptr, heim_type)

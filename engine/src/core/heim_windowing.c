@@ -1,4 +1,5 @@
 #include "core/heim_windowing.h"
+#include "core/heim_input.h"
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include <stdio.h>
@@ -9,12 +10,14 @@ float currentFrame = 0.0f;
 HeimWindow* heim_window_new(char* title, HeimLogger *logger, HeimMemory *memory){
     HeimWindow *heim_window = HEIM_MALLOC(memory, HeimWindow, HEIM_MEMORY_TYPE_BASE);
     heim_window->title = title;
+    heim_window->window = NULL;
     heim_window->window_size = (heim_vec2ui){800, 600};
     heim_window->window_top_left = (heim_vec2ui){0, 0};
     heim_window->delta_time = 0.0f;
     heim_window->last_frame = 0.0f;
     heim_window->logger = logger;
     heim_window->memory = memory;
+    heim_window->input = heim_input_create(logger, memory, heim_window->window);
     return heim_window;
 }
 
@@ -31,6 +34,14 @@ bool heim_window_init(HeimWindow *heim_window){
     glfwWindowHint(GLFW_RESIZABLE, false);
 
     heim_window->window = glfwCreateWindow(heim_window->window_size.x, heim_window->window_size.y, heim_window->title, NULL, NULL);
+    
+    if (heim_window->window == NULL)
+    {
+        HEIM_LOG_ERROR(heim_window->logger, "Failed to create GLFW window");
+        glfwTerminate();
+        return false;
+    }
+
     glfwMakeContextCurrent(heim_window->window);
 
     // glew: load all OpenGL function pointers
@@ -41,11 +52,9 @@ bool heim_window_init(HeimWindow *heim_window){
         return false;
     }
 
-    //glfwSetKeyCallback(window->window, Nomu::Input::keyCallback);
-    //glfwSetCursorPosCallback(window->window, Nomu::Input::cursorPositionCallback);
-    //glfwSetMouseButtonCallback(window->window, Nomu::Input::mouseButtonCallback);
-    //glfwSetFramebufferSizeCallback(window->window, Nomu::Input::framebufferSizeCallback);
 
+    heim_window->input->window = heim_window->window;
+    heim_input_init(heim_window->input);
     // OpenGL configuration
     glViewport(heim_window->window_top_left.x, heim_window->window_top_left.y, heim_window->window_size.x, heim_window->window_size.y);
     glEnable(GL_DEPTH_TEST);
@@ -60,7 +69,7 @@ void heim_window_update(HeimWindow *heim_window){
         currentFrame = glfwGetTime();
         heim_window->delta_time = currentFrame - heim_window->last_frame;
         glfwPollEvents();
-        //mGame->ProcessInput(window->delta_time);
+        heim_input_update(heim_window->input);
         //mGame->Update(window->delta_time);
         glClearColor(0.2f, 0.0f, 0.2f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -83,5 +92,6 @@ void heim_window_set_window_title(HeimWindow *heim_window, char *title){
 
 void heim_window_free(HeimWindow *heim_window){
     glfwTerminate();
+    heim_input_free(heim_window->input);
     HEIM_FREE(heim_window->memory, heim_window, HEIM_MEMORY_TYPE_BASE);
 }

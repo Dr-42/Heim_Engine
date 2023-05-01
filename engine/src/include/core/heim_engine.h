@@ -12,17 +12,6 @@
 #include "core/heim_logger.h"
 
 typedef struct HeimEngine{
-	GLFWwindow *window;
-	char* title;
-	heim_vec2ui window_size;
-	heim_vec2ui window_top_left;
-	bool keys[1024];
-	bool mouse_left, mouse_right;
-	heim_vec2i mouse_pos;
-	heim_vec2i mouse_delta;
-
-	float delta_time;
-	float last_frame;
 	HeimLogger *logger;
 	HeimMemory *memory;
 	HeimWindow *heim_window;

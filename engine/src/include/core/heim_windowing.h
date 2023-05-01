@@ -8,6 +8,7 @@
 #include "math/heim_vector.h"
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
+#include "core/heim_input.h"
 
 typedef struct {
 	GLFWwindow *window;
@@ -19,6 +20,7 @@ typedef struct {
 	
 	HeimLogger *logger;	
 	HeimMemory *memory;
+	HeimInput *input;
 } HeimWindow;
 
 HeimWindow *heim_window_new(char *title, HeimLogger *logger, HeimMemory *memory);

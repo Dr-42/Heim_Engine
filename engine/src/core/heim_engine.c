@@ -9,17 +9,6 @@
 
 HeimEngine* heim_engine_new(char* title){
 	HeimEngine *heim = malloc(sizeof(HeimEngine));
-	heim->title = title;
-	heim->window_size = (heim_vec2ui){800, 600};
-	heim->window_top_left = (heim_vec2ui){0, 0};
-	heim->mouse_left = false;
-	heim->mouse_right = false;
-	heim->mouse_pos = (heim_vec2i){0, 0};
-	heim->mouse_delta = (heim_vec2i){0, 0};
-
-	heim->delta_time = 0.0f;
-	heim->last_frame = 0.0f;
-
 	heim->logger = heim_logger_create(HEIM_LOG_LEVEL_DEBUG, stdout);
 	heim->memory = heim_memory_create(heim->logger);
 	heim->heim_window = heim_window_new("Heim Engine", heim->logger, heim->memory);
@@ -29,13 +18,13 @@ HeimEngine* heim_engine_new(char* title){
 	
 }
 void heim_engine_set_window_size(HeimEngine *heim, uint32_t x, uint32_t y){
-	heim->window_size.x = x;
-	heim->window_size.y = y;
+	heim->heim_window->window_size.x = x;
+	heim->heim_window->window_size.y = y;
 	HEIM_LOG_INFO(heim->logger, "Set window size to %d, %d", x, y);
 }
 void heim_engine_set_window_top_left(HeimEngine *heim, uint32_t x, uint32_t y){
-	heim->window_top_left.x = x;
-	heim->window_top_left.y = y;
+	heim->heim_window->window_top_left.x = x;
+	heim->heim_window->window_top_left.y = y;
 	HEIM_LOG_INFO(heim->logger, "Set window top left to %d, %d", x, y);
 }
 
