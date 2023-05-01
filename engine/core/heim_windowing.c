@@ -18,6 +18,7 @@ HeimWindow* heim_window_new(char* title, HeimLogger *logger, HeimMemory *memory)
     heim_window->logger = logger;
     heim_window->memory = memory;
     heim_window->input = heim_input_create(logger, memory, heim_window->window);
+    heim_window->ecs = heim_ecs_create(logger, memory);
     return heim_window;
 }
 
@@ -75,7 +76,9 @@ void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool
 
         glClearColor(0.2f, 0.0f, 0.2f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-        //mGame->Render();
+
+        heim_ecs_update(heim_window->ecs, heim_window->delta_time);
+
         glfwSwapBuffers(heim_window->window);
 
         heim_window->last_frame = currentFrame;
@@ -95,5 +98,6 @@ void heim_window_set_window_title(HeimWindow *heim_window, char *title){
 void heim_window_free(HeimWindow *heim_window){
     glfwTerminate();
     heim_input_free(heim_window->input);
+    heim_ecs_free(heim_window->ecs, heim_window->memory);
     HEIM_FREE(heim_window->memory, heim_window, HEIM_MEMORY_TYPE_BASE);
 }

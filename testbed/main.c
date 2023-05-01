@@ -2,8 +2,28 @@
 
 HeimEngine* heim;
 
+HeimEntity entity;
+HeimComponent component;
+
+typedef struct {
+	float x;
+	float y;
+} Position;
+
+Position position = {0.0f, 0.0f};
+
+HeimSystem test_system(HeimEcs *ecs, float dt){
+	position.x += 0.1f;
+	position.y += 0.1f;
+	//HEIM_LOG_INFO(heim->logger, "Position: %f, %f", position.x, position.y);
+}
+
 void testbed_init(){
 	HEIM_LOG_INFO(heim->logger, "Testbed init");
+	entity = heim_ecs_create_entity(heim->heim_window->ecs);
+	component = heim_ecs_add_component(heim->heim_window->ecs, entity, &position, sizeof(Position));
+
+	heim_ecs_add_system(heim->heim_window->ecs, test_system);
 }
 
 void testbed_update(float *dt){

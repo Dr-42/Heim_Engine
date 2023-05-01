@@ -10,6 +10,8 @@
 #include "core/heim_memory.h"
 #include "core/heim_input.h"
 
+#include "ecs/heim_ecs.h"
+
 typedef struct {
 	GLFWwindow *window;
 	char *title;
@@ -21,6 +23,7 @@ typedef struct {
 	HeimLogger *logger;	
 	HeimMemory *memory;
 	HeimInput *input;
+	HeimEcs *ecs;
 } HeimWindow;
 
 HeimWindow *heim_window_new(char *title, HeimLogger *logger, HeimMemory *memory);
