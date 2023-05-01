@@ -15,4 +15,6 @@ typedef struct{
 	float x, y;
 } HeimVec2f;
 
+HeimVec2f heim_vec2f_add(HeimVec2f a, HeimVec2f b);
+
 #endif // HEIM_VECTOR_H 
