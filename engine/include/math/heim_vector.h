@@ -18,6 +18,10 @@ typedef struct{
 	float x, y;
 } HeimVec2f;
 
+typedef struct{
+	float x, y, z;
+} HeimVec3f;
+
 /// @brief Add two HeimVec2f vectors
 /// @param a vec 1
 /// @param b vec 2

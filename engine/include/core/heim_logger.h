@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 /// @brief Log levels.
-typedef enum {
+typedef enum HEIM_LOG_LEVEL {
 	HEIM_LOG_LEVEL_DEBUG,
 	HEIM_LOG_LEVEL_INFO,
 	HEIM_LOG_LEVEL_LOG,
@@ -13,7 +13,7 @@ typedef enum {
 } HEIM_LOG_LEVEL;
 
 /// @brief HeimLogger is a struct that contains all the information needed to log.
-typedef struct {
+typedef struct HeimLogger {
 	HEIM_LOG_LEVEL level;
 	FILE *file;
 } HeimLogger;

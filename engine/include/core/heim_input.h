@@ -10,7 +10,7 @@
 #include "math/heim_vector.h"
 
 /// @brief HeimInput is a struct that contains all the information needed to handle input.
-typedef struct {
+typedef struct HeimInput {
 	bool *keys;
 	bool mouse_left, mouse_right;
 	HeimVec2f mouse_pos;

@@ -27,8 +27,8 @@ typedef struct HeimEcs {
     uint64_t entity_count;
     uint64_t component_count;
 
-    HeimMemory *memory;
     HeimLogger *logger;
+    HeimMemory *memory;
 } HeimEcs;
 
 /// @brief A function pointer to a system function of type void funtion(HeimEcs *ecs, float dt)

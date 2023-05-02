@@ -17,7 +17,7 @@ typedef enum {
 } HEIM_MEMORY_TYPE;
 
 /// @brief HeimMemory is a struct that contains all the information needed to manage memory.
-typedef struct {
+typedef struct HeimMemory {
 	HEIM_MEMORY_TYPE type_counts[HEIM_MEMORY_TYPE_COUNT];
 	size_t total_size;
 	size_t total_allocations;
