@@ -124,7 +124,3 @@ void heim_shader_set_uniform2f(HeimShader* shader, const char* name, HeimVec2f v
 void heim_shader_set_uniform3f(HeimShader* shader, const char* name, HeimVec3f value){
     glUniform3f(glGetUniformLocation(shader->program, name), value.x, value.y, value.z);
 }
-
-void heim_shader_set_uniform_mat4f(HeimShader* shader, const char* name, HeimMat4f value){
-    glUniformMatrix4fv(glGetUniformLocation(shader->program, name), 1, GL_FALSE, heim_mat4f_to_array(value));
-}

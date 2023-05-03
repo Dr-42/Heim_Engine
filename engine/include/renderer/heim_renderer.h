@@ -10,7 +10,6 @@
 #include "core/heim_memory.h"
 
 #include "renderer/heim_shader.h"
-#include "renderer/heim_camera.h"
 
 typedef struct HeimRenderer {
     GLFWwindow* window;
@@ -23,7 +22,6 @@ typedef struct HeimRenderer {
     GLuint triangle_vbo;
     GLuint triangle_ebo;
 
-    HeimCamera* camera;
     HeimShader* shader;
 
 } HeimRenderer;

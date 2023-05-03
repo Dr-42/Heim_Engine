@@ -19,12 +19,6 @@ HeimRenderer* heim_renderer_create(HeimLogger* logger, HeimMemory* memory, HeimV
     renderer->triangle_ebo = 0;
 
     renderer->shader = heim_shader_create(renderer->logger, renderer->memory);
-    renderer->camera = heim_camera_create(logger, memory, 
-        (HeimVec3f){0.0f, 0.0f, -10.0f},
-        (HeimVec3f){0.0f, 1.0f, 0.0f},
-        -90.0f,
-        0.0f);
-
     renderer->window_size = win_size;
     renderer->window = NULL;
     return renderer;
@@ -32,7 +26,6 @@ HeimRenderer* heim_renderer_create(HeimLogger* logger, HeimMemory* memory, HeimV
 
 void heim_renderer_free(HeimRenderer* renderer, HeimMemory* memory){
     heim_shader_free(renderer->shader);
-    heim_camera_free(renderer->camera);
     HEIM_FREE(memory, renderer, HEIM_MEMORY_TYPE_RENDERER);
 }
 
