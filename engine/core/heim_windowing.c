@@ -4,9 +4,6 @@
 #include "core/heim_memory.h"
 #include <stdio.h>
 
-
-float currentFrame = 0.0f;
-
 HeimWindow* heim_window_new(char* title, HeimLogger *logger, HeimMemory *memory){
     HeimWindow *heim_window = HEIM_MALLOC(memory, HeimWindow, HEIM_MEMORY_TYPE_BASE);
     heim_window->title = title;
@@ -19,6 +16,8 @@ HeimWindow* heim_window_new(char* title, HeimLogger *logger, HeimMemory *memory)
     heim_window->memory = memory;
     heim_window->input = heim_input_create(logger, memory, heim_window->window);
     heim_window->ecs = heim_ecs_create(logger, memory);
+    heim_window->renderer = heim_renderer_create(logger, memory, heim_window->window_size);
+
     return heim_window;
 }
 
@@ -53,35 +52,33 @@ bool heim_window_init(HeimWindow *heim_window){
         return false;
     }
 
+    glViewport(0, 0, heim_window->window_size.x, heim_window->window_size.y);
+
+    heim_renderer_init(heim_window->renderer, heim_window->window);
 
     heim_window->input->window = heim_window->window;
     heim_input_init(heim_window->input);
-    // OpenGL configuration
-    glViewport(heim_window->window_top_left.x, heim_window->window_top_left.y, heim_window->window_size.x, heim_window->window_size.y);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     return true;
 }
 
 void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool* running){
     while (!glfwWindowShouldClose(heim_window->window) && *running)
     {
-        currentFrame = glfwGetTime();
-        heim_window->delta_time = currentFrame - heim_window->last_frame;
-        glfwPollEvents();
+        heim_window->current_frame = glfwGetTime();
+        heim_window->delta_time = heim_window->current_frame - heim_window->last_frame;
+        heim_window->last_frame = heim_window->current_frame;
+
         heim_input_update(heim_window->input);
+
+        heim_renderer_update(heim_window->renderer, heim_window->delta_time);
 
         update(&heim_window->delta_time);
 
-        glClearColor(0.2f, 0.0f, 0.2f, 1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
         heim_ecs_update(heim_window->ecs, heim_window->delta_time);
 
-        glfwSwapBuffers(heim_window->window);
+        glfwPollEvents();
 
-        heim_window->last_frame = currentFrame;
     }
 }
 
@@ -99,5 +96,6 @@ void heim_window_free(HeimWindow *heim_window){
     glfwTerminate();
     heim_input_free(heim_window->input);
     heim_ecs_free(heim_window->ecs, heim_window->memory);
+    heim_renderer_free(heim_window->renderer, heim_window->memory);
     HEIM_FREE(heim_window->memory, heim_window, HEIM_MEMORY_TYPE_BASE);
 }

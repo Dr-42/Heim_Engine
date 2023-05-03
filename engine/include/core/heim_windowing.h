@@ -11,20 +11,21 @@
 #include "core/heim_input.h"
 
 #include "ecs/heim_ecs.h"
+#include "renderer/heim_renderer.h"
 
 /// @brief HeimWindow is a struct that contains all the information needed to create a window.
-typedef struct {
+typedef struct HeimWindow{
 	GLFWwindow *window;
 	char *title;
 	HeimVec2ui window_size;
 	HeimVec2ui window_top_left;
-	float delta_time;
-	float last_frame;
+	float delta_time, current_frame, last_frame;
 	
 	HeimLogger *logger;	
 	HeimMemory *memory;
 	HeimInput *input;
 	HeimEcs *ecs;
+	HeimRenderer *renderer;
 } HeimWindow;
 
 /// @brief Creates a new HeimWindow struct.

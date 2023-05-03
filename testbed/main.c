@@ -14,14 +14,14 @@ Position position2 = {(HeimVec2f){10.0f, 0.0f}};
 
 float total_time = 0.0f;
 
-HeimSystem test_system(HeimEcs *ecs, float dt){
+void test_system(HeimEcs *ecs, float dt){
 	for (int i = 1; i < ecs->entity_count + 1; i++){
 		HeimEntity entity = ecs->entities[i];
 		for (int j = 1; j < ecs->component_count + 1; j++){
 			if(ecs->components[j] == component){
 				Position *pos = ecs->component_data[j][entity];
 				pos->position = heim_vec2f_add(pos->position, (HeimVec2f){0.1f, 0.1f});
-				HEIM_LOG_DEBUG(heim->logger, "Position: %f, %f", pos->position.x, pos->position.y);
+				//HEIM_LOG_DEBUG(heim->logger, "Position: %f, %f", pos->position.x, pos->position.y);
 			}
 		}
 	}
