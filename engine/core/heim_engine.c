@@ -65,5 +65,4 @@ void heim_engine_free(HeimEngine *heim){
 void heim_engine_shutdown(HeimEngine *heim){
 	heim_engine_cleanup(heim);
 	heim_engine_free(heim);
-	glfwSetWindowShouldClose(heim->heim_window->window, GLFW_TRUE);
 }
