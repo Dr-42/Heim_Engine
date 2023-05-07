@@ -63,7 +63,7 @@ bool heim_window_init(HeimWindow *heim_window){
 }
 
 void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool* running){
-    while (!glfwWindowShouldClose(heim_window->window) && *running)
+    while (*running)
     {
         heim_window->current_frame = glfwGetTime();
         heim_window->delta_time = heim_window->current_frame - heim_window->last_frame;
