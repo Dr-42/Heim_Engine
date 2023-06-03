@@ -12,6 +12,8 @@ file(GLOB LIBHEIMDALL_ENGINE_SOURCES
     "engine/math/*.c"
 )
 
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+
 add_library(libheimdall-engine SHARED
     ${LIBHEIMDALL_ENGINE_SOURCES}
 )
@@ -27,7 +29,7 @@ set_target_properties(libheimdall-engine PROPERTIES
 )
 
 # Link the libheimdall-engine library with the required libraries
-if(CYGWIN)
+if(WIN32)
     target_link_libraries(libheimdall-engine
         glew32
         glfw3

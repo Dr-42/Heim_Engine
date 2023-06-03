@@ -50,7 +50,7 @@ void testbed_update(float *dt){
 }
 
 int main(int argc, char** argv){
-	heim = heim_engine_new("Heim Engine");
+	heim = heim_engine_new("Heim Engine Testbed");
 	heim_engine_set_window_size(heim, 1000, 600);
 	heim_engine_set_window_top_left(heim, 100, 100);
 

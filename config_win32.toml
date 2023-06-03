@@ -6,7 +6,7 @@ name = "libheimdall-engine"
 src = "engine"
 include_dir = "engine/include"
 type = 'dll'
-cflags = " -g -Wall"
+cflags = " -g -Wall -Wextra"
 libs = "-lglew32 -lglfw3 -lopengl32 -lm"
 
 [[targets]]

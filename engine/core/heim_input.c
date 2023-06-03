@@ -35,7 +35,9 @@ void heim_input_init(HeimInput *input){
 		HEIM_LOG_ERROR(input->logger, "Input: Window is NULL");
 	}
 }
+
 void heim_input_update(HeimInput *input){
+	(void)input; // Fix for unused parameter warning
 	glfwPollEvents();
 }
 
@@ -43,7 +45,10 @@ void heim_input_free(HeimInput *input){
 	HEIM_FREE(input->memory, input, HEIM_MEMORY_TYPE_BASE);
 }
 
-void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int action, int mods){
+void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int action, int /*mods*/){
+	(void)window; // Fix for unused parameter warning
+	(void)scancode; // Fix for unused parameter warning
+
 	if (key >= 0 && key < 1024){
 		if (action == GLFW_PRESS){
 			keys_static[key] = true;
@@ -52,9 +57,25 @@ void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int acti
 		}
 	}
 }
-void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action, int mods){}
-void heim_input_cursor_position_callback(GLFWwindow *window, double xpos, double ypos){}
-void heim_input_framebuffer_size_callback(GLFWwindow *window, int width, int height){}
 
-void heim_input_mouse_grab(HeimInput *input, bool grab){}
-void heim_input_mouse_hide(HeimInput *input, bool hide){}
+void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action, int mods){
+	(void)window; // Fix for unused parameter warning
+}
+
+void heim_input_cursor_position_callback(GLFWwindow *window, double xpos, double ypos){
+	(void)window; // Fix for unused parameter warning
+}
+
+void heim_input_framebuffer_size_callback(GLFWwindow *window, int width, int height){
+	(void)window; // Fix for unused parameter warning
+}
+
+void heim_input_mouse_grab(HeimInput *input, bool grab){
+	(void)input; // Fix for unused parameter warning
+	(void)grab; // Fix for unused parameter warning
+}
+
+void heim_input_mouse_hide(HeimInput *input, bool hide){
+	(void)input; // Fix for unused parameter warning
+	(void)hide; // Fix for unused parameter warning
+}

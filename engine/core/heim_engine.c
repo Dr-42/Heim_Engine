@@ -12,7 +12,7 @@ HeimEngine* heim_engine_new(char* title){
 	heim->running = false;
 	heim->logger = heim_logger_create(HEIM_LOG_LEVEL_DEBUG, stdout);
 	heim->memory = heim_memory_create(heim->logger);
-	heim->heim_window = heim_window_new("Heim Engine", heim->logger, heim->memory);
+	heim->heim_window = heim_window_new(title, heim->logger, heim->memory);
 
 	HEIM_LOG_INFO(heim->logger, "Created new Heim Engine");
 	return heim;

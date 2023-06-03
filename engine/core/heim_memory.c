@@ -1,4 +1,5 @@
 #include "core/heim_memory.h"
+#include <string.h>
 #include <memory.h>
 
 

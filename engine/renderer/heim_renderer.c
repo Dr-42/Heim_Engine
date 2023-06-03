@@ -47,6 +47,7 @@ void heim_renderer_init(HeimRenderer *renderer, GLFWwindow *window){
 
 void heim_renderer_update(HeimRenderer *renderer, float dt)
 {
+    (void)dt;
     glClearColor(0.2f, 0.0f, 0.2f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 

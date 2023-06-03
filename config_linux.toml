@@ -6,7 +6,7 @@ name = "libheimdall-engine"
 src = "engine"
 include_dir = "engine/include"
 type = 'dll'
-cflags = " -g -Wall -Wunused"
+cflags = " -g -Wall -Wextra"
 libs = "-lGLEW -lglfw -lm"
 
 [[targets]]

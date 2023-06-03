@@ -25,7 +25,7 @@ void heim_shader_unbind();
 
 
 uint64_t heim_shader_get_file_size(const char* file_path, HeimLogger* logger);
-bool heim_shader_get_source(const char* file_path, char* buffer, uint64_t file_size, HeimLogger* logger, HeimMemory* memory);
+bool heim_shader_get_source(const char* file_path, char* buffer, uint64_t file_size, HeimLogger* logger);
 uint32_t heim_shader_get_program(const char* vert_source_path, const char* frag_source_path, HeimLogger* logger, HeimMemory* memory);
 
 bool heim_shader_read_file(const char *file_path, char* buffer, HeimLogger* logger, HeimMemory* memory);

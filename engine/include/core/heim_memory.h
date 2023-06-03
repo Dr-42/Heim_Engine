@@ -59,6 +59,9 @@ void *heim_memset(void *s, int c, size_t n);
 #define HEIM_MALLOC(memory, type, heim_type) (type *)heim_malloc(memory, sizeof(type), heim_type)
 /// @brief Wrapper for calloc.
 #define HEIM_CALLOC(memory, type, nmemb, heim_type) (type *)heim_calloc(memory, nmemb, sizeof(type), heim_type)
+/// @brief Wrapper for calloc where user specifies element size.
+#define HEIM_CALLOC_SIZED(memory, type, nmemb, size, heim_type) (type *)heim_calloc(memory, nmemb, size, heim_type)
+
 /// @brief Wrapper for realloc.
 #define HEIM_REALLOC(memory, type, ptr, heim_type) (type *)heim_realloc(memory, ptr, sizeof(type), heim_type)
 /// @brief Wrapper for free.

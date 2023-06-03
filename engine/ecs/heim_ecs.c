@@ -11,7 +11,7 @@ HeimEcs* heim_ecs_create(HeimLogger* logger, HeimMemory* memory){
 
     ecs->entities = HEIM_CALLOC(memory, HeimEntity, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
     ecs->components = HEIM_CALLOC(memory, HeimComponent, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
-    ecs->systems = HEIM_CALLOC(memory, void*, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
+    ecs->systems = HEIM_CALLOC(memory, HeimSystem, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
     ecs->component_data = HEIM_CALLOC(memory, void**, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
@@ -71,7 +71,7 @@ HeimComponent heim_ecs_register_component(HeimEcs *ecs, uint64_t size){
     if(ecs->component_data[component_id] != 0){
         HEIM_FREE(ecs->memory, ecs->component_data[component_id], HEIM_MEMORY_TYPE_ECS);
     }
-    ecs->component_data[component_id] = HEIM_CALLOC(ecs->memory, void*, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
+    ecs->component_data[component_id] = HEIM_CALLOC_SIZED(ecs->memory, void*, MAX_ENTITIES, size, HEIM_MEMORY_TYPE_ECS);
 
     return component_id;
 }
