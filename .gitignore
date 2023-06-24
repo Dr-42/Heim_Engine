@@ -1,3 +1,5 @@
 build
 .bld_cpp
 .vscode
+compile_commands.json
+.cache

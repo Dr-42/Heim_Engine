@@ -1,4 +1,5 @@
 #include <core/heim_engine.h>
+#include <renderer/heim_renderer.h>
 
 HeimEngine *heim;
 
@@ -13,6 +14,8 @@ Position position = {(HeimVec2f){0.0f, 0.0f}};
 Position position2 = {(HeimVec2f){10.0f, 0.0f}};
 
 float total_time = 0.0f;
+
+HeimSprite *sprite, *sprite2;
 
 void test_system(HeimEcs *ecs, float dt) {
     for (uint64_t i = 1; i < ecs->entity_count + 1; i++) {
@@ -38,6 +41,18 @@ void testbed_init() {
     heim_ecs_add_component(entity2, component, &position2);
 
     heim_ecs_add_system(test_system);
+
+    sprite = heim_create_sprite("assets/textures/Heim.png");
+    heim_sprite_set_position(sprite, (HeimVec2f){0.0f, 0.0f});
+    heim_sprite_set_size(sprite, (HeimVec2f){0.5f, 0.5f});
+
+    heim_renderer_register_sprite(sprite);
+
+    sprite2 = heim_create_sprite("assets/textures/Heim.png");
+    heim_sprite_set_position(sprite2, (HeimVec2f){0.3f, 0.3f});
+    heim_sprite_set_size(sprite2, (HeimVec2f){0.3f, 0.3f});
+
+    heim_renderer_register_sprite(sprite2);
 }
 
 void testbed_update(float *dt) {
@@ -54,6 +69,7 @@ int main(void) {
 
     heim_engine_init(testbed_init);
     heim_engine_run(testbed_update);
+    heim_sprite_free(sprite);
     heim_engine_shutdown();
     return 0;
 }

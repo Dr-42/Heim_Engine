@@ -65,11 +65,9 @@ void heim_window_update(void (*update)(float *dt), bool *running) {
         heim_window.last_frame = heim_window.current_frame;
 
         heim_input_update();
-
-        heim_renderer_update(heim_window.delta_time);
-
         update(&heim_window.delta_time);
 
+        heim_renderer_update(heim_window.delta_time);
         heim_ecs_update(heim_window.delta_time);
 
         glfwPollEvents();

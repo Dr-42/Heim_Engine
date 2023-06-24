@@ -14,8 +14,6 @@ HeimEngine heim = {
 
 void heim_engine_new(char *title) {
     heim_window_new(title);
-    heim_log_init(NULL, HEIM_LOG_LEVEL_ALL);
-
     HEIM_LOG_INFO("Created new Heim Engine");
 }
 void heim_engine_set_window_size(uint32_t x, uint32_t y) {
@@ -32,6 +30,7 @@ void heim_engine_init(void (*init)()) {
         HEIM_LOG_ERROR("Failed to initialize window");
     }
 
+    heim_logger_init(NULL, HEIM_LOG_LEVEL_ALL);
     heim_ecs_create();
 
     heim.running = true;
@@ -62,6 +61,7 @@ void heim_engine_free() {
 
 void heim_engine_shutdown() {
     heim_ecs_close();
+    heim_logger_close();
     heim_engine_cleanup();
     heim_engine_free();
 }

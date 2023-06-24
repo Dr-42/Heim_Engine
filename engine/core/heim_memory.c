@@ -22,7 +22,7 @@ void heim_memory_close() {
         HEIM_LOG_WARN("Memory leak detected! %d allocations, %d freed", memory.total_allocations, memory.total_freed);
         HEIM_LOG_WARN("Total size: %d", memory.total_size);
         for (int i = 0; i < HEIM_MEMORY_TYPE_COUNT; i++) {
-            HEIM_LOG_WARN("Type %d: %d", memory_type_names[i], memory.type_counts[i]);
+            HEIM_LOG_WARN("Type %s: %d", memory_type_names[i], memory.type_counts[i]);
         }
     } else {
         HEIM_LOG_INFO("No memory leaks detected");

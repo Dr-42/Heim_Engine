@@ -24,7 +24,7 @@ static const char *log_level_names[] = {
     "ERROR : ",
 };
 
-void heim_log_init(const char *filename, HEIM_LOG_LEVEL level) {
+void heim_logger_init(const char *filename, HEIM_LOG_LEVEL level) {
     if (filename == NULL) {
         logger.file = stdout;
     } else {

@@ -23,7 +23,7 @@ typedef struct HeimLogger {
 /// @param level Preferred log level.
 /// @param file Output file. (can be stdout)
 /// @return Pointer to the new HeimLogger struct.
-void heim_log_init(const char *filename, HEIM_LOG_LEVEL level);
+void heim_logger_init(const char *filename, HEIM_LOG_LEVEL level);
 
 void heim_log(HEIM_LOG_LEVEL level, const char *fmt, ...);
 
