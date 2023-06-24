@@ -1,50 +1,82 @@
 #include "core/heim_logger.h"
+
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-HeimLogger *heim_logger_create(HEIM_LOG_LEVEL level, FILE *file){
-	HeimLogger *logger = malloc(sizeof(HeimLogger));
-	logger->level = level;
-	logger->file = file;
-	return logger;
+static HeimLogger logger = (HeimLogger){
+    .level = HEIM_LOG_LEVEL_INFO,
+    .file = NULL,
+};
+
+#define UNI_RED "\033[0;31m"
+#define UNI_GREEN "\033[0;32m"
+#define UNI_YELLOW "\033[0;33m"
+#define UNI_BLUE "\033[0;34m"
+#define UNI_MAGENTA "\033[0;35m"
+#define UNI_RESET "\033[0m"
+
+static const char *log_level_names[] = {
+    "DEBUG : ",
+    "INFO : ",
+    "LOG : ",
+    "WARN : ",
+    "ERROR : ",
+};
+
+void heim_log_init(const char *filename, HEIM_LOG_LEVEL level) {
+    if (filename == NULL) {
+        logger.file = stdout;
+    } else {
+        logger.file = fopen(filename, "w");
+        if (logger.file == NULL) {
+            fprintf(stderr, "Failed to open log file %s\n", filename);
+            return;
+        }
+    }
+
+    logger.level = level;
+}
+void heim_logger_close() {
+    if (logger.file != NULL && logger.file != stdout) {
+        fclose(logger.file);
+    }
 }
 
-#define YELLOW "\033[1;33m"
-#define RED "\033[1;31m"
-#define GREEN "\033[1;32m"
-#define BLUE "\033[1;34m"
-#define MAGENTA "\033[1;35m"
-#define RESET "\033[0m"
+void heim_log(HEIM_LOG_LEVEL level, const char *fmt, ...) {
+    if (level > logger.level) {
+        return;
+    }
 
-void heim_log(HeimLogger *logger, HEIM_LOG_LEVEL level, const char *fmt, ...){
-	if (level >= logger->level) {
-		switch (level) {
-			case HEIM_LOG_LEVEL_DEBUG:
-				fprintf(logger->file, "%s[DEBUG] %s", MAGENTA, RESET);
-				break;
-			case HEIM_LOG_LEVEL_INFO:
-				fprintf(logger->file, "%s[INFO] %s", BLUE, RESET);
-				break;
-			case HEIM_LOG_LEVEL_LOG:
-				fprintf(logger->file, "%s[LOG] %s", GREEN, RESET);
-				break;
-			case HEIM_LOG_LEVEL_WARN:
-				fprintf(logger->file, "%s[WARN] %s", YELLOW, RESET);
-				break;
-			case HEIM_LOG_LEVEL_ERROR:
-				fprintf(logger->file, "%s[ERROR] %s", RED, RESET);
-				break;
-			default:
-				break;
-		}
-		va_list args;
-		va_start(args, fmt);
-		vfprintf(logger->file, fmt, args);
-		va_end(args);
-		fprintf(logger->file, "\n");
-	}
-}
+    va_list args;
+    va_start(args, fmt);
 
-void heim_logger_free(HeimLogger *logger){
-	free(logger);
+    char buffer[1024];
+
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    if (logger.file != NULL && logger.file != stdout)
+        fprintf(logger.file, "%s%s\n", log_level_names[level], buffer);
+    else {
+        switch (level) {
+            case HEIM_LOG_LEVEL_ERROR:
+                fprintf(stderr, "%s%s%s%s\n", UNI_RED, log_level_names[level], UNI_RESET, buffer);
+                break;
+            case HEIM_LOG_LEVEL_WARN:
+                fprintf(stderr, "%s%s%s%s\n", UNI_YELLOW, log_level_names[level], UNI_RESET, buffer);
+                break;
+            case HEIM_LOG_LEVEL_LOG:
+                fprintf(stderr, "%s%s%s%s\n", UNI_GREEN, log_level_names[level], UNI_RESET, buffer);
+                break;
+            case HEIM_LOG_LEVEL_INFO:
+                fprintf(stderr, "%s%s%s%s\n", UNI_BLUE, log_level_names[level], UNI_RESET, buffer);
+                break;
+            case HEIM_LOG_LEVEL_DEBUG:
+                fprintf(stderr, "%s%s%s%s\n", UNI_MAGENTA, log_level_names[level], UNI_RESET, buffer);
+                break;
+            default:
+                break;
+        }
+    }
+    va_end(args);
+    fflush(logger.file);
 }

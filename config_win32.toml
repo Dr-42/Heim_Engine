@@ -14,6 +14,6 @@ name = "testbed"
 src = "testbed"
 include_dir = "testbed/include"
 type = "exe"
-cflags = "-g -Wall"
+cflags = "-g -Wall -Wextra"
 libs = ""
 deps = ["libheimdall-engine"]

@@ -57,7 +57,7 @@ target_include_directories(testbed PUBLIC
 
 # Set the compile flags for the testbed executable
 set_target_properties(testbed PROPERTIES
-    COMPILE_FLAGS "-g -Wall"
+    COMPILE_FLAGS "-g -Wall -Wextra"
 )
 
 # Link the testbed executable with the libheimdall-engine library

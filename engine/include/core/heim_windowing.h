@@ -5,61 +5,48 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
-#include "math/heim_vector.h"
+#include "core/heim_input.h"
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
-#include "core/heim_input.h"
-
 #include "ecs/heim_ecs.h"
+#include "math/heim_vector.h"
 #include "renderer/heim_renderer.h"
 
 /// @brief HeimWindow is a struct that contains all the information needed to create a window.
-typedef struct HeimWindow{
-	GLFWwindow *window;
-	char *title;
-	HeimVec2ui window_size;
-	HeimVec2ui window_top_left;
-	float delta_time, current_frame, last_frame;
-	
-	HeimLogger *logger;	
-	HeimMemory *memory;
-	HeimInput *input;
-	HeimEcs *ecs;
-	HeimRenderer *renderer;
+typedef struct HeimWindow {
+    GLFWwindow *window;
+    char *title;
+    HeimVec2ui window_size;
+    HeimVec2ui window_top_left;
+    float delta_time, current_frame, last_frame;
 } HeimWindow;
 
 /// @brief Creates a new HeimWindow struct.
 /// @param title The title of the window.
-/// @param logger Pointer to the logger.
-/// @param memory Pointer to the memory.
 /// @return Pointer to the new HeimWindow struct.
-HeimWindow *heim_window_new(char *title, HeimLogger *logger, HeimMemory *memory);
+void heim_window_new(char *title);
 
 /// @brief Initializes the HeimWindow struct.
-/// @param heim_window Pointer to the HeimWindow struct.
-bool heim_window_init(HeimWindow *heim_window);
+bool heim_window_init();
 
 /// @brief Updates the HeimWindow struct.
-/// @param heim_window Pointer to the HeimWindow struct.
-void heim_window_update(HeimWindow *heim_window, void (*update)(float *dt), bool *running);
+void heim_window_update(void (*update)(float *dt), bool *running);
 
 /// @brief Frees the HeimWindow struct.
-/// @param heim_window Pointer to the HeimWindow struct.
-void heim_window_free(HeimWindow *heim_window);
+void heim_window_close();
+
+GLFWwindow *heim_window_get_window();
 
 /// @brief Sets the window size.
-/// @param heim_window Pointer to the HeimWindow struct.
 /// @param size Size of the window.
-void heim_window_set_window_size(HeimWindow *heim_window, HeimVec2ui size);
+void heim_window_set_window_size(HeimVec2ui size);
 
 /// @brief Sets the window top left.
-/// @param heim_window Pointer to the HeimWindow struct.
 /// @param top_left Top left of the window.
-void heim_window_set_window_top_left(HeimWindow *heim_window, HeimVec2ui top_left);
+void heim_window_set_window_top_left(HeimVec2ui top_left);
 
 /// @brief Sets the window title.
-/// @param heim_window Pointer to the HeimWindow struct.
 /// @param title Title of the window.
-void heim_window_set_window_title(HeimWindow *heim_window, char *title);
+void heim_window_set_window_title(char *title);
 
-#endif // HEIM_WINDOWING_H
+#endif  // HEIM_WINDOWING_H

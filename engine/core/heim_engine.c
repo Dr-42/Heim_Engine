@@ -1,67 +1,67 @@
+#include "core/heim_engine.h"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "core/heim_engine.h"
 
 #include "core/heim_memory.h"
-#include "math/heim_vector.h"
 #include "core/heim_windowing.h"
+#include "math/heim_vector.h"
 
-HeimEngine* heim_engine_new(char* title){
-	HeimEngine *heim = malloc(sizeof(HeimEngine));
-	heim->running = false;
-	heim->logger = heim_logger_create(HEIM_LOG_LEVEL_DEBUG, stdout);
-	heim->memory = heim_memory_create(heim->logger);
-	heim->heim_window = heim_window_new(title, heim->logger, heim->memory);
+HeimEngine heim = {
+    .running = false,
+};
 
-	HEIM_LOG_INFO(heim->logger, "Created new Heim Engine");
-	return heim;
-	
+void heim_engine_new(char *title) {
+    heim_window_new(title);
+    heim_log_init(NULL, HEIM_LOG_LEVEL_ALL);
+
+    HEIM_LOG_INFO("Created new Heim Engine");
 }
-void heim_engine_set_window_size(HeimEngine *heim, uint32_t x, uint32_t y){
-	heim->heim_window->window_size.x = x;
-	heim->heim_window->window_size.y = y;
-	HEIM_LOG_INFO(heim->logger, "Set window size to %d, %d", x, y);
+void heim_engine_set_window_size(uint32_t x, uint32_t y) {
+    heim_window_set_window_size((HeimVec2ui){x, y});
+    HEIM_LOG_INFO("Set window size to %d, %d", x, y);
 }
-void heim_engine_set_window_top_left(HeimEngine *heim, uint32_t x, uint32_t y){
-	heim->heim_window->window_top_left.x = x;
-	heim->heim_window->window_top_left.y = y;
-	HEIM_LOG_INFO(heim->logger, "Set window top left to %d, %d", x, y);
+void heim_engine_set_window_top_left(uint32_t x, uint32_t y) {
+    heim_window_set_window_top_left((HeimVec2ui){x, y});
+    HEIM_LOG_INFO("Set window top left to %d, %d", x, y);
 }
 
-void heim_engine_init(HeimEngine *heim, void (*init)()){
-	if(!heim_window_init(heim->heim_window)){
-		HEIM_LOG_ERROR(heim->logger, "Failed to initialize window");
-	}
+void heim_engine_init(void (*init)()) {
+    if (!heim_window_init()) {
+        HEIM_LOG_ERROR("Failed to initialize window");
+    }
 
-	heim->running = true;
-	HEIM_LOG_INFO(heim->logger, "Initialized Heim Engine");
-	init();
+    heim_ecs_create();
+
+    heim.running = true;
+    HEIM_LOG_INFO("Initialized Heim Engine");
+    init();
 }
 
-void heim_engine_run(HeimEngine *heim, void (*update)(float *dt)){
-	heim_window_update(heim->heim_window, update, &(heim->running));
+void heim_engine_run(void (*update)(float *dt)) {
+    heim_window_update(update, &(heim.running));
 }
 
-void heim_engine_should_close(HeimEngine *heim, bool should_close){
-	heim->running = !should_close;
+void heim_engine_should_close(bool should_close) {
+    heim.running = !should_close;
+    glfwSetWindowShouldClose(heim_window_get_window(), should_close);
 }
 
-void heim_engine_cleanup(HeimEngine *heim){
-	HEIM_LOG_INFO(heim->logger, "Cleaned up Heim Engine");
-	heim_window_free(heim->heim_window);
-	heim_memory_free(heim->memory);
-	heim_logger_free(heim->logger);
+void heim_engine_cleanup() {
+    HEIM_LOG_INFO("Cleaned up Heim Engine");
+    heim_window_close(heim_window_get_window());
+    heim_memory_close();
 }
 
-void heim_engine_free(HeimEngine *heim){
-	//End GL
-	glfwDestroyWindow(heim->heim_window->window);
-	glfwTerminate();
-	free(heim);
+void heim_engine_free() {
+    // End GL
+    glfwDestroyWindow(heim_window_get_window());
+    glfwTerminate();
 }
 
-void heim_engine_shutdown(HeimEngine *heim){
-	heim_engine_cleanup(heim);
-	heim_engine_free(heim);
+void heim_engine_shutdown() {
+    heim_ecs_close();
+    heim_engine_cleanup();
+    heim_engine_free();
 }
