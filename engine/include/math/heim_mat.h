@@ -1,7 +1,7 @@
 #ifndef HEIM_MAT_H
 #define HEIM_MAT_H
 
-#include "heim_vector.h"
+#include "math/heim_vector.h"
 
 typedef struct {
     float m[9];
@@ -11,17 +11,20 @@ typedef struct {
     float m[16];
 } HeimMat4;
 
+void heim_mat3_print(HeimMat3 mat);
+void heim_mat4_print(HeimMat4 mat);
+
 HeimMat3 heim_mat3_identity();
 HeimMat4 heim_mat4_identity();
 
-HeimMat3 heim_mat3_translate(float x, float y);
-HeimMat4 heim_mat4_translate(float x, float y, float z);
+HeimMat3 heim_mat3_translate(HeimMat3 m, HeimVec2f vec);
+HeimMat4 heim_mat4_translate(HeimMat4 m, HeimVec3f vec);
 
-HeimMat3 heim_mat3_rotate(float angle);
-HeimMat4 heim_mat4_rotate(float angle, HeimVec3f axis);
+HeimMat3 heim_mat3_rotate(HeimMat3 m, float degrees);
+HeimMat4 heim_mat4_rotate(HeimMat4 m, float degrees, HeimVec3f axis);
 
-HeimMat3 heim_mat3_scale(HeimVec2f vec);
-HeimMat4 heim_mat4_scale(HeimVec3f vec);
+HeimMat3 heim_mat3_scale(HeimMat3 m, HeimVec2f vec);
+HeimMat4 heim_mat4_scale(HeimMat4 m, HeimVec3f vec);
 
 HeimMat3 heim_mat3_multiply(HeimMat3 a, HeimMat3 b);
 HeimMat4 heim_mat4_multiply(HeimMat4 a, HeimMat4 b);
