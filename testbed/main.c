@@ -44,11 +44,11 @@ void testbed_init() {
 
     sprite = heim_create_sprite("assets/textures/Heim.png");
     heim_sprite_set_position(sprite, (HeimVec2f){0.0f, 0.0f});
-    heim_sprite_set_size(sprite, (HeimVec2f){0.5f, 0.5f});
+    heim_sprite_set_size(sprite, (HeimVec2f){1.4f, 1.8f});
 
     heim_renderer_register_sprite(sprite);
 
-    sprite2 = heim_create_sprite("assets/textures/Heim.png");
+    sprite2 = heim_create_sprite("assets/textures/nomu.png");
     heim_sprite_set_position(sprite2, (HeimVec2f){0.3f, 0.3f});
     heim_sprite_set_size(sprite2, (HeimVec2f){0.3f, 0.3f});
 
@@ -69,7 +69,6 @@ int main(void) {
 
     heim_engine_init(testbed_init);
     heim_engine_run(testbed_update);
-    heim_sprite_free(sprite);
     heim_engine_shutdown();
     return 0;
 }

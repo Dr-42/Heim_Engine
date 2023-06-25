@@ -13,11 +13,6 @@
 typedef struct HeimRenderer {
     GLFWwindow* window;
     HeimVec2ui window_size;
-
-    GLuint vao;
-    GLuint vbo;
-    GLuint ebo;
-
     HeimShader* shader;
 } HeimRenderer;
 

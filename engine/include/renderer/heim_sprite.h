@@ -15,7 +15,7 @@ void heim_sprite_set_color(HeimSprite* sprite, HeimVec4f color);
 HeimVec2f heim_sprite_get_position(HeimSprite* sprite);
 HeimVec2f heim_sprite_get_size(HeimSprite* sprite);
 HeimVec4f heim_sprite_get_color(HeimSprite* sprite);
-void* heim_sprite_get_texture(HeimSprite* sprite);
+GLuint heim_sprite_get_texture(HeimSprite* sprite);
 
 GLuint heim_sprite_get_vao(HeimSprite* sprite);
 GLuint heim_sprite_get_vbo(HeimSprite* sprite);
