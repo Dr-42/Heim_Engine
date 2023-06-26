@@ -1,4 +1,5 @@
 #include <core/heim_engine.h>
+#include <math/heim_math_common.h>
 #include <renderer/heim_renderer.h>
 
 HeimEngine *heim;
@@ -63,8 +64,8 @@ void testbed_update(float *dt) {
 
     // Make the sprite rotate around the 400, 400
     total_time += *dt;
-    float x = 400.0f + 200.0f * cos(total_time);
-    float y = 400.0f + 200.0f * sin(total_time);
+    float x = 400.0f + 200.0f * heim_math_cos(total_time);
+    float y = 400.0f + 200.0f * heim_math_sin(total_time);
 
     heim_sprite_set_position(sprite, (HeimVec2f){x, y});
 }
