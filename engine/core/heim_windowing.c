@@ -47,6 +47,7 @@ bool heim_window_init() {
 
     glViewport(0, 0, heim_window.window_size.x, heim_window.window_size.y);
 
+    heim_renderer_create(heim_window.window_size);
     heim_renderer_init(heim_window.window);
     heim_input_create(heim_window.window);
     heim_input_init();

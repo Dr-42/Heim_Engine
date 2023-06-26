@@ -135,3 +135,26 @@ void heim_shader_set_uniform2f(HeimShader* shader, const char* name, HeimVec2f v
 void heim_shader_set_uniform3f(HeimShader* shader, const char* name, HeimVec3f value) {
     glUniform3f(glGetUniformLocation(shader->program, name), value.x, value.y, value.z);
 }
+
+void heim_shader_set_uniform_mat4(HeimShader* shader, const char* name, HeimMat4 value) {
+    float m[16] = {
+        value.m[0][0],
+        value.m[0][1],
+        value.m[0][2],
+        value.m[0][3],
+        value.m[1][0],
+        value.m[1][1],
+        value.m[1][2],
+        value.m[1][3],
+        value.m[2][0],
+        value.m[2][1],
+        value.m[2][2],
+        value.m[2][3],
+        value.m[3][0],
+        value.m[3][1],
+        value.m[3][2],
+        value.m[3][3],
+    };
+
+    glUniformMatrix4fv(glGetUniformLocation(shader->program, name), 1, GL_FALSE, m);
+}

@@ -43,14 +43,14 @@ void testbed_init() {
     heim_ecs_add_system(test_system);
 
     sprite = heim_create_sprite("assets/textures/Heim.png");
-    heim_sprite_set_position(sprite, (HeimVec2f){0.0f, 0.0f});
-    heim_sprite_set_size(sprite, (HeimVec2f){1.4f, 1.8f});
+    heim_sprite_set_position(sprite, (HeimVec2f){400.0f, 400.0f});
+    heim_sprite_set_size(sprite, (HeimVec2f){300.f, 400.f});
 
     heim_renderer_register_sprite(sprite);
 
     sprite2 = heim_create_sprite("assets/textures/nomu.png");
-    heim_sprite_set_position(sprite2, (HeimVec2f){0.3f, 0.3f});
-    heim_sprite_set_size(sprite2, (HeimVec2f){0.3f, 0.3f});
+    heim_sprite_set_position(sprite2, (HeimVec2f){600.0f, 100.0f});
+    heim_sprite_set_size(sprite2, (HeimVec2f){100.0f, 100.0f});
 
     heim_renderer_register_sprite(sprite2);
 }
@@ -60,11 +60,18 @@ void testbed_update(float *dt) {
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
         heim_engine_should_close(true);
     }
+
+    // Make the sprite rotate around the 400, 400
+    total_time += *dt;
+    float x = 400.0f + 200.0f * cos(total_time);
+    float y = 400.0f + 200.0f * sin(total_time);
+
+    heim_sprite_set_position(sprite, (HeimVec2f){x, y});
 }
 
 int main(void) {
     heim_engine_new("Heim Engine Testbed");
-    heim_engine_set_window_size(800, 600);
+    heim_engine_set_window_size(800, 800);
     heim_engine_set_window_top_left(100, 100);
 
     heim_engine_init(testbed_init);

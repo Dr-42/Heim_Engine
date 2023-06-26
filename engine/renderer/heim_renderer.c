@@ -1,6 +1,7 @@
 #include "renderer/heim_renderer.h"
 
 #include "core/heim_logger.h"
+#include "math/heim_mat.h"
 #include "math/heim_vector.h"
 #include "renderer/heim_sprite.h"
 
@@ -32,7 +33,7 @@ void heim_renderer_init(GLFWwindow* window) {
     heim_shader_init(renderer.shader, "assets/shaders/sprite.vert", "assets/shaders/sprite.frag");
 
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glCullFace(GL_BACK);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -61,6 +62,7 @@ void heim_renderer_update(float dt) {
 }
 
 void heim_renderer_register_sprite(HeimSprite* sprite) {
+    heim_sprite_set_projection(sprite, heim_mat4_ortho(0.0f, renderer.window_size.x, renderer.window_size.y, 0.0f, -1.0f, 1.0f));
     if (sprite_count < HEIM_RENDERER_MAX_SPRITES) {
         sprites[sprite_count++] = sprite;
     } else {
@@ -72,6 +74,12 @@ void heim_renderer_draw_sprite(HeimSprite* sprite) {
     GLuint vao = heim_sprite_get_vao(sprite);
     GLuint vbo = heim_sprite_get_vbo(sprite);
     GLuint ebo = heim_sprite_get_ebo(sprite);
+
+    heim_shader_bind(renderer.shader);
+
+    heim_shader_set_uniform_mat4(renderer.shader, "model", heim_sprite_get_model(sprite));
+    heim_shader_set_uniform_mat4(renderer.shader, "view", heim_sprite_get_view(sprite));
+    heim_shader_set_uniform_mat4(renderer.shader, "projection", heim_sprite_get_projection(sprite));
 
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
