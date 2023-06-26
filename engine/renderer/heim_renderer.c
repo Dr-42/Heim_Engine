@@ -4,6 +4,7 @@
 #include "math/heim_mat.h"
 #include "math/heim_vector.h"
 #include "renderer/heim_sprite.h"
+#include "renderer/heim_texture.h"
 
 #define HEIM_RENDERER_MAX_SPRITES 1000
 static HeimSprite* sprites[HEIM_RENDERER_MAX_SPRITES];
@@ -86,7 +87,7 @@ void heim_renderer_draw_sprite(HeimSprite* sprite) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, heim_sprite_get_texture(sprite));
+    glBindTexture(GL_TEXTURE_2D, heim_sprite_get_texture(sprite)->id);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 

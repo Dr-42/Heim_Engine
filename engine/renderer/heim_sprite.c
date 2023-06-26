@@ -1,8 +1,6 @@
 #include "renderer/heim_sprite.h"
 
-#define STB_IMAGE_IMPLEMENTATION
 #include <cglm/cglm.h>
-#include <stb/stb_image.h>
 
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
@@ -19,8 +17,7 @@ typedef struct HeimSprite {
     HeimVec2f size;
     HeimVec4f color;
     float rotation;
-    char* texture_path;
-    GLuint texture;
+    HeimTexture* texture;
 
     Vertex vertices[4];
 
@@ -49,21 +46,13 @@ void _update_sprite_mats(HeimSprite* sprite) {
     sprite->size.y *= -1;
 }
 
-HeimSprite* heim_create_sprite(char* texture_path) {
+HeimSprite* heim_create_sprite(HeimTexture* texture) {
     HeimSprite* sprite = HEIM_MALLOC(HeimSprite, HEIM_MEMORY_TYPE_RENDERER);
     sprite->position = (HeimVec2f){0.0f, 0.0f};
     sprite->size = (HeimVec2f){0.5f, 0.5f};
     sprite->color = (HeimVec4f){1.0f, 1.0f, 1.0f, 1.0f};
     sprite->rotation = 0.0f;
-    sprite->texture_path = texture_path;
-
-    int w, h, channels;
-    stbi_set_flip_vertically_on_load(1);
-    uint8_t* texture_data = stbi_load(texture_path, &w, &h, &channels, 0);
-
-    if (!texture_data) {
-        HEIM_LOG_ERROR("Failed to load texture: %s", texture_path);
-    }
+    sprite->texture = texture;
 
     sprite->vertices[0] = (Vertex){
         (HeimVec3f){1.0f, 1.0f, 0.0f},
@@ -104,20 +93,6 @@ HeimSprite* heim_create_sprite(char* texture_path) {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
     glEnableVertexAttribArray(1);
-
-    glGenTextures(1, &sprite->texture);
-    glBindTexture(GL_TEXTURE_2D, sprite->texture);
-
-    if (channels == 3) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
-    } else if (channels == 4) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
-    } else {
-        HEIM_LOG_ERROR("Unsupported number of channels: %d", channels);
-    }
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    stbi_image_free(texture_data);
 
     _update_sprite_mats(sprite);
 
@@ -171,7 +146,7 @@ float heim_sprite_get_rotation(HeimSprite* sprite) {
     return sprite->rotation;
 }
 
-GLuint heim_sprite_get_texture(HeimSprite* sprite) {
+HeimTexture* heim_sprite_get_texture(HeimSprite* sprite) {
     return sprite->texture;
 }
 

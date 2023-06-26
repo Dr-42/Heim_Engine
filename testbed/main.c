@@ -1,6 +1,7 @@
 #include <core/heim_engine.h>
 #include <math/heim_math_common.h>
 #include <renderer/heim_renderer.h>
+#include <renderer/heim_texture.h>
 
 HeimEngine *heim;
 
@@ -17,6 +18,7 @@ Position position2 = {(HeimVec2f){10.0f, 0.0f}};
 float total_time = 0.0f;
 
 HeimSprite *sprite, *sprite2;
+HeimTexture *tex1, *tex2;
 
 void test_system(HeimEcs *ecs, float dt) {
     for (uint64_t i = 1; i < ecs->entity_count + 1; i++) {
@@ -43,13 +45,15 @@ void testbed_init() {
 
     heim_ecs_add_system(test_system);
 
-    sprite = heim_create_sprite("assets/textures/Heim.png");
+    tex1 = heim_create_texture("assets/textures/Heim.png");
+    tex2 = heim_create_texture("assets/textures/nomu.png");
+    sprite = heim_create_sprite(tex1);
     heim_sprite_set_position(sprite, (HeimVec2f){400.0f, 400.0f});
     heim_sprite_set_size(sprite, (HeimVec2f){300.f, 400.f});
 
     heim_renderer_register_sprite(sprite);
 
-    sprite2 = heim_create_sprite("assets/textures/nomu.png");
+    sprite2 = heim_create_sprite(tex1);
     heim_sprite_set_position(sprite2, (HeimVec2f){600.0f, 100.0f});
     heim_sprite_set_size(sprite2, (HeimVec2f){100.0f, 100.0f});
 
@@ -77,6 +81,10 @@ int main(void) {
 
     heim_engine_init(testbed_init);
     heim_engine_run(testbed_update);
+
+    heim_destroy_texture(tex1);
+    heim_destroy_texture(tex2);
+
     heim_engine_shutdown();
     return 0;
 }
