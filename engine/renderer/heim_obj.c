@@ -86,6 +86,24 @@ HeimObj *heim_obj_load(const char *path) {
 
     fclose(file);
 
+    obj->vertices_data = HEIM_CALLOC(HeimVertex, obj->face_count * 3, HEIM_MEMORY_TYPE_RENDERER);
+
+    // Fill in the heim vertices_data array according to the faces
+    // Each Heim vertex has a position, normal and uv
+    for (uint64_t i = 0; i < obj->face_count; i++) {
+        obj->vertices_data[i * 3 + 0].position = obj->vertices[obj->faces[i].vertex_index[0]];
+        obj->vertices_data[i * 3 + 1].position = obj->vertices[obj->faces[i].vertex_index[1]];
+        obj->vertices_data[i * 3 + 2].position = obj->vertices[obj->faces[i].vertex_index[2]];
+
+        obj->vertices_data[i * 3 + 0].normal = obj->normals[obj->faces[i].normal_index[0]];
+        obj->vertices_data[i * 3 + 1].normal = obj->normals[obj->faces[i].normal_index[1]];
+        obj->vertices_data[i * 3 + 2].normal = obj->normals[obj->faces[i].normal_index[2]];
+
+        obj->vertices_data[i * 3 + 0].uv = obj->uvs[obj->faces[i].uv_index[0]];
+        obj->vertices_data[i * 3 + 1].uv = obj->uvs[obj->faces[i].uv_index[1]];
+        obj->vertices_data[i * 3 + 2].uv = obj->uvs[obj->faces[i].uv_index[2]];
+    }
+
     return obj;
 }
 
@@ -103,6 +121,7 @@ void heim_obj_render(HeimObj *obj) {
     glBindVertexArray(obj->vao);
 
     // Generate the VBO for vertices
+    /*
     glGenBuffers(1, &obj->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
     glBufferData(GL_ARRAY_BUFFER, obj->vertex_count * sizeof(HeimVec3f), obj->vertices, GL_STATIC_DRAW);
@@ -129,9 +148,22 @@ void heim_obj_render(HeimObj *obj) {
     glGenBuffers(1, &obj->ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj->face_count * 3 * sizeof(uint32_t), obj->elements, GL_STATIC_DRAW);
+    */
+
+    // Generate the VBO for vertices
+    glGenBuffers(1, &obj->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
+    glBufferData(GL_ARRAY_BUFFER, obj->face_count * sizeof(HeimVertex) * 3, obj->vertices_data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, position));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, normal));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, uv));
 
     // Draw the object
-    glDrawElements(GL_TRIANGLES, obj->face_count * 3, GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, obj->face_count * 3, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, obj->face_count * 3);
 
     // Unbind the VAO and VBOs
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -139,6 +171,6 @@ void heim_obj_render(HeimObj *obj) {
     glBindVertexArray(0);
 
     // Delete the VBOs
-    glDeleteBuffers(1, &normal_vbo);
-    glDeleteBuffers(1, &uv_vbo);
+    // glDeleteBuffers(1, &normal_vbo);
+    // glDeleteBuffers(1, &uv_vbo);
 }

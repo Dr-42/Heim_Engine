@@ -12,6 +12,12 @@ typedef struct HeimObjFace {
     uint64_t uv_index[3];
 } HeimObjFace;
 
+typedef struct HeimVertex {
+    HeimVec3f position;
+    HeimVec3f normal;
+    HeimVec2f uv;
+} HeimVertex;
+
 // Obj model
 typedef struct HeimObj {
     uint64_t vertex_count;
@@ -25,6 +31,8 @@ typedef struct HeimObj {
     HeimObjFace *faces;
 
     uint32_t *elements;
+
+    HeimVertex *vertices_data;
 
     uint32_t vao;
     uint32_t vbo;
