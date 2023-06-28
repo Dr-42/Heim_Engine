@@ -5,9 +5,10 @@
 // #include "renderer/heim_sprite.h"
 #include "core/heim_input.h"
 #include "renderer/heim_texture.h"
-#include "renderer/obj.h"
+// #include "renderer/obj.h"
+#include "renderer/heim_obj.h"
 
-obj* O;
+HeimObj* O;
 HeimMat4 model_mat;
 HeimMat4 view_mat;
 HeimMat4 proj_mat;
@@ -34,6 +35,8 @@ void heim_renderer_close() {
     for (uint32_t i = 0; i < sprite_count; ++i) {
         heim_sprite_free(sprites[i]);
     }
+
+    heim_obj_free(O);
 }
 
 void heim_renderer_init(GLFWwindow* window) {
@@ -41,8 +44,8 @@ void heim_renderer_init(GLFWwindow* window) {
     renderer.shader = heim_shader_create();
     heim_shader_init(renderer.shader, "assets/shaders/model.vert", "assets/shaders/model.frag");
 
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -71,11 +74,13 @@ void heim_renderer_init(GLFWwindow* window) {
     heim_shader_set_uniform_mat4(renderer.shader, "view", view_mat);
     heim_shader_set_uniform_mat4(renderer.shader, "projection", proj_mat);
 
-    O = obj_create("assets/models/susan.obj");
+    O = heim_obj_load("assets/models/susan.obj");
+    /*
     obj_set_vert_loc(O, -1,  // glGetAttribLocation(renderer.shader->program, "vTangent"),
                      glGetAttribLocation(renderer.shader->program, "aNormal"),
                      glGetAttribLocation(renderer.shader->program, "aTexCoords"),
                      glGetAttribLocation(renderer.shader->program, "aPos"));
+                     */
 
     tex = heim_create_texture("assets/textures/susan.png");
     // obj_set_prop_loc(O, OBJ_KD, -1, glGetUniformLocation(renderer.shader->program, "texture_diffuse1"), -1);
@@ -96,7 +101,7 @@ void heim_renderer_update(float dt) {
     }
     */
 
-    obj_render(O);
+    heim_obj_render(O);
 
     // Control camera using the view matrix
     if (heim_input_key_pressed(GLFW_KEY_W)) {
