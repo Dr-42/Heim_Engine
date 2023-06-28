@@ -21,6 +21,7 @@ HeimSprite *sprite, *sprite2;
 HeimTexture *tex1, *tex2;
 
 void test_system(HeimEcs *ecs, float dt) {
+    /*
     for (uint64_t i = 1; i < ecs->entity_count + 1; i++) {
         HeimEntity entity = ecs->entities[i];
         for (uint64_t j = 1; j < ecs->component_count + 1; j++) {
@@ -31,9 +32,11 @@ void test_system(HeimEcs *ecs, float dt) {
             }
         }
     }
+    */
 }
 
 void testbed_init() {
+    /*
     HEIM_LOG_INFO("Testbed init");
     entity = heim_ecs_create_entity();
     entity2 = heim_ecs_create_entity();
@@ -58,6 +61,7 @@ void testbed_init() {
     heim_sprite_set_size(sprite2, (HeimVec2f){100.0f, 100.0f});
 
     heim_renderer_register_sprite(sprite2);
+    */
 }
 
 void testbed_update(float *dt) {
@@ -66,12 +70,14 @@ void testbed_update(float *dt) {
         heim_engine_should_close(true);
     }
 
+    /*
     // Make the sprite rotate around the 400, 400
     total_time += *dt;
     float x = 400.0f + 200.0f * heim_math_cos(total_time);
     float y = 400.0f + 200.0f * heim_math_sin(total_time);
 
     heim_sprite_set_position(sprite, (HeimVec2f){x, y});
+    */
 }
 
 int main(void) {
@@ -80,10 +86,12 @@ int main(void) {
     heim_engine_set_window_top_left(100, 100);
 
     heim_engine_init(testbed_init);
+    heim_input_mouse_hide(true);
+    heim_input_mouse_grab(true);
     heim_engine_run(testbed_update);
 
-    heim_destroy_texture(tex1);
-    heim_destroy_texture(tex2);
+    // heim_destroy_texture(tex1);
+    // heim_destroy_texture(tex2);
 
     heim_engine_shutdown();
     return 0;

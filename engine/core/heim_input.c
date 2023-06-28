@@ -118,5 +118,7 @@ HeimVec2f heim_input_mouse_position() {
     return input.mouse_pos;
 }
 HeimVec2f heim_input_mouse_delta() {
-    return input.mouse_delta;
+    HeimVec2f delta = input.mouse_delta;
+    input.mouse_delta = (HeimVec2f){0.0f, 0.0f};
+    return delta;
 }
