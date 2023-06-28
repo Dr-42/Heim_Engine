@@ -108,16 +108,6 @@ HeimObj *heim_obj_load(const char *path) {
     HEIM_FREE(normals, HEIM_MEMORY_TYPE_RENDERER);
     HEIM_FREE(uvs, HEIM_MEMORY_TYPE_RENDERER);
 
-    return obj;
-}
-
-void heim_obj_free(HeimObj *obj) {
-    HEIM_FREE(obj->vertices_data, HEIM_MEMORY_TYPE_RENDERER);
-    HEIM_FREE(obj, HEIM_MEMORY_TYPE_RENDERER);
-}
-
-void heim_obj_render(HeimObj *obj) {
-    // Generate and bind the VAO
     glGenVertexArrays(1, &obj->vao);
     glBindVertexArray(obj->vao);
     // Generate the VBO for vertices
@@ -130,6 +120,18 @@ void heim_obj_render(HeimObj *obj) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, normal));
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, uv));
+
+    return obj;
+}
+
+void heim_obj_free(HeimObj *obj) {
+    HEIM_FREE(obj->vertices_data, HEIM_MEMORY_TYPE_RENDERER);
+    HEIM_FREE(obj, HEIM_MEMORY_TYPE_RENDERER);
+}
+
+void heim_obj_render(HeimObj *obj) {
+    glBindVertexArray(obj->vao);
+    glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 
     // Draw the object
     glDrawArrays(GL_TRIANGLES, 0, obj->face_count * 3);

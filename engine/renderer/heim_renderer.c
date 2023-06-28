@@ -74,8 +74,8 @@ void heim_renderer_init(GLFWwindow* window) {
     heim_shader_set_uniform_mat4(renderer.shader, "view", view_mat);
     heim_shader_set_uniform_mat4(renderer.shader, "projection", proj_mat);
 
-    O = heim_obj_load("assets/models/susan.obj");
-    tex = heim_create_texture("assets/textures/susan.png");
+    O = heim_obj_load("assets/models/backpack.obj");
+    tex = heim_create_texture("assets/textures/backpack.jpg");
 }
 
 void heim_renderer_update(float dt) {
