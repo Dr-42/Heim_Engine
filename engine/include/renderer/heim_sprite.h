@@ -5,7 +5,7 @@
 #include <cglm/cglm.h>
 
 #include "math/heim_mat.h"
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 #include "renderer/heim_texture.h"
 
 typedef struct HeimSprite HeimSprite;

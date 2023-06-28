@@ -7,7 +7,7 @@
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include "math/heim_mat.h"
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 
 typedef struct HeimShader {
     GLuint program;

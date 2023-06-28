@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 #include "math/heim_math_common.h"
-#include "math/heim_vector.h"
 
 void heim_mat4_print(HeimMat4 mat) {
     for (size_t i = 0; i < 4; i++) {

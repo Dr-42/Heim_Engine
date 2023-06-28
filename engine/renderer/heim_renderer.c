@@ -2,11 +2,16 @@
 
 #include "core/heim_logger.h"
 #include "math/heim_mat.h"
-#include "math/heim_vector.h"
 // #include "renderer/heim_sprite.h"
 #include "core/heim_input.h"
 #include "renderer/heim_texture.h"
 #include "renderer/obj.h"
+
+obj* O;
+HeimMat4 model_mat;
+HeimMat4 view_mat;
+HeimMat4 proj_mat;
+HeimTexture* tex;
 
 #define HEIM_RENDERER_MAX_SPRITES 1000
 static HeimSprite* sprites[HEIM_RENDERER_MAX_SPRITES];
@@ -24,17 +29,12 @@ void heim_renderer_create(HeimVec2ui win_size) {
 
 void heim_renderer_close() {
     heim_shader_free(renderer.shader);
+    heim_destroy_texture(tex);
 
     for (uint32_t i = 0; i < sprite_count; ++i) {
         heim_sprite_free(sprites[i]);
     }
 }
-
-obj* O;
-HeimMat4 model_mat;
-HeimMat4 view_mat;
-HeimMat4 proj_mat;
-HeimTexture* tex;
 
 void heim_renderer_init(GLFWwindow* window) {
     renderer.window = window;
@@ -44,8 +44,11 @@ void heim_renderer_init(GLFWwindow* window) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -74,7 +77,8 @@ void heim_renderer_init(GLFWwindow* window) {
                      glGetAttribLocation(renderer.shader->program, "aTexCoords"),
                      glGetAttribLocation(renderer.shader->program, "aPos"));
 
-    tex = heim_create_texture("assets/textures/sus.jpg");
+    tex = heim_create_texture("assets/textures/susan.png");
+    // obj_set_prop_loc(O, OBJ_KD, -1, glGetUniformLocation(renderer.shader->program, "texture_diffuse1"), -1);
 }
 
 void heim_renderer_update(float dt) {
@@ -83,6 +87,8 @@ void heim_renderer_update(float dt) {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     heim_shader_bind(renderer.shader);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex->id);
 
     /*
     for (uint32_t i = 0; i < sprite_count; i++) {
@@ -118,8 +124,6 @@ void heim_renderer_update(float dt) {
     view_mat = heim_mat4_rotate(view_mat, mouse_delta.y * 0.01f, (HeimVec3f){1.0f * dt, 0.0f, 0.0f});
 
     heim_shader_set_uniform_mat4(renderer.shader, "view", view_mat);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, tex->id);
 
     glfwSwapBuffers(renderer.window);
 }

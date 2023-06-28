@@ -9,7 +9,7 @@
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include "ecs/heim_ecs.h"
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 #include "renderer/heim_renderer.h"
 
 /// @brief HeimWindow is a struct that contains all the information needed to create a window.

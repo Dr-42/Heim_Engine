@@ -1,7 +1,7 @@
 #include "core/heim_input.h"
 
 #include "core/heim_logger.h"
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 
 static HeimInput input = {
     .keys = {false},

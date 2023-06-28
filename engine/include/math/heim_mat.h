@@ -1,7 +1,7 @@
 #ifndef HEIM_MAT_H
 #define HEIM_MAT_H
 
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 
 typedef struct {
     float m[4][4];

@@ -9,7 +9,7 @@
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include "core/heim_windowing.h"
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 
 /// @brief Main Engine struct.
 typedef struct HeimEngine {

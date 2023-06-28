@@ -7,7 +7,7 @@
 
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
-#include "math/heim_vector.h"
+#include "math/heim_vec.h"
 
 /// @brief HeimInput is a struct that contains all the information needed to handle input.
 typedef struct HeimInput {
