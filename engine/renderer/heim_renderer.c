@@ -4,9 +4,9 @@
 #include "math/heim_mat.h"
 // #include "renderer/heim_sprite.h"
 #include "core/heim_input.h"
-#include "renderer/heim_texture.h"
-// #include "renderer/obj.h"
 #include "renderer/heim_obj.h"
+#include "renderer/heim_shader.h"
+#include "renderer/heim_texture.h"
 
 HeimObj* O;
 HeimMat4 model_mat;
@@ -44,8 +44,8 @@ void heim_renderer_init(GLFWwindow* window) {
     renderer.shader = heim_shader_create();
     heim_shader_init(renderer.shader, "assets/shaders/model.vert", "assets/shaders/model.frag");
 
-    // glEnable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -75,15 +75,7 @@ void heim_renderer_init(GLFWwindow* window) {
     heim_shader_set_uniform_mat4(renderer.shader, "projection", proj_mat);
 
     O = heim_obj_load("assets/models/susan.obj");
-    /*
-    obj_set_vert_loc(O, -1,  // glGetAttribLocation(renderer.shader->program, "vTangent"),
-                     glGetAttribLocation(renderer.shader->program, "aNormal"),
-                     glGetAttribLocation(renderer.shader->program, "aTexCoords"),
-                     glGetAttribLocation(renderer.shader->program, "aPos"));
-                     */
-
     tex = heim_create_texture("assets/textures/susan.png");
-    // obj_set_prop_loc(O, OBJ_KD, -1, glGetUniformLocation(renderer.shader->program, "texture_diffuse1"), -1);
 }
 
 void heim_renderer_update(float dt) {
@@ -127,6 +119,11 @@ void heim_renderer_update(float dt) {
     HeimVec2f mouse_delta = heim_input_mouse_delta();
     view_mat = heim_mat4_rotate(view_mat, mouse_delta.x * 0.01f, (HeimVec3f){0.0f, 1.0f * dt, 0.0f});
     view_mat = heim_mat4_rotate(view_mat, mouse_delta.y * 0.01f, (HeimVec3f){1.0f * dt, 0.0f, 0.0f});
+
+    if (heim_input_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        view_mat = heim_mat4_identity();
+        view_mat = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 3.0f}, (HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 1.0f, 0.0f});
+    }
 
     heim_shader_set_uniform_mat4(renderer.shader, "view", view_mat);
 

@@ -5,13 +5,6 @@
 
 #include "math/heim_mat.h"
 
-// Face structure
-typedef struct HeimObjFace {
-    uint64_t vertex_index[3];
-    uint64_t normal_index[3];
-    uint64_t uv_index[3];
-} HeimObjFace;
-
 typedef struct HeimVertex {
     HeimVec3f position;
     HeimVec3f normal;
@@ -25,18 +18,10 @@ typedef struct HeimObj {
     uint64_t uv_count;
     uint64_t face_count;
 
-    HeimVec3f *vertices;
-    HeimVec3f *normals;
-    HeimVec2f *uvs;
-    HeimObjFace *faces;
-
-    uint32_t *elements;
-
     HeimVertex *vertices_data;
 
     uint32_t vao;
     uint32_t vbo;
-    uint32_t ebo;
 } HeimObj;
 
 HeimObj *heim_obj_load(const char *path);
