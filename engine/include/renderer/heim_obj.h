@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "math/heim_mat.h"
+#include "renderer/heim_shader.h"
 
 typedef struct HeimVertex {
     HeimVec3f position;
@@ -22,6 +23,8 @@ typedef struct HeimObj {
 
     uint32_t vao;
     uint32_t vbo;
+
+    HeimShader *shader;
 } HeimObj;
 
 HeimObj *heim_obj_load(const char *path);

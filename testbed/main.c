@@ -1,67 +1,51 @@
 #include <core/heim_engine.h>
 #include <math/heim_math_common.h>
-#include <renderer/heim_renderer.h>
+#include <renderer/heim_obj.h>
 #include <renderer/heim_texture.h>
 
-HeimEngine *heim;
-
-HeimEntity entity, entity2;
+HeimEntity entity;
 HeimComponent component;
+HeimObj *object;
 
-typedef struct {
-    HeimVec2f position;
-} Position;
-
-Position position = {(HeimVec2f){0.0f, 0.0f}};
-Position position2 = {(HeimVec2f){10.0f, 0.0f}};
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 
 float total_time = 0.0f;
 
-HeimSprite *sprite, *sprite2;
-HeimTexture *tex1, *tex2;
+HeimTexture *tex1;
+HeimMat4 model_mat;
+HeimMat4 view_mat;
+HeimMat4 proj_mat;
 
 void test_system(HeimEcs *ecs, float dt) {
-    /*
     for (uint64_t i = 1; i < ecs->entity_count + 1; i++) {
         HeimEntity entity = ecs->entities[i];
         for (uint64_t j = 1; j < ecs->component_count + 1; j++) {
             if (ecs->components[j] == component) {
-                Position *pos = ecs->component_data[j][entity];
-                pos->position = heim_vec2f_add(pos->position, (HeimVec2f){dt, 0.1f});
-                // HEIM_LOG_DEBUG("Position: %f, %f", pos->position.x, pos->position.y);
+                HeimObj *obj = ecs->component_data[j][entity];
+                heim_texture_bind(tex1, 0);
+                heim_obj_render(obj);
             }
         }
     }
-    */
 }
 
 void testbed_init() {
-    /*
-    HEIM_LOG_INFO("Testbed init");
     entity = heim_ecs_create_entity();
-    entity2 = heim_ecs_create_entity();
+    component = heim_ecs_register_component(sizeof(HeimObj));
 
-    component = heim_ecs_register_component(sizeof(Position));
+    object = heim_obj_load("assets/models/susan.obj");
+    heim_ecs_add_component(entity, component, object);
 
-    heim_ecs_add_component(entity, component, &position);
-    heim_ecs_add_component(entity2, component, &position2);
+    view_mat = heim_mat4_identity();
+    view_mat = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 3.0f}, (HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 1.0f, 0.0f});
+
+    HeimMat4 projection = heim_mat4_perspective(heim_math_deg_to_rad(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    heim_shader_set_uniform_mat4(object->shader, "projection", projection);
 
     heim_ecs_add_system(test_system);
 
-    tex1 = heim_create_texture("assets/textures/Heim.png");
-    tex2 = heim_create_texture("assets/textures/nomu.png");
-    sprite = heim_create_sprite(tex1);
-    heim_sprite_set_position(sprite, (HeimVec2f){400.0f, 400.0f});
-    heim_sprite_set_size(sprite, (HeimVec2f){300.f, 400.f});
-
-    heim_renderer_register_sprite(sprite);
-
-    sprite2 = heim_create_sprite(tex1);
-    heim_sprite_set_position(sprite2, (HeimVec2f){600.0f, 100.0f});
-    heim_sprite_set_size(sprite2, (HeimVec2f){100.0f, 100.0f});
-
-    heim_renderer_register_sprite(sprite2);
-    */
+    tex1 = heim_create_texture("assets/textures/susan.png");
 }
 
 void testbed_update(float *dt) {
@@ -70,19 +54,42 @@ void testbed_update(float *dt) {
         heim_engine_should_close(true);
     }
 
-    /*
-    // Make the sprite rotate around the 400, 400
-    total_time += *dt;
-    float x = 400.0f + 200.0f * heim_math_cos(total_time);
-    float y = 400.0f + 200.0f * heim_math_sin(total_time);
+    heim_shader_bind(object->shader);
+    if (heim_input_key_pressed(GLFW_KEY_W)) {
+        view_mat = heim_mat4_translate(view_mat, (HeimVec3f){0.0f, 0.0f, 1.0f * *dt});
+    }
+    if (heim_input_key_pressed(GLFW_KEY_S)) {
+        view_mat = heim_mat4_translate(view_mat, (HeimVec3f){0.0f, 0.0f, -1.0f * *dt});
+    }
+    if (heim_input_key_pressed(GLFW_KEY_A)) {
+        view_mat = heim_mat4_translate(view_mat, (HeimVec3f){1.0f * *dt, 0.0f, 0.0f});
+    }
+    if (heim_input_key_pressed(GLFW_KEY_D)) {
+        view_mat = heim_mat4_translate(view_mat, (HeimVec3f){-1.0f * *dt, 0.0f, 0.0f});
+    }
+    if (heim_input_key_pressed(GLFW_KEY_Q)) {
+        view_mat = heim_mat4_translate(view_mat, (HeimVec3f){0.0f, -1.0f * *dt, 0.0f});
+    }
+    if (heim_input_key_pressed(GLFW_KEY_E)) {
+        view_mat = heim_mat4_translate(view_mat, (HeimVec3f){0.0f, 1.0f * *dt, 0.0f});
+    }
 
-    heim_sprite_set_position(sprite, (HeimVec2f){x, y});
-    */
+    // mouse
+    HeimVec2f mouse_delta = heim_input_mouse_delta();
+    view_mat = heim_mat4_rotate(view_mat, mouse_delta.x * 0.01f, (HeimVec3f){0.0f, 1.0f * *dt, 0.0f});
+    view_mat = heim_mat4_rotate(view_mat, mouse_delta.y * 0.01f, (HeimVec3f){1.0f * *dt, 0.0f, 0.0f});
+
+    if (heim_input_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        view_mat = heim_mat4_identity();
+        view_mat = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 3.0f}, (HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 1.0f, 0.0f});
+    }
+
+    heim_shader_set_uniform_mat4(object->shader, "view", view_mat);
 }
 
 int main(void) {
     heim_engine_new("Heim Engine Testbed");
-    heim_engine_set_window_size(800, 800);
+    heim_engine_set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT);
     heim_engine_set_window_top_left(100, 100);
 
     heim_engine_init(testbed_init);
@@ -90,8 +97,8 @@ int main(void) {
     heim_input_mouse_grab(true);
     heim_engine_run(testbed_update);
 
-    // heim_destroy_texture(tex1);
-    // heim_destroy_texture(tex2);
+    heim_destroy_texture(tex1);
+    heim_obj_free(object);
 
     heim_engine_shutdown();
     return 0;

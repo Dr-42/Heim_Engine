@@ -18,4 +18,6 @@ uint32_t heim_texture_get_width(HeimTexture* texture);
 uint32_t heim_texture_get_height(HeimTexture* texture);
 uint32_t heim_texture_get_channels(HeimTexture* texture);
 
+void heim_texture_bind(HeimTexture* texture, uint32_t slot);
+
 #endif  // HEIM_TEXTURE_H

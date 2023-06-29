@@ -58,3 +58,8 @@ uint32_t heim_texture_get_height(HeimTexture* texture) {
 uint32_t heim_texture_get_channels(HeimTexture* texture) {
     return texture->channels;
 }
+
+void heim_texture_bind(HeimTexture* texture, uint32_t slot) {
+    glActiveTexture(GL_TEXTURE0 + slot);
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+}
