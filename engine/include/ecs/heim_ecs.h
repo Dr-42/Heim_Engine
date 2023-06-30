@@ -10,17 +10,22 @@
 #define MAX_COMPONENTS 64
 #define MAX_ENTITIES 1024
 
+typedef struct HeimEcs HeimEcs;
+
 /// @brief A unique identifier for an entity
 typedef uint64_t HeimEntity;
 
 /// @brief A unique identifier for a component
 typedef uint64_t HeimComponent;
 
+/// @brief A function pointer to a system function of type void funtion(HeimEcs *ecs, float dt)
+typedef void (*HeimSystem)(HeimEcs* ecs, HeimEntity entity, float dt);
+
 /// @brief A struct containing all the data needed for the ECS
 typedef struct HeimEcs {
     HeimEntity* entities;
     HeimComponent* components;
-    void (**systems)(struct HeimEcs*, float);  // Array of pointers system functions of type void funtion(HeimEcs *ecs, float dt)
+    HeimSystem* systems;
 
     void*** component_data;  // [component_id][entity_id][component_data]
     uint64_t component_masks[MAX_ENTITIES];
@@ -29,9 +34,6 @@ typedef struct HeimEcs {
     uint64_t component_count;
 
 } HeimEcs;
-
-/// @brief A function pointer to a system function of type void funtion(HeimEcs *ecs, float dt)
-typedef void (*HeimSystem)(HeimEcs* ecs, float dt);
 
 /// @brief Creates a new ECS Manager
 /// @return Pointer to the new HeimEcs

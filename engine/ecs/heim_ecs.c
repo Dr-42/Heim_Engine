@@ -1,7 +1,5 @@
 #include "ecs/heim_ecs.h"
 
-static uint64_t ecs_matrix[MAX_ENTITIES][MAX_COMPONENTS] = {0};
-
 static HeimEcs* ecs = NULL;
 
 void heim_ecs_create() {
@@ -111,7 +109,9 @@ void heim_ecs_remove_system(HeimSystem system) {
 void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
         if (ecs->systems[i] != 0) {
-            ecs->systems[i](ecs, dt);
+            for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
+                ecs->systems[i](ecs, entity, dt);
+            }
         }
     }
 }

@@ -17,13 +17,12 @@ HeimMat4 model_mat;
 HeimMat4 view_mat;
 HeimMat4 proj_mat;
 
-void test_system(HeimEcs *ecs, float dt) {
-    for (HeimEntity i = 1; i < ecs->entity_count + 1; i++) {
-        if (heim_ecs_has_component(ecs, i, component)) {
-            HeimObj *obj = heim_ecs_get_component_data(ecs, i, component);
-            heim_texture_bind(tex1, 0);
-            heim_obj_render(obj);
-        }
+void test_system(HeimEcs *ecs, HeimEntity entity, float dt) {
+    (void)dt;
+    if (heim_ecs_has_component(ecs, entity, component)) {
+        HeimObj *obj = heim_ecs_get_component_data(ecs, entity, component);
+        heim_texture_bind(tex1, 0);
+        heim_obj_render(obj);
     }
 }
 
@@ -31,7 +30,7 @@ void testbed_init() {
     entity = heim_ecs_create_entity();
     component = heim_ecs_register_component(sizeof(HeimObj));
 
-    object = heim_obj_load("assets/models/susan.obj");
+    object = heim_obj_load("assets/models/backpack.obj");
     heim_ecs_add_component(entity, component, object);
 
     view_mat = heim_mat4_identity();
@@ -42,11 +41,10 @@ void testbed_init() {
 
     heim_ecs_add_system(test_system);
 
-    tex1 = heim_create_texture("assets/textures/susan.png");
+    tex1 = heim_create_texture("assets/textures/backpack.jpg");
 }
 
 void testbed_update(float *dt) {
-    (void)dt;
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
         heim_engine_should_close(true);
     }
