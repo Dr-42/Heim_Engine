@@ -73,27 +73,21 @@ HeimComponent heim_ecs_register_component(uint64_t size) {
 }
 
 void heim_ecs_add_component(HeimEntity entity, HeimComponent component, void* data) {
-    for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
-        if (ecs->components[i] == component) {
-            ecs->component_data[i][entity] = data;
-            ecs_matrix[entity][i] = true;
-            return;
-        }
-    }
-
-    HEIM_LOG_WARN("Component not found");
+    ecs->component_data[component][entity] = data;
+    ecs->component_masks[entity] |= (1 << component);
 }
 
 void heim_ecs_remove_component(HeimEntity entity, HeimComponent component) {
-    for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
-        if (ecs->components[i] == component) {
-            ecs->component_data[i][entity] = 0;
-            ecs_matrix[entity][i] = false;
-            return;
-        }
-    }
+    ecs->component_data[component][entity] = NULL;
+    ecs->component_masks[entity] &= ~(1 << component);  // Clear the bit for this component
+}
 
-    HEIM_LOG_WARN("Component not found");
+bool heim_ecs_has_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component) {
+    return ecs->component_masks[entity] & (1 << component);
+}
+
+void* heim_ecs_get_component_data(HeimEcs* ecs, HeimEntity entity, HeimComponent component) {
+    return ecs->component_data[component][entity];
 }
 
 void heim_ecs_add_system(HeimSystem system) {

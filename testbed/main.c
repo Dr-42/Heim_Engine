@@ -18,14 +18,11 @@ HeimMat4 view_mat;
 HeimMat4 proj_mat;
 
 void test_system(HeimEcs *ecs, float dt) {
-    for (uint64_t i = 1; i < ecs->entity_count + 1; i++) {
-        HeimEntity entity = ecs->entities[i];
-        for (uint64_t j = 1; j < ecs->component_count + 1; j++) {
-            if (ecs->components[j] == component) {
-                HeimObj *obj = ecs->component_data[j][entity];
-                heim_texture_bind(tex1, 0);
-                heim_obj_render(obj);
-            }
+    for (HeimEntity i = 1; i < ecs->entity_count + 1; i++) {
+        if (heim_ecs_has_component(ecs, i, component)) {
+            HeimObj *obj = heim_ecs_get_component_data(ecs, i, component);
+            heim_texture_bind(tex1, 0);
+            heim_obj_render(obj);
         }
     }
 }

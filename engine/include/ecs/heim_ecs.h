@@ -1,6 +1,7 @@
 #ifndef HEIM_ECS_H
 #define HEIM_ECS_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "core/heim_logger.h"
@@ -22,6 +23,7 @@ typedef struct HeimEcs {
     void (**systems)(struct HeimEcs*, float);  // Array of pointers system functions of type void funtion(HeimEcs *ecs, float dt)
 
     void*** component_data;  // [component_id][entity_id][component_data]
+    uint64_t component_masks[MAX_ENTITIES];
 
     uint64_t entity_count;
     uint64_t component_count;
@@ -61,6 +63,18 @@ void heim_ecs_add_component(HeimEntity entity, HeimComponent component, void* da
 /// @param entity The entity to remove the component from
 /// @param component The component type to remove
 void heim_ecs_remove_component(HeimEntity entity, HeimComponent component);
+
+/// @brief Checks if an entity has a component
+/// @param entity The entity to check
+/// @param component The component type to check
+bool heim_ecs_has_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component);
+
+/// @brief Gets the component data of an entity
+/// @param ecs Pointer to the ECS
+/// @param entity Entity id
+/// @param component Component id
+/// @return Component data pointer
+void* heim_ecs_get_component_data(HeimEcs* ecs, HeimEntity entity, HeimComponent component);
 
 /// @brief Registers a new system
 /// @param system Function pointer to the system function
