@@ -53,7 +53,7 @@ void testbed_init() {
     heim_ecs_add_component(entity2, get_transform_component(), &transform2);
 
     entity3 = heim_ecs_create_entity();
-    tex3 = heim_create_texture("assets/textures/heim.png");
+    tex3 = heim_create_texture("./assets/textures/Heim.png");
     sprite = heim_create_sprite(tex3);
     ui_transform = (HeimUiTransform){
         .position = {WINDOW_WIDTH - 75.0f, WINDOW_HEIGHT - 75.0f},
