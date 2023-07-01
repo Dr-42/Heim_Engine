@@ -1,4 +1,7 @@
 #include <core/heim_engine.h>
+#include <ecs/heim_ecs_predef.h>
+#include <ecs/predef_comps/heim_model.h>
+#include <ecs/predef_comps/heim_transform.h>
 #include <math/heim_math_common.h>
 #include <renderer/heim_obj.h>
 #include <renderer/heim_texture.h>
@@ -17,6 +20,10 @@ HeimMat4 model_mat;
 HeimMat4 view_mat;
 HeimMat4 proj_mat;
 
+HeimModel model;
+HeimTransform transform;
+
+/*
 void test_system(HeimEcs *ecs, HeimEntity entity, float dt) {
     (void)dt;
     if (heim_ecs_has_component(ecs, entity, component)) {
@@ -25,23 +32,25 @@ void test_system(HeimEcs *ecs, HeimEntity entity, float dt) {
         heim_obj_render(obj);
     }
 }
+*/
 
 void testbed_init() {
     entity = heim_ecs_create_entity();
-    component = heim_ecs_register_component(sizeof(HeimObj));
-
     object = heim_obj_load("assets/models/backpack.obj");
-    heim_ecs_add_component(entity, component, object);
+    tex1 = heim_create_texture("assets/textures/backpack.jpg");
 
-    view_mat = heim_mat4_identity();
-    view_mat = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 3.0f}, (HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 1.0f, 0.0f});
+    model = (HeimModel){object, tex1};
+    transform = (HeimTransform){
+        .position = {0.0f, 0.0f, 0.0f},
+        .rotation = {0.0f, 0.0f, 0.0f},
+        .size = {1.0f, 1.0f, 1.0f},
+    };
+
+    heim_ecs_add_component(entity, get_model_component(), &model);
+    heim_ecs_add_component(entity, get_transform_component(), &transform);
 
     HeimMat4 projection = heim_mat4_perspective(heim_math_deg_to_rad(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     heim_shader_set_uniform_mat4(object->shader, "projection", projection);
-
-    heim_ecs_add_system(test_system);
-
-    tex1 = heim_create_texture("assets/textures/backpack.jpg");
 }
 
 void testbed_update(float *dt) {
@@ -49,6 +58,7 @@ void testbed_update(float *dt) {
         heim_engine_should_close(true);
     }
 
+    /*
     heim_shader_bind(object->shader);
     if (heim_input_key_pressed(GLFW_KEY_W)) {
         view_mat = heim_mat4_translate(view_mat, (HeimVec3f){0.0f, 0.0f, 1.0f * *dt});
@@ -80,6 +90,7 @@ void testbed_update(float *dt) {
     }
 
     heim_shader_set_uniform_mat4(object->shader, "view", view_mat);
+    */
 }
 
 int main(void) {

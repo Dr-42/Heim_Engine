@@ -1,5 +1,7 @@
 #include "ecs/heim_ecs.h"
 
+#include "ecs/heim_ecs_predef.h"
+
 static HeimEcs* ecs = NULL;
 
 void heim_ecs_create() {
@@ -12,6 +14,9 @@ void heim_ecs_create() {
     ecs->systems = HEIM_CALLOC(HeimSystem, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
     ecs->component_data = HEIM_CALLOC(void**, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
+
+    heim_ecs_load_predef_components();
+    heim_load_predef_systems();
 }
 
 void heim_ecs_close() {
@@ -115,3 +120,6 @@ void heim_ecs_update(float dt) {
         }
     }
 }
+
+void heim_ecs_load_predef_components();
+void heim_load_predef_systems();

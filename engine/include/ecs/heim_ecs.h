@@ -89,5 +89,4 @@ void heim_ecs_remove_system(HeimSystem system);
 /// @brief Internal function to update the ECS
 /// @param dt Delta time
 void heim_ecs_update(float dt);
-
 #endif  // HEIM_ECS_H
