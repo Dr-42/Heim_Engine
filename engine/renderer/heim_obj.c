@@ -123,13 +123,6 @@ HeimObj *heim_obj_load(const char *path) {
 
     obj->shader = heim_shader_create();
     heim_shader_init(obj->shader, "assets/shaders/model.vert", "assets/shaders/model.frag");
-
-    /*
-    heim_shader_bind(obj->shader);
-    HeimMat4 model = heim_mat4_identity();
-    heim_shader_set_uniform_mat4(obj->shader, "model", model);
-    */
-
     return obj;
 }
 

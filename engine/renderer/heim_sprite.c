@@ -6,52 +6,10 @@
 #include "core/heim_memory.h"
 #include "math/heim_mat.h"
 #include "math/heim_math_common.h"
-
-typedef struct Vertex {
-    HeimVec3f position;
-    HeimVec2f tex_coords;
-} Vertex;
-
-typedef struct HeimSprite {
-    HeimVec2f position;
-    HeimVec2f size;
-    HeimVec4f color;
-    float rotation;
-    HeimTexture* texture;
-
-    Vertex vertices[4];
-
-    HeimMat4 model;
-    HeimMat4 view;
-    HeimMat4 projection;
-
-    GLuint vao;
-    GLuint vbo;
-    GLuint ebo;
-} HeimSprite;
-
-void _update_sprite_mats(HeimSprite* sprite) {
-    sprite->size.y *= -1;
-    sprite->model = heim_mat4_identity();
-    sprite->view = heim_mat4_identity();
-
-    sprite->model = heim_mat4_translate(heim_mat4_identity(), (HeimVec3f){sprite->position.x, sprite->position.y, 0.0f});
-    sprite->model = heim_mat4_rotate(sprite->model, sprite->rotation, (HeimVec3f){0.0f, 0.0f, 1.0f});
-    sprite->model = heim_mat4_translate(sprite->model, (HeimVec3f){-0.5 * sprite->size.x, -0.5 * sprite->size.y, 0.0f});
-    sprite->model = heim_mat4_scale(sprite->model, (HeimVec3f){sprite->size.x, sprite->size.y, 1.0f});
-
-    sprite->view = heim_mat4_translate(sprite->view, (HeimVec3f){0.0f, 0.0f, -1.0f});
-
-    // NOTE: Projection set in heim_renderer.c
-    sprite->size.y *= -1;
-}
+#include "renderer/heim_shader.h"
 
 HeimSprite* heim_create_sprite(HeimTexture* texture) {
     HeimSprite* sprite = HEIM_MALLOC(HeimSprite, HEIM_MEMORY_TYPE_RENDERER);
-    sprite->position = (HeimVec2f){0.0f, 0.0f};
-    sprite->size = (HeimVec2f){0.5f, 0.5f};
-    sprite->color = (HeimVec4f){1.0f, 1.0f, 1.0f, 1.0f};
-    sprite->rotation = 0.0f;
     sprite->texture = texture;
 
     sprite->vertices[0] = (Vertex){
@@ -76,8 +34,6 @@ HeimSprite* heim_create_sprite(HeimTexture* texture) {
     sprite->view = heim_mat4_identity();
     sprite->projection = heim_mat4_identity();
 
-    sprite->rotation = 0.0f;
-
     glGenVertexArrays(1, &sprite->vao);
     glGenBuffers(1, &sprite->vbo);
     glGenBuffers(1, &sprite->ebo);
@@ -94,7 +50,9 @@ HeimSprite* heim_create_sprite(HeimTexture* texture) {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
     glEnableVertexAttribArray(1);
 
-    _update_sprite_mats(sprite);
+    HeimShader* shader = heim_shader_create();
+    heim_shader_init(shader, "assets/shaders/sprite.vert", "assets/shaders/sprite.frag");
+    sprite->shader = shader;
 
     return sprite;
 }
@@ -103,73 +61,20 @@ void heim_sprite_free(HeimSprite* sprite) {
     glDeleteVertexArrays(1, &sprite->vao);
     glDeleteBuffers(1, &sprite->vbo);
     glDeleteBuffers(1, &sprite->ebo);
+    heim_shader_free(sprite->shader);
     HEIM_FREE(sprite, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void heim_sprite_set_position(HeimSprite* sprite, HeimVec2f position) {
-    sprite->position = position;
+void heim_sprite_render(HeimSprite* sprite) {
+    GLuint vao = sprite->vao;
+    GLuint vbo = sprite->vbo;
+    GLuint ebo = sprite->ebo;
 
-    _update_sprite_mats(sprite);
-}
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-void heim_sprite_set_size(HeimSprite* sprite, HeimVec2f size) {
-    sprite->size = size;
-    _update_sprite_mats(sprite);
-}
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-void heim_sprite_set_color(HeimSprite* sprite, HeimVec4f color) {
-    sprite->color = color;
-}
-
-void heim_sprite_set_rotation(HeimSprite* sprite, float degrees) {
-    sprite->rotation = degrees;
-    _update_sprite_mats(sprite);
-}
-void heim_sprite_set_projection(HeimSprite* sprite, HeimMat4 projection) {
-    sprite->projection = projection;
-    _update_sprite_mats(sprite);
-}
-
-HeimVec2f heim_sprite_get_position(HeimSprite* sprite) {
-    return sprite->position;
-}
-
-HeimVec2f heim_sprite_get_size(HeimSprite* sprite) {
-    return sprite->size;
-}
-
-HeimVec4f heim_sprite_get_color(HeimSprite* sprite) {
-    return sprite->color;
-}
-
-float heim_sprite_get_rotation(HeimSprite* sprite) {
-    return sprite->rotation;
-}
-
-HeimTexture* heim_sprite_get_texture(HeimSprite* sprite) {
-    return sprite->texture;
-}
-
-GLuint heim_sprite_get_vao(HeimSprite* sprite) {
-    return sprite->vao;
-}
-
-GLuint heim_sprite_get_vbo(HeimSprite* sprite) {
-    return sprite->vbo;
-}
-
-GLuint heim_sprite_get_ebo(HeimSprite* sprite) {
-    return sprite->ebo;
-}
-
-HeimMat4 heim_sprite_get_model(HeimSprite* sprite) {
-    return sprite->model;
-}
-
-HeimMat4 heim_sprite_get_view(HeimSprite* sprite) {
-    return sprite->view;
-}
-
-HeimMat4 heim_sprite_get_projection(HeimSprite* sprite) {
-    return sprite->projection;
+    glBindVertexArray(0);
 }

@@ -85,11 +85,11 @@ void heim_ecs_remove_component(HeimEntity entity, HeimComponent component) {
     ecs->component_masks[entity] &= ~(1 << component);  // Clear the bit for this component
 }
 
-bool heim_ecs_has_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component) {
+bool heim_ecs_has_component(HeimEntity entity, HeimComponent component) {
     return ecs->component_masks[entity] & (1 << component);
 }
 
-void* heim_ecs_get_component_data(HeimEcs* ecs, HeimEntity entity, HeimComponent component) {
+void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component) {
     return ecs->component_data[component][entity];
 }
 
@@ -115,7 +115,7 @@ void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
         if (ecs->systems[i] != 0) {
             for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
-                ecs->systems[i](ecs, entity, dt);
+                ecs->systems[i](entity, dt);
             }
         }
     }

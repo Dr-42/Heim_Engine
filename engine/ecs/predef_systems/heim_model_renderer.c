@@ -1,13 +1,15 @@
 #include "ecs/predef_systems/heim_model_renderer.h"
 
 #include "core/heim_input.h"
+#include "core/heim_windowing.h"
 #include "ecs/heim_ecs_predef.h"
 #include "math/heim_mat.h"
 #include "math/heim_math_common.h"
-void heim_model_renderer_system(HeimEcs* ecs, HeimEntity entity, float dt) {
+
+void heim_model_renderer_system(HeimEntity entity, float dt) {
     (void)dt;
-    bool has_model = heim_ecs_has_component(ecs, entity, get_model_component());
-    bool has_transform = heim_ecs_has_component(ecs, entity, get_transform_component());
+    bool has_model = heim_ecs_has_component(entity, get_model_component());
+    bool has_transform = heim_ecs_has_component(entity, get_transform_component());
 
     if (!has_model || !has_transform) {
         return;
@@ -18,17 +20,23 @@ void heim_model_renderer_system(HeimEcs* ecs, HeimEntity entity, float dt) {
         return;
     }
 
-    HeimModel* model = heim_ecs_get_component_data(ecs, entity, get_model_component());
-    HeimTransform* transform = heim_ecs_get_component_data(ecs, entity, get_transform_component());
+    HeimModel* model = heim_ecs_get_component_data(entity, get_model_component());
+    HeimTransform* transform = heim_ecs_get_component_data(entity, get_transform_component());
 
     heim_model_render(model, transform->position, transform->rotation, transform->size, &dt);
 }
-HeimMat4 view_mat = (HeimMat4){0};
+
+// Temporary until proper camera
+HeimMat4 view_mat = (HeimMat4){
+    .m = {{1.000000, 0.000000, 0.000000, 0.000000},
+          {0.000000, 1.000000, 0.000000, 0.000000},
+          {0.000000, 0.000000, 1.000000, 0.000000},
+          {0.000000, 0.000000, -3.000000, 1.000000}}};
 
 void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, float* dt) {
     HeimMat4 model_matrix = heim_mat4_identity();
     model_matrix = heim_mat4_translate(model_matrix, position);
-    model_matrix = heim_mat4_rotate(model_matrix, rotation.x, (HeimVec3f){1.0f, 0.0f, 0.0f});
+    model_matrix = heim_mat4_rotate(model_matrix, rotation.x, (HeimVec3f){1.0f, 0.0f, 0.5f});
     model_matrix = heim_mat4_rotate(model_matrix, rotation.y, (HeimVec3f){0.0f, 1.0f, 0.0f});
     model_matrix = heim_mat4_rotate(model_matrix, rotation.z, (HeimVec3f){0.0f, 0.0f, 1.0f});
     model_matrix = heim_mat4_scale(model_matrix, scale);
@@ -73,7 +81,7 @@ void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation,
     heim_shader_set_uniform_mat4(model->obj->shader, "view", view_mat);
 
     HeimMat4 projection_matrix = heim_mat4_identity();
-    projection_matrix = heim_mat4_perspective(heim_math_deg_to_rad(45.0f), 800 / 600, 0.1f, 100.0f);
+    projection_matrix = heim_mat4_perspective(heim_math_deg_to_rad(45.0f), (float)heim_window_get_window_size().x / (float)heim_window_get_window_size().y, 0.1f, 100.0f);
 
     heim_shader_set_uniform_mat4(model->obj->shader, "projection", projection_matrix);
 

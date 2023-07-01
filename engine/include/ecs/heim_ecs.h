@@ -19,7 +19,7 @@ typedef uint64_t HeimEntity;
 typedef uint64_t HeimComponent;
 
 /// @brief A function pointer to a system function of type void funtion(HeimEcs *ecs, float dt)
-typedef void (*HeimSystem)(HeimEcs* ecs, HeimEntity entity, float dt);
+typedef void (*HeimSystem)(HeimEntity entity, float dt);
 
 /// @brief A struct containing all the data needed for the ECS
 typedef struct HeimEcs {
@@ -69,14 +69,13 @@ void heim_ecs_remove_component(HeimEntity entity, HeimComponent component);
 /// @brief Checks if an entity has a component
 /// @param entity The entity to check
 /// @param component The component type to check
-bool heim_ecs_has_component(HeimEcs* ecs, HeimEntity entity, HeimComponent component);
+bool heim_ecs_has_component(HeimEntity entity, HeimComponent component);
 
 /// @brief Gets the component data of an entity
-/// @param ecs Pointer to the ECS
 /// @param entity Entity id
 /// @param component Component id
 /// @return Component data pointer
-void* heim_ecs_get_component_data(HeimEcs* ecs, HeimEntity entity, HeimComponent component);
+void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component);
 
 /// @brief Registers a new system
 /// @param system Function pointer to the system function

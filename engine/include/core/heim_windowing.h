@@ -48,4 +48,8 @@ void heim_window_set_window_top_left(HeimVec2ui top_left);
 /// @param title Title of the window.
 void heim_window_set_window_title(char *title);
 
+/// @brief Gets the window size.
+/// @return Size of the window.
+HeimVec2ui heim_window_get_window_size();
+
 #endif  // HEIM_WINDOWING_H

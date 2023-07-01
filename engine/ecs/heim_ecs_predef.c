@@ -6,6 +6,7 @@
 #include "ecs/predef_comps/heim_ui_sprite.h"
 #include "ecs/predef_comps/heim_uitransform.h"
 #include "ecs/predef_systems/heim_model_renderer.h"
+#include "ecs/predef_systems/heim_ui_sprite_renderer.h"
 
 uint64_t HEIM_COMPONENT_UI_TRANSFORM;
 uint64_t HEIM_COMPONENT_TRANSFORM;
@@ -20,6 +21,7 @@ void heim_ecs_load_predef_components() {
 }
 void heim_load_predef_systems() {
     heim_ecs_add_system(heim_model_renderer_system);
+    heim_ecs_add_system(heim_ui_sprite_render_system);
 }
 
 uint64_t get_ui_transform_component() {

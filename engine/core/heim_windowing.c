@@ -104,6 +104,10 @@ void heim_window_set_window_title(char *title) {
     heim_window.title = title;
 }
 
+HeimVec2ui heim_window_get_window_size() {
+    return heim_window.window_size;
+}
+
 void heim_window_close() {
     glfwTerminate();
 }
