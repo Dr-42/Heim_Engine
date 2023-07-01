@@ -68,7 +68,7 @@ bool heim_window_init() {
     return true;
 }
 
-void heim_window_update(void (*update)(float *dt), bool *running) {
+void heim_window_update(void (*update)(float dt), bool *running) {
     while (*running) {
         if (glfwWindowShouldClose(heim_window.window)) {
             *running = false;
@@ -81,7 +81,7 @@ void heim_window_update(void (*update)(float *dt), bool *running) {
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         heim_input_update();
-        update(&heim_window.delta_time);
+        update(heim_window.delta_time);
 
         heim_ecs_update(heim_window.delta_time);
         glfwSwapBuffers(heim_window.window);
@@ -108,42 +108,14 @@ HeimVec2ui heim_window_get_window_size() {
     return heim_window.window_size;
 }
 
-void heim_window_close() {
-    glfwTerminate();
-}
-
-/*
-
-void heim_renderer_register_sprite(HeimSprite* sprite) {
-    heim_sprite_set_projection(sprite, heim_mat4_ortho(0.0f, renderer.window_size.x, renderer.window_size.y, 0.0f, -1.0f, 1.0f));
-    if (sprite_count < HEIM_RENDERER_MAX_SPRITES) {
-        sprites[sprite_count++] = sprite;
+void heim_window_set_fullscreen(bool fullscreen) {
+    if (fullscreen) {
+        glfwSetWindowMonitor(heim_window.window, glfwGetPrimaryMonitor(), 0, 0, heim_window.window_size.x, heim_window.window_size.y, GLFW_DONT_CARE);
     } else {
-        HEIM_LOG_ERROR("Maximum number of sprites reached");
+        glfwSetWindowMonitor(heim_window.window, NULL, heim_window.window_top_left.x, heim_window.window_top_left.y, heim_window.window_size.x, heim_window.window_size.y, GLFW_DONT_CARE);
     }
 }
 
-void heim_renderer_draw_sprite(HeimSprite* sprite) {
-    GLuint vao = heim_sprite_get_vao(sprite);
-    GLuint vbo = heim_sprite_get_vbo(sprite);
-    GLuint ebo = heim_sprite_get_ebo(sprite);
-
-    heim_shader_bind(renderer.shader);
-
-    heim_shader_set_uniform_mat4(renderer.shader, "model", heim_sprite_get_model(sprite));
-    heim_shader_set_uniform_mat4(renderer.shader, "view", heim_sprite_get_view(sprite));
-    heim_shader_set_uniform_mat4(renderer.shader, "projection", heim_sprite_get_projection(sprite));
-
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, heim_sprite_get_texture(sprite)->id);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-
-    glBindVertexArray(0);
+void heim_window_close() {
+    glfwTerminate();
 }
-
-*/

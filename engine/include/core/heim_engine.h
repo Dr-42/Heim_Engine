@@ -14,6 +14,7 @@
 /// @brief Main Engine struct.
 typedef struct HeimEngine {
     bool running;
+    bool fullscreen;
 } HeimEngine;
 
 /// @brief Creates a new HeimEngine.
@@ -26,6 +27,14 @@ void heim_engine_set_window_size(uint32_t x, uint32_t y);
 /// @brief Sets the window top left.
 void heim_engine_set_window_top_left(uint32_t x, uint32_t y);
 
+/// @brief Sets fullscreen mode.
+/// @param fullscreen Whether or not to set fullscreen mode.
+void heim_engine_set_fullscreen(bool fullscreen);
+
+/// @brief Returns if the engine is fullscreen.
+/// @return Whether or not the engine is fullscreen.
+bool heim_engine_is_fullscreen();
+
 /// @brief Initializes the HeimEngine struct.
 /// @param heim Pointer to the HeimEngine struct.
 /// @param init Pointer to the user init function.
@@ -34,7 +43,7 @@ void heim_engine_init(void (*init)(void));
 /// @brief Runs the HeimEngine struct.
 /// @param heim Pointer to the HeimEngine struct.
 /// @param update Pointer to the user update function.
-void heim_engine_run(void (*update)(float *dt));
+void heim_engine_run(void (*update)(float dt));
 
 /// @brief Frees the HeimEngine struct.
 /// @param heim Pointer to the HeimEngine struct.

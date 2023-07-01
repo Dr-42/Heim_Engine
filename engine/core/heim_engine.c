@@ -10,6 +10,7 @@
 
 HeimEngine heim = {
     .running = false,
+    .fullscreen = false,
 };
 
 void heim_engine_new(char *title) {
@@ -25,6 +26,20 @@ void heim_engine_set_window_top_left(uint32_t x, uint32_t y) {
     HEIM_LOG_INFO("Set window top left to %d, %d", x, y);
 }
 
+void heim_engine_set_fullscreen(bool fullscreen) {
+    heim.fullscreen = fullscreen;
+    heim_window_set_fullscreen(fullscreen);
+    if (fullscreen) {
+        HEIM_LOG_INFO("Set fullscreen");
+    } else {
+        HEIM_LOG_INFO("Disabled fullscreen");
+    }
+}
+
+bool heim_engine_is_fullscreen() {
+    return heim.fullscreen;
+}
+
 void heim_engine_init(void (*init)()) {
     if (!heim_window_init()) {
         HEIM_LOG_ERROR("Failed to initialize window");
@@ -38,7 +53,7 @@ void heim_engine_init(void (*init)()) {
     init();
 }
 
-void heim_engine_run(void (*update)(float *dt)) {
+void heim_engine_run(void (*update)(float dt)) {
     heim_window_update(update, &(heim.running));
 }
 

@@ -1,5 +1,6 @@
 #include <core/heim_engine.h>
 #include <ecs/heim_ecs_predef.h>
+#include <ecs/predef_comps/heim_camera.h>
 #include <ecs/predef_comps/heim_model.h>
 #include <ecs/predef_comps/heim_transform.h>
 #include <ecs/predef_comps/heim_ui_sprite.h>
@@ -22,6 +23,20 @@ HeimTransform transform1, transform2;
 HeimSprite *sprite;
 HeimUiTransform ui_transform;
 HeimUiSprite ui_sprite;
+
+HeimEntity camera_entity;
+HeimCamera camera = {
+    .fov = 45.0f,
+    .aspect = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
+    .near = 0.1f,
+    .far = 100.0f,
+
+    .front = {0.0f, 0.0f, -1.0f},
+    .up = {0.0f, 1.0f, 0.0f},
+};
+HeimTransform camera_transform = {
+    .position = {0.0f, 0.0f, 3.0f},
+};
 
 void testbed_init() {
     entity1 = heim_ecs_create_entity();
@@ -66,12 +81,93 @@ void testbed_init() {
 
     heim_ecs_add_component(entity3, get_ui_transform_component(), &ui_transform);
     heim_ecs_add_component(entity3, get_ui_sprite_component(), &ui_sprite);
+
+    camera_entity = heim_ecs_create_entity();
+    heim_ecs_add_component(camera_entity, get_camera_component(), &camera);
+    heim_ecs_add_component(camera_entity, get_transform_component(), &camera_transform);
 }
 
-void testbed_update(float *dt) {
+float speed = 3.0f;
+float sensitivity = 0.05f;
+
+void testbed_update(float dt) {
     (void)dt;
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
         heim_engine_should_close(true);
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_W)) {
+        camera_transform.position = heim_vec3f_add(
+            camera_transform.position,
+            heim_vec3f_mul(heim_vec3f_normalize(camera.front), speed * dt));
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_S)) {
+        camera_transform.position = heim_vec3f_sub(
+            camera_transform.position,
+            heim_vec3f_mul(heim_vec3f_normalize(camera.front), speed * dt));
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_A)) {
+        camera_transform.position = heim_vec3f_sub(
+            camera_transform.position,
+            heim_vec3f_mul(heim_vec3f_normalize(heim_vec3f_cross(camera.front, camera.up)),
+                           speed * dt));
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_D)) {
+        camera_transform.position = heim_vec3f_add(
+            camera_transform.position,
+            heim_vec3f_mul(heim_vec3f_normalize(heim_vec3f_cross(camera.front, camera.up)),
+                           speed * dt));
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_Q)) {
+        camera_transform.position = heim_vec3f_add(
+            camera_transform.position, heim_vec3f_mul(camera.up, speed * dt));
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_E)) {
+        camera_transform.position = heim_vec3f_sub(
+            camera_transform.position, heim_vec3f_mul(camera.up, speed * dt));
+    }
+
+    HeimVec2f mouseDelta = heim_input_mouse_delta();
+
+    // Reorient camera without yaw. Readjust the up and front vectors.
+
+    if (mouseDelta.x != 0.0f || mouseDelta.y != 0.0f || mouseDelta.x < 0.5f || mouseDelta.y < 0.5f) {
+        camera.yaw -= mouseDelta.x * sensitivity * dt;
+        camera.pitch += mouseDelta.y * sensitivity * dt;
+    }
+
+    if (heim_input_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        camera.yaw = 0.0f;
+        camera.pitch = 0.0f;
+
+        camera.front = (HeimVec3f){0.0f, 0.0f, -1.0f};
+        camera.up = (HeimVec3f){0.0f, 1.0f, 0.0f};
+        camera_transform.position = (HeimVec3f){0.0f, 0.0f, 3.0f};
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_UP)) {
+        speed += 0.1f;
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_DOWN)) {
+        speed -= 0.1f;
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_LEFT)) {
+        sensitivity -= 0.01f;
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_RIGHT)) {
+        sensitivity += 0.01f;
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_F)) {
+        heim_engine_set_fullscreen(!heim_engine_is_fullscreen());
     }
 }
 

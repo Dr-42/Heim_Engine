@@ -29,7 +29,7 @@ void heim_window_new(char *title);
 bool heim_window_init();
 
 /// @brief Updates the HeimWindow struct.
-void heim_window_update(void (*update)(float *dt), bool *running);
+void heim_window_update(void (*update)(float dt), bool *running);
 
 /// @brief Frees the HeimWindow struct.
 void heim_window_close();
@@ -51,5 +51,9 @@ void heim_window_set_window_title(char *title);
 /// @brief Gets the window size.
 /// @return Size of the window.
 HeimVec2ui heim_window_get_window_size();
+
+/// @brief Sets fullscreen mode.
+/// @param fullscreen Whether or not to set fullscreen mode.
+void heim_window_set_fullscreen(bool fullscreen);
 
 #endif  // HEIM_WINDOWING_H
