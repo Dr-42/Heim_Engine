@@ -53,8 +53,8 @@ void heim_camera_free(HeimCamera* camera) {
     if (camera->render_to_texture) {
         glDeleteFramebuffers(1, &camera->framebuffer);
         glDeleteRenderbuffers(1, &camera->depthbuffer);
+        heim_texture_free(camera->texture);
     }
-    heim_texture_free(camera->texture);
     HEIM_FREE(camera, HEIM_MEMORY_TYPE_ECS);
 }
 
