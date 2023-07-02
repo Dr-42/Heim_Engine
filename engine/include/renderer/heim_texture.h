@@ -1,6 +1,7 @@
 #ifndef HEIM_TEXTURE_H
 #define HEIM_TEXTURE_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct HeimTexture {
@@ -10,8 +11,10 @@ typedef struct HeimTexture {
     uint32_t channels;
 } HeimTexture;
 
-HeimTexture* heim_create_texture(char* path);
-void heim_destroy_texture(HeimTexture* texture);
+HeimTexture* heim_texture_create(char* path);
+
+HeimTexture* heim_texture_create_empty_slot(uint32_t width, uint32_t height, uint32_t channels);
+void heim_texture_free(HeimTexture* texture);
 
 uint32_t heim_texture_get_id(HeimTexture* texture);
 uint32_t heim_texture_get_width(HeimTexture* texture);

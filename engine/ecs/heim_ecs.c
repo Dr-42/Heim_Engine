@@ -1,6 +1,8 @@
 #include "ecs/heim_ecs.h"
 
 #include "ecs/heim_ecs_predef.h"
+#include "ecs/predef_comps/heim_camera.h"
+#include "ecs/predef_systems/heim_model_renderer.h"
 
 static HeimEcs* ecs = NULL;
 
@@ -114,6 +116,15 @@ void heim_ecs_remove_system(HeimSystem system) {
 void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
         if (ecs->systems[i] != 0) {
+            if (ecs->systems[i] == heim_model_renderer_system) {
+                // Clear the camera framebuffers
+                for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
+                    if (heim_ecs_has_component(entity, get_camera_component())) {
+                        HeimCamera* camera = heim_ecs_get_component_data(entity, get_camera_component());
+                        heim_camera_clear(camera);
+                    }
+                }
+            }
             for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
                 ecs->systems[i](entity, dt);
             }

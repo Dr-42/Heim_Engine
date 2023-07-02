@@ -55,6 +55,7 @@ bool heim_window_init() {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     glDepthFunc(GL_LESS);
     glEnable(GL_DEPTH_TEST);
@@ -77,7 +78,7 @@ void heim_window_update(void (*update)(float dt), bool *running) {
         heim_window.current_frame = glfwGetTime();
         heim_window.delta_time = heim_window.current_frame - heim_window.last_frame;
         heim_window.last_frame = heim_window.current_frame;
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.3f, 0.1f, 0.3f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         heim_input_update();

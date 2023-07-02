@@ -15,7 +15,6 @@ void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation,
     model_matrix = heim_mat4_rotate(model_matrix, rotation.z, (HeimVec3f){0.0f, 0.0f, 1.0f});
     model_matrix = heim_mat4_scale(model_matrix, scale);
 
-    heim_texture_bind(model->texture, 0);
     heim_shader_bind(model->obj->shader);
     heim_shader_set_uniform_mat4(model->obj->shader, "model", model_matrix);
     camera->front.x = -heim_math_sin(camera->yaw) * heim_math_cos(camera->pitch);
@@ -43,7 +42,15 @@ void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation,
     heim_shader_set_uniform_mat4(model->obj->shader, "view", view_matrix);
     heim_shader_set_uniform_mat4(model->obj->shader, "projection", projection_matrix);
 
-    heim_obj_render(model->obj);
+    if (camera->render_to_texture) {
+        heim_camera_bind(camera);
+    }
+
+    heim_obj_render(model->obj, model->texture);
+
+    if (camera->render_to_texture) {
+        heim_camera_unbind(camera);
+    }
 }
 
 void heim_model_renderer_system(HeimEntity entity, float dt) {

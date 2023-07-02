@@ -132,11 +132,14 @@ void heim_obj_free(HeimObj *obj) {
     HEIM_FREE(obj, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void heim_obj_render(HeimObj *obj) {
+void heim_obj_render(HeimObj *obj, HeimTexture *texture) {
     // heim_shader_bind(obj->shader);
     glBindVertexArray(obj->vao);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 
+    // Bind the texture
+    heim_texture_bind(texture, 0);
+    heim_shader_set_uniform1i(obj->shader, "texture_diffuse1", 0);
     // Draw the object
     glDrawArrays(GL_TRIANGLES, 0, obj->face_count * 3);
 

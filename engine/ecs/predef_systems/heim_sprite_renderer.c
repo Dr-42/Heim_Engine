@@ -38,11 +38,11 @@ void heim_ui_sprite_render_system(HeimEntity entity, float dt) {
     ui_sprite->sprite->view = view;
 
     heim_shader_bind(ui_sprite->sprite->shader);
-    heim_texture_bind(ui_sprite->sprite->texture, 1);
+    heim_texture_bind(ui_sprite->sprite->texture, 0);
     heim_shader_set_uniform_mat4(ui_sprite->sprite->shader, "projection", ui_sprite->sprite->projection);
     heim_shader_set_uniform_mat4(ui_sprite->sprite->shader, "view", ui_sprite->sprite->view);
     heim_shader_set_uniform_mat4(ui_sprite->sprite->shader, "model", ui_sprite->sprite->model);
-    heim_shader_set_uniform1i(ui_sprite->sprite->shader, "image", 1);
+    heim_shader_set_uniform1i(ui_sprite->sprite->shader, "image", 0);
 
     heim_sprite_render(ui_sprite->sprite);
 }

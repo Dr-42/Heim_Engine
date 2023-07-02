@@ -9,7 +9,7 @@
 
 #define MAX_TEXTURES 32
 
-HeimTexture* heim_create_texture(char* path) {
+HeimTexture* heim_texture_create(char* path) {
     HeimTexture* tex = HEIM_MALLOC(HeimTexture, HEIM_MEMORY_TYPE_RENDERER);
 
     int w, h, channels;
@@ -41,7 +41,30 @@ HeimTexture* heim_create_texture(char* path) {
     return tex;
 }
 
-void heim_destroy_texture(HeimTexture* texture) {
+HeimTexture* heim_texture_create_empty_slot(uint32_t width, uint32_t height, uint32_t channels) {
+    HeimTexture* tex = HEIM_MALLOC(HeimTexture, HEIM_MEMORY_TYPE_RENDERER);
+
+    glGenTextures(1, &tex->id);
+    glBindTexture(GL_TEXTURE_2D, tex->id);
+
+    if (channels == 3) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    } else if (channels == 4) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    } else {
+        HEIM_LOG_ERROR("Unsupported number of channels: %d", channels);
+    }
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    tex->width = width;
+    tex->height = height;
+    tex->channels = channels;
+
+    return tex;
+}
+
+void heim_texture_free(HeimTexture* texture) {
     glDeleteTextures(1, &texture->id);
     HEIM_FREE(texture, HEIM_MEMORY_TYPE_RENDERER);
 }
