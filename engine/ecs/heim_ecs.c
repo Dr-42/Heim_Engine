@@ -72,7 +72,7 @@ HeimComponent heim_ecs_register_component(uint64_t size) {
     if (ecs->component_data[component_id] != 0) {
         HEIM_FREE(ecs->component_data[component_id], HEIM_MEMORY_TYPE_ECS);
     }
-    ecs->component_data[component_id] = heim_calloc(size, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
+    ecs->component_data[component_id] = heim_calloc(size, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS, __FILE__, __LINE__);
 
     return component_id;
 }

@@ -29,9 +29,9 @@ typedef struct HeimMemory {
 void heim_memory_close();
 
 // Memory allocation
-void *heim_malloc(size_t size, HEIM_MEMORY_TYPE type);
-void *heim_calloc(size_t nmemb, size_t size, HEIM_MEMORY_TYPE type);
-void *heim_realloc(void *ptr, size_t size, HEIM_MEMORY_TYPE type);
+void *heim_malloc(size_t size, HEIM_MEMORY_TYPE type, const char *file, int line);
+void *heim_calloc(size_t nmemb, size_t size, HEIM_MEMORY_TYPE type, const char *file, int line);
+void *heim_realloc(void *ptr, size_t size, HEIM_MEMORY_TYPE type, const char *file, int line);
 void heim_free(void *ptr, HEIM_MEMORY_TYPE type);
 
 // Memory copy
@@ -48,11 +48,11 @@ void *heim_memset(void *s, int c, size_t n);
 // Memory allocation macros
 
 /// @brief Wrapper for malloc.
-#define HEIM_MALLOC(type, heim_type) (type *)heim_malloc(sizeof(type), heim_type)
+#define HEIM_MALLOC(type, heim_type) (type *)heim_malloc(sizeof(type), heim_type, __FILE__, __LINE__)
 /// @brief Wrapper for calloc.
-#define HEIM_CALLOC(type, nmemb, heim_type) (type *)heim_calloc(nmemb, sizeof(type), heim_type)
+#define HEIM_CALLOC(type, nmemb, heim_type) (type *)heim_calloc(nmemb, sizeof(type), heim_type, __FILE__, __LINE__)
 /// @brief Wrapper for realloc.
-#define HEIM_REALLOC(type, ptr, heim_type) (type *)heim_realloc(ptr, sizeof(type), heim_type)
+#define HEIM_REALLOC(type, ptr, heim_type) (type *)heim_realloc(ptr, sizeof(type), heim_type, __FILE__, __LINE__)
 /// @brief Wrapper for free.
 #define HEIM_FREE(ptr, heim_type) heim_free(ptr, heim_type)
 
