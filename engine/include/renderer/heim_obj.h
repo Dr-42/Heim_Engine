@@ -24,12 +24,10 @@ typedef struct HeimObj {
 
     uint32_t vao;
     uint32_t vbo;
-
-    HeimShader *shader;
 } HeimObj;
 
 HeimObj *heim_obj_load(const char *path);
 void heim_obj_free(HeimObj *obj);
-void heim_obj_render(HeimObj *obj, HeimTexture *texture);
+void heim_obj_render(HeimObj *obj);
 
 #endif  // HEIM_OBJ_H

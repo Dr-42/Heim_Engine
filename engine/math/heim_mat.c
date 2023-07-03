@@ -74,3 +74,27 @@ HeimMat4 heim_mat4_lookat(HeimVec3f eye, HeimVec3f target, HeimVec3f up) {
     glm_lookat((vec3){eye.x, eye.y, eye.z}, (vec3){target.x, target.y, target.z}, (vec3){up.x, up.y, up.z}, mat.m);
     return mat;
 }
+
+HeimMat3 heim_mat3_identity() {
+    HeimMat3 mat = {0};
+    mat.m[0][0] = 1.0f;
+    mat.m[1][1] = 1.0f;
+    mat.m[2][2] = 1.0f;
+    return mat;
+}
+HeimMat3 heim_mat3_transpose(HeimMat3 mat) {
+    HeimMat3 result = mat;
+    glm_mat3_transpose(result.m);
+    return result;
+}
+HeimMat3 heim_mat3_inverse(HeimMat3 mat) {
+    HeimMat3 result = {0};
+    glm_mat3_inv(mat.m, result.m);
+    return result;
+}
+
+HeimMat3 heim_mat3_from_mat4(HeimMat4 mat) {
+    HeimMat3 result = {0};
+    glm_mat4_pick3(mat.m, result.m);
+    return result;
+}

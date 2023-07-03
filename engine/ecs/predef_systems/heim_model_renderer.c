@@ -6,6 +6,13 @@
 #include "ecs/predef_comps/heim_camera.h"
 #include "math/heim_mat.h"
 #include "math/heim_math_common.h"
+#include "renderer/heim_shader.h"
+
+static HeimShader* model_shader;
+void heim_model_renderer_init() {
+    model_shader = heim_shader_create();
+    heim_shader_init(model_shader, "assets/shaders/model.vert", "assets/shaders/model.frag");
+}
 
 void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, HeimCamera* camera, HeimTransform* camera_transform) {
     HeimMat4 model_matrix = heim_mat4_identity();
@@ -15,8 +22,8 @@ void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation,
     model_matrix = heim_mat4_rotate(model_matrix, rotation.z, (HeimVec3f){0.0f, 0.0f, 1.0f});
     model_matrix = heim_mat4_scale(model_matrix, scale);
 
-    heim_shader_bind(model->obj->shader);
-    heim_shader_set_uniform_mat4(model->obj->shader, "model", model_matrix);
+    heim_shader_bind(model_shader);
+    heim_shader_set_uniform_mat4(model_shader, "model", model_matrix);
     // Assuming you have a HeimMat4 and HeimVec3f structures and functions defined somewhere
     HeimMat4 cameraRotation = heim_mat4_identity();  // Initialize to identity matrix
 
@@ -42,14 +49,17 @@ void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation,
 
     HeimMat4 projection_matrix = heim_mat4_perspective(camera->fov, camera->aspect, camera->near, camera->far);
 
-    heim_shader_set_uniform_mat4(model->obj->shader, "view", view_matrix);
-    heim_shader_set_uniform_mat4(model->obj->shader, "projection", projection_matrix);
+    heim_shader_set_uniform_mat4(model_shader, "view", view_matrix);
+    heim_shader_set_uniform_mat4(model_shader, "projection", projection_matrix);
 
     if (camera->render_to_texture) {
         heim_camera_bind(camera);
     }
 
-    heim_obj_render(model->obj, model->texture);
+    heim_texture_bind(model->texture, 0);
+    heim_shader_set_uniform1i(model_shader, "texture_diffuse1", 0);
+    heim_shader_bind(model_shader);
+    heim_obj_render(model->obj);
 
     if (camera->render_to_texture) {
         heim_camera_unbind(camera);
@@ -93,4 +103,7 @@ void heim_model_renderer_system(HeimEntity entity, float dt) {
     HeimTransform* camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
 
     heim_model_render(model, transform->position, transform->rotation, transform->size, camera_data, camera_transform);
+}
+void heim_model_renderer_free() {
+    heim_shader_free(model_shader);
 }

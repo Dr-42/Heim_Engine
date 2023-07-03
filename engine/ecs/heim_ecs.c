@@ -2,7 +2,7 @@
 
 #include "ecs/heim_ecs_predef.h"
 #include "ecs/predef_comps/heim_camera.h"
-#include "ecs/predef_systems/heim_model_renderer.h"
+#include "ecs/predef_systems/heim_pbr_model_renderer.h"
 
 static HeimEcs* ecs = NULL;
 
@@ -22,11 +22,12 @@ void heim_ecs_create() {
 }
 
 void heim_ecs_close() {
-    for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
+    for (uint64_t i = 0; i < ecs->component_count; i++) {
         if (ecs->component_data[i] != 0) {
             HEIM_FREE(ecs->component_data[i], HEIM_MEMORY_TYPE_ECS);
         }
     }
+    void heim_unload_predef_systems();
 
     HEIM_FREE(ecs->component_data, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(ecs->systems, HEIM_MEMORY_TYPE_ECS);
@@ -116,7 +117,7 @@ void heim_ecs_remove_system(HeimSystem system) {
 void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
         if (ecs->systems[i] != 0) {
-            if (ecs->systems[i] == heim_model_renderer_system) {
+            if (ecs->systems[i] == heim_pbr_model_renderer_system) {
                 // Clear the camera framebuffers
                 for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
                     if (heim_ecs_has_component(entity, get_camera_component())) {

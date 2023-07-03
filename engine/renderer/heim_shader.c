@@ -162,3 +162,19 @@ void heim_shader_set_uniform_mat4(HeimShader* shader, const char* name, HeimMat4
 
     glUniformMatrix4fv(glGetUniformLocation(shader->program, name), 1, GL_FALSE, m);
 }
+
+void heim_shader_set_uniform_mat3(HeimShader* shader, const char* name, HeimMat3 value) {
+    float m[9] = {
+        value.m[0][0],
+        value.m[0][1],
+        value.m[0][2],
+        value.m[1][0],
+        value.m[1][1],
+        value.m[1][2],
+        value.m[2][0],
+        value.m[2][1],
+        value.m[2][2],
+    };
+
+    glUniformMatrix3fv(glGetUniformLocation(shader->program, name), 1, GL_FALSE, m);
+}

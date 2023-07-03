@@ -120,26 +120,20 @@ HeimObj *heim_obj_load(const char *path) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, normal));
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HeimVertex), (void *)offsetof(HeimVertex, uv));
-
-    obj->shader = heim_shader_create();
-    heim_shader_init(obj->shader, "assets/shaders/model.vert", "assets/shaders/model.frag");
     return obj;
 }
 
 void heim_obj_free(HeimObj *obj) {
     HEIM_FREE(obj->vertices_data, HEIM_MEMORY_TYPE_RENDERER);
-    heim_shader_free(obj->shader);
     HEIM_FREE(obj, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void heim_obj_render(HeimObj *obj, HeimTexture *texture) {
+void heim_obj_render(HeimObj *obj) {
     // heim_shader_bind(obj->shader);
     glBindVertexArray(obj->vao);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 
     // Bind the texture
-    heim_texture_bind(texture, 0);
-    heim_shader_set_uniform1i(obj->shader, "texture_diffuse1", 0);
     // Draw the object
     glDrawArrays(GL_TRIANGLES, 0, obj->face_count * 3);
 

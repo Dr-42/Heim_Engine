@@ -31,6 +31,7 @@ void heim_shader_set_uniform1f(HeimShader* shader, const char* name, float value
 void heim_shader_set_uniform2f(HeimShader* shader, const char* name, HeimVec2f value);
 void heim_shader_set_uniform3f(HeimShader* shader, const char* name, HeimVec3f value);
 void heim_shader_set_uniform4f(HeimShader* shader, const char* name, HeimVec4f value);
+void heim_shader_set_uniform_mat3(HeimShader* shader, const char* name, HeimMat3 value);
 void heim_shader_set_uniform_mat4(HeimShader* shader, const char* name, HeimMat4 value);
 
 #endif  // HEIM_SHADER_H
