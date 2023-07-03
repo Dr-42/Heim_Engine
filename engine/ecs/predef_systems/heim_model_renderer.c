@@ -17,19 +17,22 @@ void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation,
 
     heim_shader_bind(model->obj->shader);
     heim_shader_set_uniform_mat4(model->obj->shader, "model", model_matrix);
-    camera->front.x = -heim_math_sin(camera->yaw) * heim_math_cos(camera->pitch);
-    camera->front.y = -heim_math_sin(camera->pitch);
-    camera->front.z = -heim_math_cos(camera->yaw) * heim_math_cos(camera->pitch);
+    // Assuming you have a HeimMat4 and HeimVec3f structures and functions defined somewhere
+    HeimMat4 cameraRotation = heim_mat4_identity();  // Initialize to identity matrix
 
-    camera->front = heim_vec3f_normalize(camera->front);
+    // Update the camera rotation
+    HeimVec3f yawAxis = {0.0f, 1.0f, 0.0f};
+    HeimVec3f pitchAxis = {1.0f, 0.0f, 0.0f};
+    cameraRotation = heim_mat4_rotate(cameraRotation, camera->yaw, yawAxis);
+    cameraRotation = heim_mat4_rotate(cameraRotation, camera->pitch, pitchAxis);
 
-    HeimVec3f right;
-    right.x = -heim_math_cos(camera->yaw);
-    right.y = 0.0f;
-    right.z = heim_math_sin(camera->yaw);
+    // Calculate the front vector from the camera rotation
+    HeimVec3f front = heim_mat4_transform_vec3(cameraRotation, (HeimVec3f){0.0f, 0.0f, -1.0f});
+    camera->front = front;
 
-    camera->up = heim_vec3f_normalize(heim_vec3f_cross(right, camera->front));
-    camera->up.y *= -1.0f;
+    // Calculate the up vector from the camera rotation
+    HeimVec3f up = heim_mat4_transform_vec3(cameraRotation, (HeimVec3f){0.0f, 1.0f, 0.0f});
+    camera->up = up;
 
     HeimMat4 view_matrix = heim_mat4_identity();
     view_matrix = heim_mat4_translate(view_matrix, camera_transform->position);

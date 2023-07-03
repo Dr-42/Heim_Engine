@@ -98,7 +98,7 @@ void testbed_init() {
 }
 
 float speed = 3.0f;
-float sensitivity = 0.05f;
+float sensitivity = 3.0f;
 
 void testbed_update(float dt) {
     (void)dt;
@@ -148,7 +148,7 @@ void testbed_update(float dt) {
 
     if (mouseDelta.x != 0.0f || mouseDelta.y != 0.0f || mouseDelta.x < 0.5f || mouseDelta.y < 0.5f) {
         camera->yaw -= mouseDelta.x * sensitivity * dt;
-        camera->pitch += mouseDelta.y * sensitivity * dt;
+        camera->pitch -= mouseDelta.y * sensitivity * dt;
     }
 
     if (heim_input_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
