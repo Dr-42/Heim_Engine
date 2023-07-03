@@ -194,18 +194,22 @@ void testbed_update(float dt) {
 
     if (heim_input_key_pressed(GLFW_KEY_UP)) {
         speed += 0.1f;
+        speed = heim_math_clamp(speed, 0.01f, 10.0f);
     }
 
     if (heim_input_key_pressed(GLFW_KEY_DOWN)) {
         speed -= 0.1f;
+        speed = heim_math_clamp(speed, 0.01f, 10.0f);
     }
 
     if (heim_input_key_pressed(GLFW_KEY_LEFT)) {
         sensitivity -= 0.01f;
+        sensitivity = heim_math_clamp(sensitivity, 0.01f, 10.0f);
     }
 
     if (heim_input_key_pressed(GLFW_KEY_RIGHT)) {
         sensitivity += 0.01f;
+        sensitivity = heim_math_clamp(sensitivity, 0.01f, 10.0f);
     }
 
     if (heim_input_key_pressed(GLFW_KEY_F)) {

@@ -21,13 +21,19 @@ typedef uint64_t HeimComponent;
 /// @brief A function pointer to a system function of type void funtion(HeimEcs *ecs, float dt)
 typedef void (*HeimSystem)(HeimEntity entity, float dt);
 
+/// @brief A struct containing the entity and the component data
+typedef struct HeimComponentData {
+    HeimEntity entity;
+    void* data;
+} HeimComponentData;
+
 /// @brief A struct containing all the data needed for the ECS
 typedef struct HeimEcs {
     HeimEntity* entities;
     HeimComponent* components;
     HeimSystem* systems;
 
-    void*** component_data;  // [component_id][entity_id][component_data]
+    HeimComponentData* component_data[MAX_COMPONENTS];
     uint64_t component_masks[MAX_ENTITIES];
 
     uint64_t entity_count;
@@ -51,9 +57,8 @@ HeimEntity heim_ecs_create_entity();
 void heim_ecs_destroy_entity(HeimEntity entity);
 
 /// @brief Registers a new component type
-/// @param size Size of the component data. Pass as sizeof(YourComponent)
 /// @return The component id
-HeimComponent heim_ecs_register_component(uint64_t size);
+HeimComponent heim_ecs_register_component();
 
 /// @brief Adds a component to an entity
 /// @param entity The entity to add the component to

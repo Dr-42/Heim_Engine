@@ -15,8 +15,6 @@ void heim_ecs_create() {
     ecs->components = HEIM_CALLOC(HeimComponent, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
     ecs->systems = HEIM_CALLOC(HeimSystem, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
-    ecs->component_data = HEIM_CALLOC(void**, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
-
     heim_ecs_load_predef_components();
     heim_load_predef_systems();
 }
@@ -29,7 +27,6 @@ void heim_ecs_close() {
     }
     heim_unload_predef_systems();
 
-    HEIM_FREE(ecs->component_data, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(ecs->systems, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(ecs->components, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(ecs->entities, HEIM_MEMORY_TYPE_ECS);
@@ -57,7 +54,7 @@ void heim_ecs_destroy_entity(HeimEntity entity) {
     ecs->entities[entity] = 0;
 }
 
-HeimComponent heim_ecs_register_component(uint64_t size) {
+HeimComponent heim_ecs_register_component() {
     HeimComponent component_id = ecs->component_count++;
     if (component_id >= MAX_COMPONENTS) {
         HEIM_LOG_ERROR("Component count exceeded MAX_COMPONENTS");
@@ -70,21 +67,22 @@ HeimComponent heim_ecs_register_component(uint64_t size) {
         }
     }
     ecs->components[component_id] = component_id;
-    if (ecs->component_data[component_id] != 0) {
-        HEIM_FREE(ecs->component_data[component_id], HEIM_MEMORY_TYPE_ECS);
-    }
-    ecs->component_data[component_id] = heim_calloc(size, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS, __FILE__, __LINE__);
+    ecs->component_data[component_id] = HEIM_CALLOC(HeimComponentData, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
 
     return component_id;
 }
 
 void heim_ecs_add_component(HeimEntity entity, HeimComponent component, void* data) {
-    ecs->component_data[component][entity] = data;
+    HeimComponentData* component_data = ecs->component_data[component];
+    component_data[entity].entity = entity;
+    component_data[entity].data = data;
     ecs->component_masks[entity] |= (1 << component);
 }
 
 void heim_ecs_remove_component(HeimEntity entity, HeimComponent component) {
-    ecs->component_data[component][entity] = NULL;
+    HeimComponentData* component_data = ecs->component_data[component];
+    component_data[entity].entity = 0;
+    component_data[entity].data = NULL;
     ecs->component_masks[entity] &= ~(1 << component);  // Clear the bit for this component
 }
 
@@ -93,7 +91,8 @@ bool heim_ecs_has_component(HeimEntity entity, HeimComponent component) {
 }
 
 void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component) {
-    return ecs->component_data[component][entity];
+    HeimComponentData* component_data = ecs->component_data[component];
+    return component_data[entity].data;
 }
 
 void heim_ecs_add_system(HeimSystem system) {

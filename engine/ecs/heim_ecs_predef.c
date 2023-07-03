@@ -19,12 +19,12 @@ uint64_t HEIM_COMPONENT_MODEL;
 uint64_t HEIM_COMPONENT_CAMERA;
 
 void heim_ecs_load_predef_components() {
-    HEIM_COMPONENT_UI_TRANSFORM = heim_ecs_register_component(sizeof(HeimUiTransform));
-    HEIM_COMPONENT_TRANSFORM = heim_ecs_register_component(sizeof(HeimTransform));
-    HEIM_COMPONENT_UI_SPRITE = heim_ecs_register_component(sizeof(HeimUiSprite));
-    HEIM_COMPONENT_MODEL = heim_ecs_register_component(sizeof(HeimModel));
-    HEIM_COMPONENT_PBR_MODEL = heim_ecs_register_component(sizeof(HeimPBRModel));
-    HEIM_COMPONENT_CAMERA = heim_ecs_register_component(sizeof(HeimCamera));
+    HEIM_COMPONENT_UI_TRANSFORM = heim_ecs_register_component();
+    HEIM_COMPONENT_TRANSFORM = heim_ecs_register_component();
+    HEIM_COMPONENT_UI_SPRITE = heim_ecs_register_component();
+    HEIM_COMPONENT_MODEL = heim_ecs_register_component();
+    HEIM_COMPONENT_PBR_MODEL = heim_ecs_register_component();
+    HEIM_COMPONENT_CAMERA = heim_ecs_register_component();
 }
 void heim_load_predef_systems() {
     heim_pbr_model_renderer_init();
