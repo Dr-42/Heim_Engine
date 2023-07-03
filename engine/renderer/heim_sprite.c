@@ -50,10 +50,6 @@ HeimSprite* heim_create_sprite(HeimTexture* texture) {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
     glEnableVertexAttribArray(1);
 
-    HeimShader* shader = heim_shader_create();
-    heim_shader_init(shader, "assets/shaders/sprite.vert", "assets/shaders/sprite.frag");
-    sprite->shader = shader;
-
     return sprite;
 }
 
@@ -61,7 +57,6 @@ void heim_sprite_free(HeimSprite* sprite) {
     glDeleteVertexArrays(1, &sprite->vao);
     glDeleteBuffers(1, &sprite->vbo);
     glDeleteBuffers(1, &sprite->ebo);
-    heim_shader_free(sprite->shader);
     HEIM_FREE(sprite, HEIM_MEMORY_TYPE_RENDERER);
 }
 

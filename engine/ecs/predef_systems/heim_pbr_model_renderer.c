@@ -9,10 +9,12 @@
 
 float total_time = 0.0f;
 
-static HeimShader* pbr_shader;
+static struct {
+    HeimShader* shader;
+} pbr_model_render_system;
 void heim_pbr_model_renderer_init() {
-    pbr_shader = heim_shader_create();
-    heim_shader_init(pbr_shader, "assets/shaders/model_pbr.vert", "assets/shaders/model_pbr.frag");
+    pbr_model_render_system.shader = heim_shader_create();
+    heim_shader_init(pbr_model_render_system.shader, "assets/shaders/model_pbr.vert", "assets/shaders/model_pbr.frag");
 }
 
 void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, HeimCamera* camera, HeimTransform* camera_transform, float dt) {
@@ -23,8 +25,8 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     model_matrix = heim_mat4_rotate(model_matrix, rotation.z, (HeimVec3f){0.0f, 0.0f, 1.0f});
     model_matrix = heim_mat4_scale(model_matrix, scale);
 
-    heim_shader_bind(pbr_shader);
-    heim_shader_set_uniform_mat4(pbr_shader, "model", model_matrix);
+    heim_shader_bind(pbr_model_render_system.shader);
+    heim_shader_set_uniform_mat4(pbr_model_render_system.shader, "model", model_matrix);
     // Assuming you have a HeimMat4 and HeimVec3f structures and functions defined somewhere
     HeimMat4 cameraRotation = heim_mat4_identity();  // Initialize to identity matrix
 
@@ -50,8 +52,8 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
 
     HeimMat4 projection_matrix = heim_mat4_perspective(camera->fov, camera->aspect, camera->near, camera->far);
 
-    heim_shader_set_uniform_mat4(pbr_shader, "view", view_matrix);
-    heim_shader_set_uniform_mat4(pbr_shader, "projection", projection_matrix);
+    heim_shader_set_uniform_mat4(pbr_model_render_system.shader, "view", view_matrix);
+    heim_shader_set_uniform_mat4(pbr_model_render_system.shader, "projection", projection_matrix);
 
     if (camera->render_to_texture) {
         heim_camera_bind(camera);
@@ -71,17 +73,17 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     */
 
     heim_texture_bind(model->albedoMap, 0);
-    heim_shader_set_uniform1i(pbr_shader, "albedoMap", 0);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "albedoMap", 0);
     heim_texture_bind(model->normalMap, 1);
-    heim_shader_set_uniform1i(pbr_shader, "normalMap", 1);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "normalMap", 1);
     heim_texture_bind(model->metallicMap, 2);
-    heim_shader_set_uniform1i(pbr_shader, "metallicMap", 2);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "metallicMap", 2);
     heim_texture_bind(model->roughnessMap, 3);
-    heim_shader_set_uniform1i(pbr_shader, "roughnessMap", 3);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "roughnessMap", 3);
     heim_texture_bind(model->aoMap, 4);
-    heim_shader_set_uniform1i(pbr_shader, "aoMap", 4);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "aoMap", 4);
 
-    heim_shader_set_uniform3f(pbr_shader, "camPos", camera_transform->position);
+    heim_shader_set_uniform3f(pbr_model_render_system.shader, "camPos", camera_transform->position);
 
     // get time from time.h
     total_time += dt;
@@ -96,15 +98,15 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
         (HeimVec3f){150.0f, 150.0f, 150.0f},
     };
 
-    heim_shader_set_uniform3f(pbr_shader, "lightPositions[0]", lightPos[0]);
-    heim_shader_set_uniform3f(pbr_shader, "lightPositions[1]", lightPos[1]);
-    heim_shader_set_uniform3f(pbr_shader, "lightColors[0]", lightColors[0]);
+    heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightPositions[0]", lightPos[0]);
+    heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightPositions[1]", lightPos[1]);
+    heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightColors[0]", lightColors[0]);
 
     // set normal matrix
     HeimMat3 normal_matrix = heim_mat3_transpose(heim_mat3_from_mat4(model_matrix));
-    heim_shader_set_uniform_mat3(pbr_shader, "normalMatrix", normal_matrix);
+    heim_shader_set_uniform_mat3(pbr_model_render_system.shader, "normalMatrix", normal_matrix);
 
-    heim_shader_bind(pbr_shader);
+    heim_shader_bind(pbr_model_render_system.shader);
     heim_obj_render(model->obj);
 
     if (camera->render_to_texture) {
@@ -152,5 +154,5 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
 }
 
 void heim_pbr_model_renderer_free() {
-    heim_shader_free(pbr_shader);
+    heim_shader_free(pbr_model_render_system.shader);
 }

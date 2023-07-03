@@ -23,8 +23,6 @@ typedef struct HeimSprite {
     HeimMat4 view;
     HeimMat4 projection;
 
-    HeimShader* shader;
-
     GLuint vao;
     GLuint vbo;
     GLuint ebo;

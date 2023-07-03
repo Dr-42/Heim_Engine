@@ -22,12 +22,12 @@ void heim_ecs_create() {
 }
 
 void heim_ecs_close() {
-    for (uint64_t i = 0; i < ecs->component_count; i++) {
+    for (uint64_t i = 1; i < ecs->component_count + 1; i++) {
         if (ecs->component_data[i] != 0) {
             HEIM_FREE(ecs->component_data[i], HEIM_MEMORY_TYPE_ECS);
         }
     }
-    void heim_unload_predef_systems();
+    heim_unload_predef_systems();
 
     HEIM_FREE(ecs->component_data, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(ecs->systems, HEIM_MEMORY_TYPE_ECS);

@@ -129,8 +129,8 @@ void testbed_init() {
     heim_ecs_add_component(camera_surface_entity, get_ui_transform_component(), &camera_surface_transform);
 }
 
-float speed = 3.0f;
-float sensitivity = 3.0f;
+float speed = 2.0f;
+float sensitivity = 2.0f;
 
 void testbed_update(float dt) {
     (void)dt;

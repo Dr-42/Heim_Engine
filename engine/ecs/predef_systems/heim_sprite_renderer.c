@@ -7,6 +7,15 @@
 #include "renderer/heim_shader.h"
 #include "renderer/heim_sprite.h"
 
+static struct {
+    HeimShader* shader;
+} sprite_render_system;
+
+void heim_ui_sprite_render_system_init() {
+    sprite_render_system.shader = heim_shader_create();
+    heim_shader_init(sprite_render_system.shader, "assets/shaders/sprite.vert", "assets/shaders/sprite.frag");
+}
+
 void heim_ui_sprite_render_system(HeimEntity entity, float dt) {
     (void)dt;
     bool has_sprite = heim_ecs_has_component(entity, get_ui_sprite_component());
@@ -37,12 +46,16 @@ void heim_ui_sprite_render_system(HeimEntity entity, float dt) {
     HeimMat4 view = heim_mat4_identity();
     ui_sprite->sprite->view = view;
 
-    heim_shader_bind(ui_sprite->sprite->shader);
+    heim_shader_bind(sprite_render_system.shader);
     heim_texture_bind(ui_sprite->sprite->texture, 0);
-    heim_shader_set_uniform_mat4(ui_sprite->sprite->shader, "projection", ui_sprite->sprite->projection);
-    heim_shader_set_uniform_mat4(ui_sprite->sprite->shader, "view", ui_sprite->sprite->view);
-    heim_shader_set_uniform_mat4(ui_sprite->sprite->shader, "model", ui_sprite->sprite->model);
-    heim_shader_set_uniform1i(ui_sprite->sprite->shader, "image", 0);
+    heim_shader_set_uniform_mat4(sprite_render_system.shader, "projection", ui_sprite->sprite->projection);
+    heim_shader_set_uniform_mat4(sprite_render_system.shader, "view", ui_sprite->sprite->view);
+    heim_shader_set_uniform_mat4(sprite_render_system.shader, "model", ui_sprite->sprite->model);
+    heim_shader_set_uniform1i(sprite_render_system.shader, "image", 0);
 
     heim_sprite_render(ui_sprite->sprite);
+}
+
+void heim_ui_sprite_render_system_free() {
+    heim_shader_free(sprite_render_system.shader);
 }
