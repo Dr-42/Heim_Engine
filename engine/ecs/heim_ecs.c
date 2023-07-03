@@ -131,6 +131,3 @@ void heim_ecs_update(float dt) {
         }
     }
 }
-
-void heim_ecs_load_predef_components();
-void heim_load_predef_systems();
