@@ -85,6 +85,8 @@ void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component);
 /// @param system Function pointer to the system function
 void heim_ecs_register_system(HeimSystem system);
 
+uint64_t heim_ecs_get_entity_count();
+
 /// @brief Internal function to update the ECS
 /// @param dt Delta time
 void heim_ecs_update(float dt);

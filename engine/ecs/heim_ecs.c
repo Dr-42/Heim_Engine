@@ -42,13 +42,13 @@ void heim_ecs_close() {
 }
 
 HeimEntity heim_ecs_create_entity() {
-    HeimEntity entity = ecs->entity_count++;
+    HeimEntity entity = ecs->entity_count;
 
     if (entity >= MAX_ENTITIES) {
         HEIM_LOG_ERROR("Entity count exceeded MAX_ENTITIES");
         return 0;
     }
-    for (uint64_t i = 1; i < MAX_ENTITIES; i++) {
+    for (uint64_t i = 0; i < ecs->entity_count; i++) {
         if (heim_bitmask_get(ecs->entities, i) == false) {
             entity = i;
             break;
@@ -58,8 +58,9 @@ HeimEntity heim_ecs_create_entity() {
     HeimBitmask* component_mask = heim_bitmask_create(ecs->components->size);
     if (entity == ecs->entity_count) {
         heim_vector_push(ecs->component_masks, component_mask);
+        ecs->entity_count++;
     } else {
-        ecs->component_masks[entity - 1] = component_mask;
+        ecs->component_masks[entity] = component_mask;
     }
 
     return entity;
@@ -82,18 +83,18 @@ void heim_ecs_add_component(HeimEntity entity, HeimComponent component, void* da
     HeimComponentData* component_data = ecs->component_data[component];
     component_data[entity].entity = entity;
     component_data[entity].data = data;
-    heim_bitmask_set(ecs->component_masks[entity - 1], component);
+    heim_bitmask_set(ecs->component_masks[entity], component);
 }
 
 void heim_ecs_remove_component(HeimEntity entity, HeimComponent component) {
     HeimComponentData* component_data = ecs->component_data[component];
     component_data[entity].entity = 0;
     component_data[entity].data = NULL;
-    heim_bitmask_unset(ecs->component_masks[entity - 1], component);
+    heim_bitmask_unset(ecs->component_masks[entity], component);
 }
 
 bool heim_ecs_has_component(HeimEntity entity, HeimComponent component) {
-    return heim_bitmask_get(ecs->component_masks[entity - 1], component);
+    return heim_bitmask_get(ecs->component_masks[entity], component);
 }
 
 void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component) {
@@ -105,19 +106,23 @@ void heim_ecs_register_system(HeimSystem system) {
     heim_vector_push(ecs->systems, system);
 }
 
+uint64_t heim_ecs_get_entity_count() {
+    return ecs->entity_count;
+}
+
 void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < heim_vector_length(ecs->systems); i++) {
         if (ecs->systems[i] != 0) {
             if (ecs->systems[i] == heim_pbr_model_renderer_system) {
                 // Clear the camera framebuffers
-                for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
+                for (HeimEntity entity = 0; entity < ecs->entity_count; entity++) {
                     if (heim_ecs_has_component(entity, get_camera_component())) {
                         HeimCamera* camera = heim_ecs_get_component_data(entity, get_camera_component());
                         heim_camera_clear(camera);
                     }
                 }
             }
-            for (HeimEntity entity = 1; entity < ecs->entity_count + 1; entity++) {
+            for (HeimEntity entity = 0; entity < ecs->entity_count; entity++) {
                 ecs->systems[i](entity, dt);
             }
         }
