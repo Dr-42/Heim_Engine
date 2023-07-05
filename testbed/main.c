@@ -226,7 +226,7 @@ void testbed_update(float dt) {
 int main(void) {
     heim_engine_new("Heim Engine Testbed");
     heim_engine_set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT);
-    heim_engine_set_window_top_left(100, 100);
+    heim_engine_set_window_top_left(400, 100);
 
     heim_engine_init(testbed_init);
     heim_input_mouse_hide(true);

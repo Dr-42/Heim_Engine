@@ -97,9 +97,11 @@ GLFWwindow *heim_window_get_window() {
 
 void heim_window_set_window_size(HeimVec2ui size) {
     heim_window.window_size = size;
+    glfwSetWindowSize(heim_window.window, size.x, size.y);
 }
 void heim_window_set_window_top_left(HeimVec2ui top_left) {
     heim_window.window_top_left = top_left;
+    glfwSetWindowPos(heim_window.window, top_left.x, top_left.y);
 }
 void heim_window_set_window_title(char *title) {
     heim_window.title = title;
