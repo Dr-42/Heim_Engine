@@ -35,7 +35,7 @@ typedef struct HeimEcs {
     HeimSystem* systems;
 
     HeimComponentData* component_data[MAX_COMPONENTS];
-    uint64_t component_masks[MAX_ENTITIES];
+    HeimBitmask** component_masks;
 
     uint64_t entity_count;
     uint64_t component_count;

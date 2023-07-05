@@ -11,6 +11,7 @@ void heim_ecs_create() {
     ecs = HEIM_CALLOC(HeimEcs, 1, HEIM_MEMORY_TYPE_ECS);
     ecs->entities = heim_bitmask_create(MAX_ENTITIES);
     ecs->components = heim_bitmask_create(MAX_COMPONENTS);
+    ecs->component_masks = heim_vector_create(HeimBitmask*);
     ecs->entity_count = 0;
     ecs->component_count = 0;
 
@@ -28,6 +29,10 @@ void heim_ecs_close() {
     }
     heim_unload_predef_systems();
 
+    for (size_t i = 0; i < heim_vector_length(ecs->component_masks); i++) {
+        heim_bitmask_destroy(ecs->component_masks[i]);
+    }
+    heim_vector_destroy(ecs->component_masks);
     heim_bitmask_destroy(ecs->entities);
     heim_bitmask_destroy(ecs->components);
     heim_vector_destroy(ecs->systems);
@@ -48,6 +53,13 @@ HeimEntity heim_ecs_create_entity() {
         }
     }
     heim_bitmask_set(ecs->entities, entity);
+    HeimBitmask* component_mask = heim_bitmask_create(MAX_COMPONENTS);
+    if (entity == ecs->entity_count) {
+        heim_vector_push(ecs->component_masks, component_mask);
+    } else {
+        ecs->component_masks[entity - 1] = component_mask;
+    }
+
     return entity;
 }
 
@@ -77,18 +89,18 @@ void heim_ecs_add_component(HeimEntity entity, HeimComponent component, void* da
     HeimComponentData* component_data = ecs->component_data[component];
     component_data[entity].entity = entity;
     component_data[entity].data = data;
-    ecs->component_masks[entity] |= (1 << component);
+    heim_bitmask_set(ecs->component_masks[entity - 1], component);
 }
 
 void heim_ecs_remove_component(HeimEntity entity, HeimComponent component) {
     HeimComponentData* component_data = ecs->component_data[component];
     component_data[entity].entity = 0;
     component_data[entity].data = NULL;
-    ecs->component_masks[entity] &= ~(1 << component);  // Clear the bit for this component
+    heim_bitmask_unset(ecs->component_masks[entity - 1], component);
 }
 
 bool heim_ecs_has_component(HeimEntity entity, HeimComponent component) {
-    return ecs->component_masks[entity] & (1 << component);
+    return heim_bitmask_get(ecs->component_masks[entity - 1], component);
 }
 
 void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component) {

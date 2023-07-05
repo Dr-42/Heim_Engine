@@ -71,3 +71,8 @@ void heim_bitmask_resize(HeimBitmask* bitmask, uint64_t size) {
     }
     bitmask->size = size;
 }
+
+void heim_bitmask_push_set(HeimBitmask* bitmask) {
+    heim_bitmask_resize(bitmask, bitmask->size + 1);
+    heim_bitmask_set(bitmask, bitmask->size - 1);
+}

@@ -87,7 +87,7 @@ void heim_model_renderer_system(HeimEntity entity, float dt) {
 
     HeimEntity camera = 0;
 
-    for (size_t i = 0; i < MAX_ENTITIES; i++) {
+    for (size_t i = 1; i < MAX_ENTITIES; i++) {
         if (!heim_ecs_has_component(i, get_camera_component())) {
             continue;
         }

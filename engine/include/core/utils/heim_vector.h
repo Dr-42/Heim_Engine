@@ -44,19 +44,19 @@ void* _heim_vector_insert_at(void* array, uint64_t index, void* value_ptr);
 #define heim_vector_destroy(array) _heim_vector_destroy(array, __FILE__, __LINE__);
 
 #define heim_vector_push(array, value)           \
-    {                                            \
+    do {                                         \
         typeof(value) temp = value;              \
         array = _heim_vector_push(array, &temp); \
-    }
+    } while (0)
 
 #define heim_vector_pop(array, value_ptr) \
     _heim_vector_pop(array, value_ptr)
 
 #define heim_vector_insert_at(array, index, value)           \
-    {                                                        \
+    do {                                                     \
         typeof(value) temp = value;                          \
         array = _heim_vector_insert_at(array, index, &temp); \
-    }
+    } while (0)
 
 #define heim_vector_pop_at(array, index, value_ptr) \
     _heim_vector_pop_at(array, index, value_ptr)
