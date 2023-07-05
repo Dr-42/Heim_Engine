@@ -1,5 +1,6 @@
 #include "ecs/heim_ecs.h"
 
+#include "core/utils/heim_vector.h"
 #include "ecs/heim_ecs_predef.h"
 #include "ecs/predef_comps/heim_camera.h"
 #include "ecs/predef_systems/heim_pbr_model_renderer.h"
@@ -13,7 +14,7 @@ void heim_ecs_create() {
     ecs->entity_count = 0;
     ecs->component_count = 0;
 
-    ecs->systems = HEIM_CALLOC(HeimSystem, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
+    ecs->systems = heim_vector_create(HeimSystem);
 
     heim_ecs_load_predef_components();
     heim_load_predef_systems();
@@ -29,7 +30,7 @@ void heim_ecs_close() {
 
     heim_bitmask_destroy(ecs->entities);
     heim_bitmask_destroy(ecs->components);
-    HEIM_FREE(ecs->systems, HEIM_MEMORY_TYPE_ECS);
+    heim_vector_destroy(ecs->systems);
     HEIM_FREE(ecs, HEIM_MEMORY_TYPE_ECS);
 }
 
@@ -95,26 +96,12 @@ void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component) {
     return component_data[entity].data;
 }
 
-void heim_ecs_add_system(HeimSystem system) {
-    for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
-        if (ecs->systems[i] == 0) {
-            ecs->systems[i] = system;
-            return;
-        }
-    }
-}
-
-void heim_ecs_remove_system(HeimSystem system) {
-    for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
-        if (ecs->systems[i] == system) {
-            ecs->systems[i] = 0;
-            return;
-        }
-    }
+void heim_ecs_register_system(HeimSystem system) {
+    heim_vector_push(ecs->systems, system);
 }
 
 void heim_ecs_update(float dt) {
-    for (uint64_t i = 0; i < MAX_COMPONENTS; i++) {
+    for (uint64_t i = 0; i < heim_vector_length(ecs->systems); i++) {
         if (ecs->systems[i] != 0) {
             if (ecs->systems[i] == heim_pbr_model_renderer_system) {
                 // Clear the camera framebuffers

@@ -30,9 +30,9 @@ void heim_load_predef_systems() {
     heim_pbr_model_renderer_init();
     heim_model_renderer_init();
     heim_ui_sprite_render_system_init();
-    heim_ecs_add_system(heim_pbr_model_renderer_system);
-    heim_ecs_add_system(heim_model_renderer_system);
-    heim_ecs_add_system(heim_ui_sprite_render_system);
+    heim_ecs_register_system(heim_pbr_model_renderer_system);
+    heim_ecs_register_system(heim_model_renderer_system);
+    heim_ecs_register_system(heim_ui_sprite_render_system);
 }
 
 void heim_unload_predef_systems() {

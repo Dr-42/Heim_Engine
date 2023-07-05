@@ -85,11 +85,7 @@ void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component);
 
 /// @brief Registers a new system
 /// @param system Function pointer to the system function
-void heim_ecs_add_system(HeimSystem system);
-
-/// @brief Removes a system
-/// @param system Function pointer to the system function
-void heim_ecs_remove_system(HeimSystem system);
+void heim_ecs_register_system(HeimSystem system);
 
 /// @brief Internal function to update the ECS
 /// @param dt Delta time
