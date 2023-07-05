@@ -8,11 +8,11 @@ static HeimEcs* ecs = NULL;
 
 void heim_ecs_create() {
     ecs = HEIM_CALLOC(HeimEcs, 1, HEIM_MEMORY_TYPE_ECS);
+    ecs->entities = heim_bitmask_create(MAX_ENTITIES);
+    ecs->components = heim_bitmask_create(MAX_COMPONENTS);
     ecs->entity_count = 0;
     ecs->component_count = 0;
 
-    ecs->entities = HEIM_CALLOC(HeimEntity, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
-    ecs->components = HEIM_CALLOC(HeimComponent, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
     ecs->systems = HEIM_CALLOC(HeimSystem, MAX_COMPONENTS, HEIM_MEMORY_TYPE_ECS);
 
     heim_ecs_load_predef_components();
@@ -27,9 +27,9 @@ void heim_ecs_close() {
     }
     heim_unload_predef_systems();
 
+    heim_bitmask_destroy(ecs->entities);
+    heim_bitmask_destroy(ecs->components);
     HEIM_FREE(ecs->systems, HEIM_MEMORY_TYPE_ECS);
-    HEIM_FREE(ecs->components, HEIM_MEMORY_TYPE_ECS);
-    HEIM_FREE(ecs->entities, HEIM_MEMORY_TYPE_ECS);
     HEIM_FREE(ecs, HEIM_MEMORY_TYPE_ECS);
 }
 
@@ -41,17 +41,17 @@ HeimEntity heim_ecs_create_entity() {
         return 0;
     }
     for (uint64_t i = 1; i < MAX_ENTITIES; i++) {
-        if (ecs->entities[i] == 0) {
+        if (heim_bitmask_get(ecs->entities, i) == false) {
             entity = i;
             break;
         }
     }
-    ecs->entities[entity] = entity;
+    heim_bitmask_set(ecs->entities, entity);
     return entity;
 }
 
 void heim_ecs_destroy_entity(HeimEntity entity) {
-    ecs->entities[entity] = 0;
+    heim_bitmask_unset(ecs->entities, entity);
 }
 
 HeimComponent heim_ecs_register_component() {
@@ -61,12 +61,12 @@ HeimComponent heim_ecs_register_component() {
         return 0;
     }
     for (uint64_t i = 1; i < MAX_COMPONENTS; i++) {
-        if (ecs->components[i] == 0) {
+        if (heim_bitmask_get(ecs->components, i) == false) {
             component_id = i;
             break;
         }
     }
-    ecs->components[component_id] = component_id;
+    heim_bitmask_set(ecs->components, component_id);
     ecs->component_data[component_id] = HEIM_CALLOC(HeimComponentData, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
 
     return component_id;

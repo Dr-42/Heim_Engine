@@ -6,6 +6,7 @@
 
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
+#include "core/utils/heim_bitmask.h"
 
 #define MAX_COMPONENTS 64
 #define MAX_ENTITIES 1024
@@ -29,8 +30,8 @@ typedef struct HeimComponentData {
 
 /// @brief A struct containing all the data needed for the ECS
 typedef struct HeimEcs {
-    HeimEntity* entities;
-    HeimComponent* components;
+    HeimBitmask* entities;
+    HeimBitmask* components;
     HeimSystem* systems;
 
     HeimComponentData* component_data[MAX_COMPONENTS];
