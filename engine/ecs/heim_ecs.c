@@ -10,10 +10,11 @@ static HeimEcs* ecs = NULL;
 void heim_ecs_create() {
     ecs = HEIM_CALLOC(HeimEcs, 1, HEIM_MEMORY_TYPE_ECS);
     ecs->entities = heim_bitmask_create(MAX_ENTITIES);
-    ecs->components = heim_bitmask_create(MAX_COMPONENTS);
+    ecs->components = heim_bitmask_create(0);
     ecs->component_masks = heim_vector_create(HeimBitmask*);
     ecs->entity_count = 0;
     ecs->component_count = 0;
+    ecs->component_data = heim_vector_create(HeimComponentData*);
 
     ecs->systems = heim_vector_create(HeimSystem);
 
@@ -22,7 +23,7 @@ void heim_ecs_create() {
 }
 
 void heim_ecs_close() {
-    for (uint64_t i = 1; i < ecs->component_count + 1; i++) {
+    for (uint64_t i = 0; i < ecs->component_count; i++) {
         if (ecs->component_data[i] != 0) {
             HEIM_FREE(ecs->component_data[i], HEIM_MEMORY_TYPE_ECS);
         }
@@ -36,6 +37,7 @@ void heim_ecs_close() {
     heim_bitmask_destroy(ecs->entities);
     heim_bitmask_destroy(ecs->components);
     heim_vector_destroy(ecs->systems);
+    heim_vector_destroy(ecs->component_data);
     HEIM_FREE(ecs, HEIM_MEMORY_TYPE_ECS);
 }
 
@@ -53,7 +55,7 @@ HeimEntity heim_ecs_create_entity() {
         }
     }
     heim_bitmask_set(ecs->entities, entity);
-    HeimBitmask* component_mask = heim_bitmask_create(MAX_COMPONENTS);
+    HeimBitmask* component_mask = heim_bitmask_create(ecs->components->size);
     if (entity == ecs->entity_count) {
         heim_vector_push(ecs->component_masks, component_mask);
     } else {
@@ -68,20 +70,11 @@ void heim_ecs_destroy_entity(HeimEntity entity) {
 }
 
 HeimComponent heim_ecs_register_component() {
-    HeimComponent component_id = ecs->component_count++;
-    if (component_id >= MAX_COMPONENTS) {
-        HEIM_LOG_ERROR("Component count exceeded MAX_COMPONENTS");
-        return 0;
-    }
-    for (uint64_t i = 1; i < MAX_COMPONENTS; i++) {
-        if (heim_bitmask_get(ecs->components, i) == false) {
-            component_id = i;
-            break;
-        }
-    }
-    heim_bitmask_set(ecs->components, component_id);
-    ecs->component_data[component_id] = HEIM_CALLOC(HeimComponentData, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
-
+    HeimComponent component_id = ecs->components->size;
+    ecs->component_count++;
+    heim_bitmask_push_set(ecs->components);
+    HeimComponentData* comps_arr = HEIM_CALLOC(HeimComponentData, MAX_ENTITIES, HEIM_MEMORY_TYPE_ECS);
+    heim_vector_push(ecs->component_data, comps_arr);
     return component_id;
 }
 
