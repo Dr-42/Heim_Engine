@@ -20,12 +20,12 @@ typedef struct HeimSkybox {
     HeimShader* background_shader;
 } HeimSkybox;
 
-HeimSkybox* heim_skybox_create(char* path);
+HeimSkybox* heim_skybox_create(const char* path);
 void heim_skybox_destroy(HeimSkybox* skybox);
 
 // Binds the skybox to the given texture slots
 // The slots should be an array of 3 elements
-void heim_skybox_bind(HeimSkybox* skybox, uint32_t* slots);
+void heim_skybox_bind(HeimSkybox* skybox);
 
 void heim_skybox_render_background(HeimSkybox* skybox, HeimMat4 view, HeimMat4 projection);
 

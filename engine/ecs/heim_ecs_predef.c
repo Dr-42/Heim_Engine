@@ -27,7 +27,7 @@ void heim_ecs_load_predef_components() {
     HEIM_COMPONENT_CAMERA = heim_ecs_register_component();
 }
 void heim_load_predef_systems() {
-    heim_pbr_model_renderer_init();
+    heim_pbr_model_renderer_init("assets/hdr/newport_loft.hdr");
     heim_model_renderer_init();
     heim_ui_sprite_render_system_init();
     heim_ecs_register_system(heim_pbr_model_renderer_system);

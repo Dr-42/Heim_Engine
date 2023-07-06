@@ -6,15 +6,19 @@
 #include "ecs/predef_comps/heim_camera.h"
 #include "math/heim_mat.h"
 #include "math/heim_math_common.h"
+#include "renderer/heim_skybox.h"
 
 float total_time = 0.0f;
 
 static struct {
     HeimShader* shader;
+    HeimSkybox* skybox;
 } pbr_model_render_system;
-void heim_pbr_model_renderer_init() {
+
+void heim_pbr_model_renderer_init(const char* skybox_path) {
     pbr_model_render_system.shader = heim_shader_create();
     heim_shader_init(pbr_model_render_system.shader, "assets/shaders/model_pbr.vert", "assets/shaders/model_pbr.frag");
+    pbr_model_render_system.skybox = heim_skybox_create(skybox_path);
 }
 
 void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, HeimCamera* camera, HeimTransform* camera_transform, float dt) {
@@ -58,30 +62,17 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     if (camera->render_to_texture) {
         heim_camera_bind(camera);
     }
-    /*
-    uniform sampler2D albedoMap;
-    uniform sampler2D normalMap;
-    uniform sampler2D metallicMap;
-    uniform sampler2D roughnessMap;
-    uniform sampler2D aoMap;
 
-    // lights
-    uniform vec3 lightPositions[4];
-    uniform vec3 lightColors[4];
-
-    uniform vec3 camPos;
-    */
-
-    heim_texture_bind(model->albedoMap, 0);
-    heim_shader_set_uniform1i(pbr_model_render_system.shader, "albedoMap", 0);
-    heim_texture_bind(model->normalMap, 1);
-    heim_shader_set_uniform1i(pbr_model_render_system.shader, "normalMap", 1);
-    heim_texture_bind(model->metallicMap, 2);
-    heim_shader_set_uniform1i(pbr_model_render_system.shader, "metallicMap", 2);
-    heim_texture_bind(model->roughnessMap, 3);
-    heim_shader_set_uniform1i(pbr_model_render_system.shader, "roughnessMap", 3);
-    heim_texture_bind(model->aoMap, 4);
-    heim_shader_set_uniform1i(pbr_model_render_system.shader, "aoMap", 4);
+    heim_texture_bind(model->albedoMap, 3);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "albedoMap", 3);
+    heim_texture_bind(model->normalMap, 4);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "normalMap", 4);
+    heim_texture_bind(model->metallicMap, 5);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "metallicMap", 5);
+    heim_texture_bind(model->roughnessMap, 6);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "roughnessMap", 6);
+    heim_texture_bind(model->aoMap, 7);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "aoMap", 7);
 
     heim_shader_set_uniform3f(pbr_model_render_system.shader, "camPos", camera_transform->position);
 
@@ -96,19 +87,26 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
 
     HeimVec3f lightColors[] = {
         (HeimVec3f){150.0f, 150.0f, 150.0f},
+        (HeimVec3f){50.0f, 40.0f, 00.0f},
     };
 
     heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightPositions[0]", lightPos[0]);
     heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightPositions[1]", lightPos[1]);
     heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightColors[0]", lightColors[0]);
+    heim_shader_set_uniform3f(pbr_model_render_system.shader, "lightColors[1]", lightColors[1]);
 
     // set normal matrix
     HeimMat3 normal_matrix = heim_mat3_transpose(heim_mat3_from_mat4(model_matrix));
     heim_shader_set_uniform_mat3(pbr_model_render_system.shader, "normalMatrix", normal_matrix);
 
     heim_shader_bind(pbr_model_render_system.shader);
+    heim_skybox_bind(pbr_model_render_system.skybox);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "irradianceMap", 0);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "prefilterMap", 1);
+    heim_shader_set_uniform1i(pbr_model_render_system.shader, "brdfLUT", 2);
     heim_obj_render(model->obj);
 
+    heim_skybox_render_background(pbr_model_render_system.skybox, view_matrix, projection_matrix);
     if (camera->render_to_texture) {
         heim_camera_unbind(camera);
     }
@@ -155,4 +153,5 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
 
 void heim_pbr_model_renderer_free() {
     heim_shader_free(pbr_model_render_system.shader);
+    heim_skybox_destroy(pbr_model_render_system.skybox);
 }

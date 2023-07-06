@@ -108,7 +108,7 @@ void render_quad() {
     glBindVertexArray(0);
 }
 
-HeimSkybox* heim_skybox_create(char* path) {
+HeimSkybox* heim_skybox_create(const char* path) {
     captureProjection = heim_mat4_perspective(90.0f, 1.0f, 0.1f, 10.0f);
 
     captureViews[0] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){1.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
@@ -119,7 +119,7 @@ HeimSkybox* heim_skybox_create(char* path) {
     captureViews[5] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, -1.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
 
     HeimShader* equirectangularToCubemapShader = heim_shader_create();
-    heim_shader_init(equirectangularToCubemapShader, "assets/shaders/equirect_to_cube.vert", "assets/shaders/equirect_to_cube.frag");
+    heim_shader_init(equirectangularToCubemapShader, "assets/shaders/cubemap.vert", "assets/shaders/equirect_to_cube.frag");
 
     HeimShader* irradianceShader = heim_shader_create();
     heim_shader_init(irradianceShader, "assets/shaders/cubemap.vert", "assets/shaders/irradiance_conv.frag");
@@ -132,6 +132,7 @@ HeimSkybox* heim_skybox_create(char* path) {
 
     HeimShader* skyboxShader = heim_shader_create();
     heim_shader_init(skyboxShader, "assets/shaders/background.vert", "assets/shaders/background.frag");
+    heim_shader_set_uniform1i(skyboxShader, "environmentMap", 0);
 
     HeimSkybox* skybox = HEIM_MALLOC(HeimSkybox, HEIM_MEMORY_TYPE_RENDERER);
 
@@ -157,7 +158,7 @@ HeimSkybox* heim_skybox_create(char* path) {
 
     uint32_t hdrTexture;
     glGenTextures(1, &hdrTexture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->id);
+    glBindTexture(GL_TEXTURE_2D, hdrTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -191,7 +192,7 @@ HeimSkybox* heim_skybox_create(char* path) {
     for (uint32_t i = 0; i < 6; i++) {
         heim_shader_set_uniform_mat4(equirectangularToCubemapShader, "view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skybox->env_cubemap, 0);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         render_cube();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -228,6 +229,7 @@ HeimSkybox* heim_skybox_create(char* path) {
     for (uint32_t i = 0; i < 6; i++) {
         heim_shader_set_uniform_mat4(irradianceShader, "view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skybox->irradiance_map, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         render_cube();
     }
@@ -267,6 +269,7 @@ HeimSkybox* heim_skybox_create(char* path) {
         for (uint32_t i = 0; i < 6; i++) {
             heim_shader_set_uniform_mat4(prefilterShader, "view", captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skybox->prefilter_map, mip);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             render_cube();
         }
@@ -302,9 +305,7 @@ HeimSkybox* heim_skybox_create(char* path) {
     heim_shader_free(brdfShader);
     heim_shader_free(equirectangularToCubemapShader);
 
-    skybox->background_shader = heim_shader_create();
-    heim_shader_init(skybox->background_shader, "shaders/background.vert", "shaders/background.frag");
-    heim_shader_set_uniform1i(skybox->background_shader, "environmentMap", 0);
+    skybox->background_shader = skyboxShader;
 
     return skybox;
 }
@@ -318,12 +319,12 @@ void heim_skybox_destroy(HeimSkybox* skybox) {
     HEIM_FREE(skybox, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void heim_skybox_bind(HeimSkybox* skybox, uint32_t* slots) {
-    glActiveTexture(GL_TEXTURE0 + slots[0]);
+void heim_skybox_bind(HeimSkybox* skybox) {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->irradiance_map);
-    glActiveTexture(GL_TEXTURE0 + slots[1]);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->prefilter_map);
-    glActiveTexture(GL_TEXTURE0 + slots[2]);
+    glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, skybox->brdf_lut);
 }
 
@@ -331,6 +332,10 @@ void heim_skybox_render_background(HeimSkybox* skybox, HeimMat4 view, HeimMat4 p
     heim_shader_bind(skybox->background_shader);
     heim_shader_set_uniform_mat4(skybox->background_shader, "view", view);
     heim_shader_set_uniform_mat4(skybox->background_shader, "projection", projection);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->env_cubemap);
+    heim_shader_set_uniform1i(skybox->background_shader, "environmentMap", 0);
 
     glDepthFunc(GL_LEQUAL);
     render_cube();

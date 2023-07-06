@@ -75,6 +75,15 @@ void testbed_init() {
     brun_roughness = heim_texture_create("assets/textures/rust/roughness.png");
     brun_ao = heim_texture_create("assets/textures/rust/ao.png");
     */
+    /*
+    object2 = heim_obj_load("assets/models/teapot.obj");
+
+    brun_albedo = heim_texture_create("assets/textures/teapot/albedo.png");
+    brun_normal = heim_texture_create("assets/textures/teapot/normal.png");
+    brun_metallic = heim_texture_create("assets/textures/teapot/roughness.png");
+    brun_roughness = heim_texture_create("assets/textures/teapot/roughness.png");
+    brun_ao = heim_texture_create("assets/textures/teapot/ao.png");
+    */
 
     model2 = (HeimPBRModel){
         .obj = object2,
