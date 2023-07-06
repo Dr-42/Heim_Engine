@@ -65,7 +65,7 @@ HeimMat4 heim_mat4_ortho(float left, float right, float bottom, float top, float
 
 HeimMat4 heim_mat4_perspective(float fov, float aspect, float near, float far) {
     HeimMat4 mat = {0};
-    glm_perspective(fov, aspect, near, far, mat.m);
+    glm_perspective(heim_math_deg_to_rad(fov), aspect, near, far, mat.m);
     return mat;
 }
 
