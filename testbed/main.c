@@ -1,11 +1,6 @@
 #include <core/heim_engine.h>
 #include <ecs/heim_ecs_predef.h>
-#include <ecs/predef_comps/heim_camera.h>
-#include <ecs/predef_comps/heim_model.h>
-#include <ecs/predef_comps/heim_pbr_model.h>
-#include <ecs/predef_comps/heim_transform.h>
-#include <ecs/predef_comps/heim_ui_sprite.h>
-#include <ecs/predef_comps/heim_uitransform.h>
+#include <ecs/predef_comps/heim_all_predef_comps.h>
 #include <math/heim_math_common.h>
 #include <renderer/heim_obj.h>
 #include <renderer/heim_sprite.h>
