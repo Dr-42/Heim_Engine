@@ -8,5 +8,3 @@
 typedef struct HeimUiSprite {
     HeimSprite* sprite;
 } HeimUiSprite;
-
-#endif  // HEIM_UI_SPRITE_H
