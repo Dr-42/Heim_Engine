@@ -7,7 +7,6 @@
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include "core/utils/heim_bitmask.h"
-#define MAX_ENTITIES 1024
 
 typedef struct HeimEcs HeimEcs;
 

@@ -9,7 +9,7 @@ static HeimEcs* ecs = NULL;
 
 void heim_ecs_create() {
     ecs = HEIM_CALLOC(HeimEcs, 1, HEIM_MEMORY_TYPE_ECS);
-    ecs->entities = heim_bitmask_create(MAX_ENTITIES);
+    ecs->entities = heim_bitmask_create(0);
     ecs->components = heim_bitmask_create(0);
     ecs->component_masks = heim_vector_create(HeimBitmask*);
     ecs->entity_count = 0;
@@ -43,25 +43,21 @@ void heim_ecs_close() {
 
 HeimEntity heim_ecs_create_entity() {
     HeimEntity entity = ecs->entity_count;
-
-    if (entity >= MAX_ENTITIES) {
-        HEIM_LOG_ERROR("Entity count exceeded MAX_ENTITIES");
-        return 0;
-    }
     for (uint64_t i = 0; i < ecs->entity_count; i++) {
         if (heim_bitmask_get(ecs->entities, i) == false) {
             entity = i;
             break;
         }
     }
-    heim_bitmask_set(ecs->entities, entity);
     HeimBitmask* component_mask = heim_bitmask_create(ecs->component_count);
     if (entity == ecs->entity_count) {
+        heim_bitmask_push_set(ecs->entities);
         heim_vector_push(ecs->component_masks, component_mask);
         HeimComponentData* comps_arr = HEIM_CALLOC(HeimComponentData, ecs->component_count, HEIM_MEMORY_TYPE_ECS);
         heim_vector_push(ecs->component_data, comps_arr);
         ecs->entity_count++;
     } else {
+        heim_bitmask_set(ecs->entities, entity);
         ecs->component_masks[entity] = component_mask;
         HeimComponentData* comps_arr = HEIM_CALLOC(HeimComponentData, ecs->component_count, HEIM_MEMORY_TYPE_ECS);
         ecs->component_data[entity] = comps_arr;
