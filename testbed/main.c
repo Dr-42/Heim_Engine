@@ -17,10 +17,10 @@
 float total_time = 0.0f;
 
 HeimEntity entity1, entity2, entity3;
-HeimObj *object1, *object2;
+HeimObj *object1, *object2, *object3;
 HeimTexture *tex1, *tex2, *tex3;
 HeimModel model1;
-HeimPBRModel model2;
+HeimPBRModel model2, model3;
 HeimTransform transform1, transform2;
 HeimSprite *sprite;
 HeimUiTransform ui_transform;
@@ -32,6 +32,7 @@ HeimTransform camera_transform = {
     .position = (HeimVec3f){0.0f, 0.0f, 3.0f},
 };
 HeimTexture *brun_albedo, *brun_normal, *brun_metallic, *brun_roughness, *brun_ao;
+HeimTexture *cube_albedo, *cube_normal, *cube_metallic, *cube_roughness, *cube_ao;
 
 HeimEntity camera_surface_entity;
 HeimSprite *camera_surface_sprite;
@@ -66,15 +67,13 @@ void testbed_init() {
     brun_roughness = heim_texture_create("assets/textures/brunhilda/DefaultMaterial_Roughness.png");
     brun_ao = heim_texture_create("assets/textures/brunhilda/DefaultMaterial_Mixed_AO.png");
 
-    /*
-    object2 = heim_obj_load("assets/models/cube.obj");
+    object3 = heim_obj_load("assets/models/cube.obj");
 
-    brun_albedo = heim_texture_create("assets/textures/rust/albedo.png");
-    brun_normal = heim_texture_create("assets/textures/rust/normal.png");
-    brun_metallic = heim_texture_create("assets/textures/rust/metallic.png");
-    brun_roughness = heim_texture_create("assets/textures/rust/roughness.png");
-    brun_ao = heim_texture_create("assets/textures/rust/ao.png");
-    */
+    cube_albedo = heim_texture_create("assets/textures/rust/albedo.png");
+    cube_normal = heim_texture_create("assets/textures/rust/normal.png");
+    cube_metallic = heim_texture_create("assets/textures/rust/metallic.png");
+    cube_roughness = heim_texture_create("assets/textures/rust/roughness.png");
+    cube_ao = heim_texture_create("assets/textures/rust/ao.png");
     /*
     object2 = heim_obj_load("assets/models/teapot.obj");
 
@@ -93,6 +92,16 @@ void testbed_init() {
         .roughnessMap = brun_roughness,
         .aoMap = brun_ao,
     };
+
+    model3 = (HeimPBRModel){
+        .obj = object3,
+        .albedoMap = cube_albedo,
+        .normalMap = cube_normal,
+        .metallicMap = cube_metallic,
+        .roughnessMap = cube_roughness,
+        .aoMap = cube_ao,
+    };
+
     transform2 = (HeimTransform){
         .position = {0.5f, -0.5f, 0.0f},
         .rotation = {0.0f, 0.0f, 0.0f},
@@ -146,9 +155,18 @@ uint64_t frame_count = 0;
 
 void testbed_update(float dt) {
     frame_count++;
-    (void)dt;
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
         heim_engine_should_close(true);
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_LEFT_SHIFT)) {
+        heim_ecs_remove_component(entity2, get_pbr_model_component());
+        heim_ecs_add_component(entity2, get_pbr_model_component(), &model3);
+    }
+
+    if (heim_input_key_pressed(GLFW_KEY_LEFT_ALT)) {
+        heim_ecs_remove_component(entity2, get_pbr_model_component());
+        heim_ecs_add_component(entity2, get_pbr_model_component(), &model2);
     }
 
     if (heim_input_key_pressed(GLFW_KEY_W)) {
@@ -247,6 +265,7 @@ int main(void) {
 
     heim_texture_free(tex2);
     heim_obj_free(object2);
+    heim_obj_free(object3);
 
     heim_texture_free(tex3);
     heim_sprite_free(sprite);
@@ -260,6 +279,11 @@ int main(void) {
     heim_texture_free(brun_roughness);
     heim_texture_free(brun_ao);
 
+    heim_texture_free(cube_albedo);
+    heim_texture_free(cube_normal);
+    heim_texture_free(cube_metallic);
+    heim_texture_free(cube_roughness);
+    heim_texture_free(cube_ao);
     heim_engine_shutdown();
     return 0;
 }

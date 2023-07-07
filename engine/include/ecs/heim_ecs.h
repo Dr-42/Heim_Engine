@@ -22,7 +22,7 @@ typedef void (*HeimSystem)(HeimEntity entity, float dt);
 
 /// @brief A struct containing the entity and the component data
 typedef struct HeimComponentData {
-    HeimEntity entity;
+    HeimComponent component;
     void* data;
 } HeimComponentData;
 

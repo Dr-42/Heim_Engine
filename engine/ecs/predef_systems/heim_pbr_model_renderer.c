@@ -147,7 +147,9 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
         pbr_model_render_system.camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
     }
 
-    heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, pbr_model_render_system.camera, pbr_model_render_system.camera_transform, dt);
+    if (model && transform) {
+        heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, pbr_model_render_system.camera, pbr_model_render_system.camera_transform, dt);
+    }
 }
 
 void heim_pbr_model_renderer_free() {
