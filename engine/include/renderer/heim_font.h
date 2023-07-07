@@ -10,6 +10,8 @@ typedef struct HeimCharacter {
     HeimVec2f size;
     HeimVec2f bearing;
     uint32_t advance;
+    HeimVec2f tex_coords_start;
+    HeimVec2f tex_coords_end;
 } HeimCharacter;
 
 typedef struct HeimFont {
@@ -18,6 +20,7 @@ typedef struct HeimFont {
     uint32_t vao;
     uint32_t vbo;
     HeimVec2f size;
+    float atlas_width;
 } HeimFont;
 
 HeimFont* heim_font_create(HeimVec2f size);

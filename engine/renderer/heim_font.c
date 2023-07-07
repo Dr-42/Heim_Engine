@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 #include "core/heim_logger.h"
+#include "core/utils/heim_vector.h"
+#include "math/heim_math_common.h"
 #include FT_FREETYPE_H
 
 #include "core/heim_memory.h"
@@ -35,6 +37,8 @@ void heim_font_free(HeimFont* font) {
 
 void heim_font_init(HeimFont* font, char* path, uint32_t size) {
     FT_Library ft;
+    int atlas_width = 0;
+    int atlas_height = 0;
 
     if (FT_Init_FreeType(&ft)) {
         HEIM_LOG_ERROR("Failed to initialize FreeType library");
@@ -53,33 +57,56 @@ void heim_font_init(HeimFont* font, char* path, uint32_t size) {
             HEIM_LOG_ERROR("Failed to load glyph");
             continue;
         }
+        atlas_width += face->glyph->bitmap.width;
+        atlas_height = heim_math_max(atlas_height, face->glyph->bitmap.rows);
+    }
 
-        uint32_t texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D,
-                     0,
-                     GL_RED,
-                     face->glyph->bitmap.width,
-                     face->glyph->bitmap.rows,
-                     0,
-                     GL_RED,
-                     GL_UNSIGNED_BYTE,
-                     face->glyph->bitmap.buffer);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    font->atlas_width = atlas_width;
+
+    uint32_t atlas;
+    glGenTextures(1, &atlas);
+    glBindTexture(GL_TEXTURE_2D, atlas);
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RED,
+        atlas_width,
+        atlas_height,
+        0,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        NULL);
+
+    int x = 0;
+    for (uint8_t i = 0; i < 128; i++) {
+        if (FT_Load_Char(face, i, FT_LOAD_RENDER)) {
+            HEIM_LOG_ERROR("Failed to load glyph");
+            continue;
+        }
+        glTexSubImage2D(
+            GL_TEXTURE_2D,
+            0,
+            x,
+            0,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer);
 
         HeimCharacter character = {
-            .texture_id = texture,
+            .texture_id = atlas,
             .size = (HeimVec2f){face->glyph->bitmap.width, face->glyph->bitmap.rows},
             .bearing = (HeimVec2f){face->glyph->bitmap_left, face->glyph->bitmap_top},
             .advance = face->glyph->advance.x,
-        };
+            .tex_coords_start = (HeimVec2f){x / (float)atlas_width, 0},
+            .tex_coords_end = (HeimVec2f){(x + face->glyph->bitmap.width) / (float)atlas_width, face->glyph->bitmap.rows / (float)atlas_height}};
 
         font->characters[i] = character;
+        x += face->glyph->bitmap.width;
     }
+    // Generate mipmaps
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
     FT_Done_Face(face);
@@ -94,6 +121,9 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->vao);
 
+    uint32_t vertexindex = 0;
+    float* verts = heim_vector_create(float);
+
     for (uint8_t* c = (uint8_t*)text; *c; c++) {
         HeimCharacter ch = font->characters[*c];
 
@@ -104,25 +134,32 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
         float h = ch.size.y * scale;
 
         float vertices[6][4] = {
-            {xpos, ypos, 0.0f, 0.0f},
-            {xpos, ypos + h, 0.0f, 1.0f},
-            {xpos + w, ypos + h, 1.0f, 1.0f},
+            {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
+            {xpos, ypos, ch.tex_coords_start.x, ch.tex_coords_start.y},
+            {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y},
 
-            {xpos, ypos, 0.0f, 0.0f},
-            {xpos + w, ypos + h, 1.0f, 1.0f},
-            {xpos + w, ypos, 1.0f, 0.0f},
-        };
-
-        glBindTexture(GL_TEXTURE_2D, ch.texture_id);
-        glBindBuffer(GL_ARRAY_BUFFER, font->vbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+            {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
+            {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y},
+            {xpos + w, ypos + h, ch.tex_coords_end.x, ch.tex_coords_end.y}};
 
         position.x += (ch.advance >> 6) * scale;
+
+        for (uint8_t i = 0; i < 6; i++) {
+            heim_vector_push(verts, vertices[i][0]);
+            heim_vector_push(verts, vertices[i][1]);
+            heim_vector_push(verts, vertices[i][2]);
+            heim_vector_push(verts, vertices[i][3]);
+        }
+
+        vertexindex += 24;
     }
+    glBindTexture(GL_TEXTURE_2D, font->characters[0].texture_id);
+    glBindBuffer(GL_ARRAY_BUFFER, font->vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexindex, verts, GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, vertexindex / 4);
 
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    heim_vector_destroy(verts);
 }
