@@ -156,8 +156,6 @@ uint64_t frame_count = 0;
 
 char text[256];
 void testbed_update(float dt) {
-    frame_count++;
-
     if (frame_count % 60 == 0) {
         sprintf(text, "Heim Engine - FPS: %f", 1.0f / dt);
     }
@@ -217,7 +215,7 @@ void testbed_update(float dt) {
 
     // Reorient camera without yaw. Readjust the up and front vectors.
 
-    if (frame_count > 1) {
+    if (frame_count) {
         if (mouseDelta.x != 0.0f || mouseDelta.y != 0.0f || mouseDelta.x < 0.5f || mouseDelta.y < 0.5f) {
             camera->yaw -= mouseDelta.x * sensitivity * dt;
             camera->pitch -= mouseDelta.y * sensitivity * dt;
@@ -256,6 +254,7 @@ void testbed_update(float dt) {
             heim_engine_set_fullscreen(!heim_engine_is_fullscreen());
         }
     }
+    frame_count++;
 }
 
 int main(void) {
