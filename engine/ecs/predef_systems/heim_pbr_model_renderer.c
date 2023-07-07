@@ -13,6 +13,8 @@ float total_time = 0.0f;
 static struct {
     HeimShader* shader;
     HeimSkybox* skybox;
+    HeimCamera* camera;
+    HeimTransform* camera_transform;
 } pbr_model_render_system;
 
 void heim_pbr_model_renderer_init(const char* skybox_path) {
@@ -99,7 +101,6 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     HeimMat3 normal_matrix = heim_mat3_transpose(heim_mat3_from_mat4(model_matrix));
     heim_shader_set_uniform_mat3(pbr_model_render_system.shader, "normalMatrix", normal_matrix);
 
-    heim_shader_bind(pbr_model_render_system.shader);
     heim_skybox_bind(pbr_model_render_system.skybox);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "irradianceMap", 0);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "prefilterMap", 1);
@@ -130,25 +131,23 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
     HeimTransform* transform = heim_ecs_get_component_data(entity, get_transform_component());
 
     HeimEntity camera = 0;
-
-    for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
-        if (!heim_ecs_has_component(i, get_camera_component())) {
-            continue;
+    if (pbr_model_render_system.camera == NULL) {
+        for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
+            if (!heim_ecs_has_component(i, get_camera_component())) {
+                continue;
+            }
+            camera = i;
+            break;
         }
-
-        camera = i;
-        break;
+        if (!camera) {
+            HEIM_LOG_WARN("No camera found");
+            return;
+        }
+        pbr_model_render_system.camera = heim_ecs_get_component_data(camera, get_camera_component());
+        pbr_model_render_system.camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
     }
 
-    if (!camera) {
-        HEIM_LOG_WARN("No camera found");
-        return;
-    }
-
-    HeimCamera* camera_data = heim_ecs_get_component_data(camera, get_camera_component());
-    HeimTransform* camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
-
-    heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, camera_data, camera_transform, dt);
+    heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, pbr_model_render_system.camera, pbr_model_render_system.camera_transform, dt);
 }
 
 void heim_pbr_model_renderer_free() {
