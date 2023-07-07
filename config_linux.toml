@@ -6,8 +6,8 @@ name = "libheimdall-engine"
 src = "engine"
 include_dir = "engine/include"
 type = 'dll'
-cflags = " -g -Wall -Wextra"
-libs = "-lGLEW -lglfw -lm"
+cflags = " -g -Wall -Wextra `pkg-config --cflags freetype2`"
+libs = "-lGLEW -lglfw `pkg-config --libs freetype2` -lm"
 
 [[targets]]
 name = "testbed"

@@ -2,6 +2,7 @@
 #include <ecs/heim_ecs_predef.h>
 #include <ecs/predef_comps/heim_all_predef_comps.h>
 #include <math/heim_math_common.h>
+#include <renderer/heim_font.h>
 #include <renderer/heim_obj.h>
 #include <renderer/heim_sprite.h>
 #include <renderer/heim_texture.h>
@@ -36,6 +37,8 @@ HeimUiTransform camera_surface_transform = {
     .position = {(float)WINDOW_WIDTH / 2, (float)WINDOW_HEIGHT / 2},
     .size = (HeimVec2f){(float)WINDOW_WIDTH, (float)WINDOW_HEIGHT},
 };
+
+HeimFont *font;
 
 void testbed_init() {
     entity1 = heim_ecs_create_entity();
@@ -142,14 +145,24 @@ void testbed_init() {
     };
     heim_ecs_add_component(camera_surface_entity, get_ui_sprite_component(), &camera_surface_ui_sprite);
     heim_ecs_add_component(camera_surface_entity, get_ui_transform_component(), &camera_surface_transform);
+
+    font = heim_font_create((HeimVec2f){WINDOW_WIDTH, WINDOW_HEIGHT});
+    heim_font_init(font, "assets/fonts/typewriter.ttf", 32);
 }
 
 float speed = 2.0f;
 float sensitivity = 2.0f;
 uint64_t frame_count = 0;
 
+char text[256];
 void testbed_update(float dt) {
     frame_count++;
+
+    if (frame_count % 60 == 0) {
+        sprintf(text, "Heim Engine - FPS: %f", 1.0f / dt);
+    }
+    heim_font_render_text(font, text, (HeimVec2f){1.0, 20.0}, 1.0f, (HeimVec3f){1.0f, 1.0f, 1.0f});
+
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
         heim_engine_should_close(true);
     }
@@ -279,6 +292,9 @@ int main(void) {
     heim_texture_free(cube_metallic);
     heim_texture_free(cube_roughness);
     heim_texture_free(cube_ao);
+
+    heim_font_free(font);
+
     heim_engine_shutdown();
     return 0;
 }
