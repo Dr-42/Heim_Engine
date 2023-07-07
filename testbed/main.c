@@ -12,7 +12,7 @@
 
 float total_time = 0.0f;
 
-HeimEntity entity1, entity2, entity3;
+HeimEntity entity1, entity2, entity3, fps_entity;
 HeimObj *object1, *object2, *object3;
 HeimTexture *tex1, *tex2, *tex3;
 HeimModel model1;
@@ -39,6 +39,9 @@ HeimUiTransform camera_surface_transform = {
 };
 
 HeimFont *font;
+HeimUiTransform fps_transform;
+HeimUiText fps_text;
+char text[256];
 
 void testbed_init() {
     entity1 = heim_ecs_create_entity();
@@ -146,20 +149,32 @@ void testbed_init() {
     heim_ecs_add_component(camera_surface_entity, get_ui_sprite_component(), &camera_surface_ui_sprite);
     heim_ecs_add_component(camera_surface_entity, get_ui_transform_component(), &camera_surface_transform);
 
+    fps_entity = heim_ecs_create_entity();
     font = heim_font_create((HeimVec2f){WINDOW_WIDTH, WINDOW_HEIGHT});
     heim_font_init(font, "assets/fonts/typewriter.ttf", 32);
+    fps_transform = (HeimUiTransform){
+        .position = {1.0f, 10.0f},
+        .size = {1.0f, 1.0f},
+        .color = (HeimVec4f){1.0f, 1.0f, 1.0f, 1.0f},
+    };
+
+    fps_text = (HeimUiText){
+        .font = font,
+        .text = text,
+    };
+
+    heim_ecs_add_component(fps_entity, get_ui_transform_component(), &fps_transform);
+    heim_ecs_add_component(fps_entity, get_ui_text_component(), &fps_text);
 }
 
 float speed = 2.0f;
 float sensitivity = 2.0f;
 uint64_t frame_count = 0;
 
-char text[256];
 void testbed_update(float dt) {
     if (frame_count % 60 == 0) {
         sprintf(text, "Heim Engine - FPS: %f", 1.0f / dt);
     }
-    heim_font_render_text(font, text, (HeimVec2f){1.0, 20.0}, 1.0f, (HeimVec3f){1.0f, 1.0f, 1.0f});
 
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
         heim_engine_should_close(true);

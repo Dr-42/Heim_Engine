@@ -94,7 +94,7 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->vao);
 
-    for (char* c = text; *c; c++) {
+    for (uint8_t* c = (uint8_t*)text; *c; c++) {
         HeimCharacter ch = font->characters[*c];
 
         float xpos = position.x + ch.bearing.x * scale;

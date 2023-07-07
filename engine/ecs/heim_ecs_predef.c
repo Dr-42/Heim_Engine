@@ -10,18 +10,21 @@
 #include "ecs/predef_systems/heim_model_renderer.h"
 #include "ecs/predef_systems/heim_pbr_model_renderer.h"
 #include "ecs/predef_systems/heim_ui_sprite_renderer.h"
+#include "ecs/predef_systems/heim_ui_text_renderer.h"
 
-uint64_t HEIM_COMPONENT_UI_TRANSFORM;
-uint64_t HEIM_COMPONENT_TRANSFORM;
-uint64_t HEIM_COMPONENT_UI_SPRITE;
-uint64_t HEIM_COMPONENT_PBR_MODEL;
-uint64_t HEIM_COMPONENT_MODEL;
-uint64_t HEIM_COMPONENT_CAMERA;
+HeimComponent HEIM_COMPONENT_UI_TRANSFORM;
+HeimComponent HEIM_COMPONENT_TRANSFORM;
+HeimComponent HEIM_COMPONENT_UI_SPRITE;
+HeimComponent HEIM_COMPONENT_UI_TEXT;
+HeimComponent HEIM_COMPONENT_PBR_MODEL;
+HeimComponent HEIM_COMPONENT_MODEL;
+HeimComponent HEIM_COMPONENT_CAMERA;
 
 void heim_ecs_load_predef_components() {
     HEIM_COMPONENT_UI_TRANSFORM = heim_ecs_register_component();
     HEIM_COMPONENT_TRANSFORM = heim_ecs_register_component();
     HEIM_COMPONENT_UI_SPRITE = heim_ecs_register_component();
+    HEIM_COMPONENT_UI_TEXT = heim_ecs_register_component();
     HEIM_COMPONENT_MODEL = heim_ecs_register_component();
     HEIM_COMPONENT_PBR_MODEL = heim_ecs_register_component();
     HEIM_COMPONENT_CAMERA = heim_ecs_register_component();
@@ -33,6 +36,7 @@ void heim_load_predef_systems() {
     heim_ecs_register_system(heim_pbr_model_renderer_system);
     heim_ecs_register_system(heim_model_renderer_system);
     heim_ecs_register_system(heim_ui_sprite_render_system);
+    heim_ecs_register_system(heim_ui_text_render_system);
 }
 
 void heim_unload_predef_systems() {
@@ -45,21 +49,25 @@ uint64_t get_ui_transform_component() {
     return HEIM_COMPONENT_UI_TRANSFORM;
 }
 
-uint64_t get_transform_component() {
+HeimComponent get_transform_component() {
     return HEIM_COMPONENT_TRANSFORM;
 }
 
-uint64_t get_ui_sprite_component() {
+HeimComponent get_ui_sprite_component() {
     return HEIM_COMPONENT_UI_SPRITE;
 }
 
-uint64_t get_model_component() {
+HeimComponent get_ui_text_component() {
+    return HEIM_COMPONENT_UI_TEXT;
+}
+
+HeimComponent get_model_component() {
     return HEIM_COMPONENT_MODEL;
 }
-uint64_t get_pbr_model_component() {
+HeimComponent get_pbr_model_component() {
     return HEIM_COMPONENT_PBR_MODEL;
 }
 
-uint64_t get_camera_component() {
+HeimComponent get_camera_component() {
     return HEIM_COMPONENT_CAMERA;
 }
