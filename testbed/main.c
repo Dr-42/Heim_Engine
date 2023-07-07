@@ -119,7 +119,7 @@ void testbed_init() {
 
     camera_entity = heim_ecs_create_entity();
     camera = heim_camera_new(
-        45.0f,
+        90.0f,
         (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
         0.1f,
         100.0f,
