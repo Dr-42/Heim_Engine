@@ -1,5 +1,4 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#pragma once
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -53,5 +52,3 @@ void heim_engine_shutdown();
 /// @param heim Pointer to the HeimEngine struct.
 /// @param should_close The value to set the should close flag to.
 void heim_engine_should_close(bool should_close);
-
-#endif /* ENGINE_H */

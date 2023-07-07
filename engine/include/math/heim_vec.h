@@ -1,5 +1,4 @@
-#ifndef HEIM_VEC_H
-#define HEIM_VEC_H
+#pragma once
 
 #include <math.h>
 #include <stdint.h>
@@ -40,5 +39,3 @@ HeimVec3f heim_vec3f_mul(HeimVec3f a, float b);
 float heim_vec3f_dot(HeimVec3f a, HeimVec3f b);
 HeimVec3f heim_vec3f_cross(HeimVec3f a, HeimVec3f b);
 HeimVec3f heim_vec3f_normalize(HeimVec3f a);
-
-#endif  // HEIM_VEC_H

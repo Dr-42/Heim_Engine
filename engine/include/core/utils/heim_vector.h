@@ -1,6 +1,4 @@
-#ifndef HEIM_VECTOR_H
-#define HEIM_VECTOR_H
-
+#pragma once
 #include <stdint.h>
 
 /*
@@ -75,5 +73,3 @@ void* _heim_vector_insert_at(void* array, uint64_t index, void* value_ptr);
 
 #define heim_vector_length_set(array, value) \
     _heim_vector_field_set(array, HEIM_VECTOR_LENGTH, value)
-
-#endif  // HEIM_VECTOR_H

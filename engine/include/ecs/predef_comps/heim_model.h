@@ -1,5 +1,4 @@
-#ifndef HEIM_MODEL_H
-#define HEIM_MODEL_H
+#pragma once
 
 #include <stdint.h>
 
@@ -10,5 +9,3 @@ typedef struct HeimModel {
     HeimObj* obj;
     HeimTexture* texture;
 } HeimModel;
-
-#endif  // HEIM_MODEL_H

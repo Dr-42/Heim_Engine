@@ -1,5 +1,4 @@
-#ifndef HEIM_MATH_COMMON_H
-#define HEIM_MATH_COMMON_H
+#pragma once
 
 #include <stdint.h>
 
@@ -23,5 +22,3 @@ float heim_math_tan(float a);
 float heim_math_asin(float a);
 float heim_math_acos(float a);
 float heim_math_atan(float a);
-
-#endif  // HEIM_MATH_COMMON_H

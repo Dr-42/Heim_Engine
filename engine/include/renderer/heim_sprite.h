@@ -1,5 +1,4 @@
-#ifndef HEIM_SPRITE_H
-#define HEIM_SPRITE_H
+#pragma once
 
 #include <GL/glew.h>
 
@@ -31,5 +30,3 @@ typedef struct HeimSprite {
 HeimSprite* heim_create_sprite(HeimTexture* texture);
 void heim_sprite_free(HeimSprite* sprite);
 void heim_sprite_render(HeimSprite* sprite);
-
-#endif  // HEIM_SPRITE_H

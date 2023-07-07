@@ -1,5 +1,4 @@
-#ifndef HEIM_WINDOWING_H
-#define HEIM_WINDOWING_H
+#pragma once
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -55,5 +54,3 @@ HeimVec2ui heim_window_get_window_size();
 /// @brief Sets fullscreen mode.
 /// @param fullscreen Whether or not to set fullscreen mode.
 void heim_window_set_fullscreen(bool fullscreen);
-
-#endif  // HEIM_WINDOWING_H

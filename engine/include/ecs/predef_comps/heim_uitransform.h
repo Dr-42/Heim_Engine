@@ -1,5 +1,4 @@
-#ifndef HEIM_UITRANSFORM_H
-#define HEIM_UITRANSFORM_H
+#pragma once
 
 #include "math/heim_vec.h"
 
@@ -9,5 +8,3 @@ typedef struct HeimUiTransform {
     float rotation;
     HeimVec4f color;
 } HeimUiTransform;
-
-#endif  // HEIM_UITRANSFORM_H

@@ -1,5 +1,4 @@
-#ifndef HEIM_MAT_H
-#define HEIM_MAT_H
+#pragma once
 
 #include "math/heim_vec.h"
 
@@ -33,5 +32,3 @@ HeimMat3 heim_mat3_identity();
 HeimMat3 heim_mat3_transpose(HeimMat3 mat);
 HeimMat3 heim_mat3_inverse(HeimMat3 mat);
 HeimMat3 heim_mat3_from_mat4(HeimMat4 mat);
-
-#endif  // HEIM_MAT_H

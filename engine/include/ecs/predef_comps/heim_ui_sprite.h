@@ -1,5 +1,4 @@
-#ifndef HEIM_UI_SPRITE_H
-#define HEIM_UI_SPRITE_H
+#pragma once
 
 #include <stdint.h>
 

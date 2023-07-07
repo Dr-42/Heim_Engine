@@ -1,5 +1,4 @@
-#ifndef HEIM_ECS_H
-#define HEIM_ECS_H
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -89,4 +88,3 @@ uint64_t heim_ecs_get_entity_count();
 /// @brief Internal function to update the ECS
 /// @param dt Delta time
 void heim_ecs_update(float dt);
-#endif  // HEIM_ECS_H

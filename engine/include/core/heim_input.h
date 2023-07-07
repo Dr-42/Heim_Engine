@@ -1,5 +1,4 @@
-#ifndef HEIM_INPUT_H
-#define HEIM_INPUT_H
+#pragma once
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -49,5 +48,3 @@ bool heim_input_mouse_released(int button);
 
 HeimVec2f heim_input_mouse_position();
 HeimVec2f heim_input_mouse_delta();
-
-#endif  // HEIM_INPUT_H

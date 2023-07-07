@@ -1,5 +1,4 @@
-#ifndef HEIM_BITMASK_H
-#define HEIM_BITMASK_H
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -21,5 +20,3 @@ void heim_bitmask_clear(HeimBitmask* bitmask);
 void heim_bitmask_resize(HeimBitmask* bitmask, uint64_t size);
 
 void heim_bitmask_push_set(HeimBitmask* bitmask);
-
-#endif  // HEIM_BITMASK_H

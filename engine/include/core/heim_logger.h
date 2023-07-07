@@ -1,5 +1,4 @@
-#ifndef HEIM_LOGGER_H
-#define HEIM_LOGGER_H
+#pragma once
 
 #include <stdio.h>
 
@@ -40,5 +39,3 @@ void heim_logger_close();
 #define HEIM_LOG_WARN(fmt, ...) heim_log(HEIM_LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
 /// @brief Log a message with the error level.
 #define HEIM_LOG_ERROR(fmt, ...) heim_log(HEIM_LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
-
-#endif

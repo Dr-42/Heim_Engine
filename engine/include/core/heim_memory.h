@@ -1,5 +1,4 @@
-#ifndef HEIM_MEMORY_H
-#define HEIM_MEMORY_H
+#pragma once
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -55,5 +54,3 @@ void *heim_memset(void *s, int c, size_t n);
 #define HEIM_REALLOC(type, ptr, heim_type) (type *)heim_realloc(ptr, sizeof(type), heim_type, __FILE__, __LINE__)
 /// @brief Wrapper for free.
 #define HEIM_FREE(ptr, heim_type) heim_free(ptr, heim_type)
-
-#endif  // HEIM_MEMORY_H

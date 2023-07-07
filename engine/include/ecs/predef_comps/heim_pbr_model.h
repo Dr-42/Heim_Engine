@@ -1,5 +1,4 @@
-#ifndef HEIM_PBR_MODEL_H
-#define HEIM_PBR_MODEL_H
+#pragma once
 
 #include <stdint.h>
 
@@ -14,5 +13,3 @@ typedef struct HeimPBRModel {
     HeimTexture* roughnessMap;
     HeimTexture* aoMap;
 } HeimPBRModel;
-
-#endif  // HEIM_MODEL_H

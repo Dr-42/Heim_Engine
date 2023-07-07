@@ -1,5 +1,4 @@
-#ifndef HEIM_CAMERA_H
-#define HEIM_CAMERA_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -33,5 +32,3 @@ void heim_camera_bind(HeimCamera* camera);
 void heim_camera_unbind(HeimCamera* camera);
 
 void heim_camera_clear(HeimCamera* camera);
-
-#endif  // HEIM_CAMERA_H

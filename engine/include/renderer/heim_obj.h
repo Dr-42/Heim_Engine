@@ -1,5 +1,4 @@
-#ifndef HEIM_OBJ_H
-#define HEIM_OBJ_H
+#pragma once
 
 #include <stdint.h>
 
@@ -29,5 +28,3 @@ typedef struct HeimObj {
 HeimObj *heim_obj_load(const char *path);
 void heim_obj_free(HeimObj *obj);
 void heim_obj_render(HeimObj *obj);
-
-#endif  // HEIM_OBJ_H

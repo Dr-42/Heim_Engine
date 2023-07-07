@@ -1,5 +1,4 @@
-#ifndef HEIM_SKYBOX_H
-#define HEIM_SKYBOX_H
+#pragma once
 
 #include <stdint.h>
 
@@ -28,5 +27,3 @@ void heim_skybox_destroy(HeimSkybox* skybox);
 void heim_skybox_bind(HeimSkybox* skybox);
 
 void heim_skybox_render_background(HeimSkybox* skybox, HeimMat4 view, HeimMat4 projection);
-
-#endif  // HEIM_SKYBOX_H
