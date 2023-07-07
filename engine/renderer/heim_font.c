@@ -21,7 +21,6 @@ HeimFont* heim_font_create(HeimVec2f size) {
     glGenBuffers(1, &font->vbo);
     glBindVertexArray(font->vao);
     glBindBuffer(GL_ARRAY_BUFFER, font->vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -121,9 +120,7 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->vao);
 
-    uint32_t vertexindex = 0;
     float* verts = heim_vector_create(float);
-
     for (uint8_t* c = (uint8_t*)text; *c; c++) {
         HeimCharacter ch = font->characters[*c];
 
@@ -150,16 +147,12 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
             heim_vector_push(verts, vertices[i][2]);
             heim_vector_push(verts, vertices[i][3]);
         }
-
-        vertexindex += 24;
     }
     glBindTexture(GL_TEXTURE_2D, font->characters[0].texture_id);
     glBindBuffer(GL_ARRAY_BUFFER, font->vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexindex, verts, GL_DYNAMIC_DRAW);
-    glDrawArrays(GL_TRIANGLES, 0, vertexindex / 4);
-
+    glBufferData(GL_ARRAY_BUFFER, heim_vector_length(verts) * 4, verts, GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, heim_vector_length(verts));
+    heim_vector_destroy(verts);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    heim_vector_destroy(verts);
 }

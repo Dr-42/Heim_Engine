@@ -172,8 +172,8 @@ float sensitivity = 2.0f;
 uint64_t frame_count = 0;
 
 void testbed_update(float dt) {
-    if (frame_count % 60 == 0) {
-        sprintf(text, "Heim Engine - FPS: %f", 1.0f / dt);
+    if (frame_count % 10 == 0) {
+        sprintf(text, "Heim Engine - FPS: %.2f", 1.0f / dt);
     }
 
     if (heim_input_key_pressed(GLFW_KEY_ESCAPE)) {
