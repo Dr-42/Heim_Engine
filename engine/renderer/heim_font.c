@@ -132,12 +132,12 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
 
         float vertices[6][4] = {
             {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
-            {xpos, ypos, ch.tex_coords_start.x, ch.tex_coords_start.y},
             {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y},
+            {xpos, ypos, ch.tex_coords_start.x, ch.tex_coords_start.y},
 
             {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
-            {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y},
-            {xpos + w, ypos + h, ch.tex_coords_end.x, ch.tex_coords_end.y}};
+            {xpos + w, ypos + h, ch.tex_coords_end.x, ch.tex_coords_end.y},
+            {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y}};
 
         position.x += (ch.advance >> 6) * scale;
 
