@@ -7,11 +7,12 @@
 #include "core/heim_event.h"
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
+#include "core/utils/heim_bitmask.h"
 #include "math/heim_vec.h"
 
 /// @brief HeimInput is a struct that contains all the information needed to handle input.
 typedef struct HeimInput {
-    bool keys[1024];
+    HeimBitmask *keys;
     bool mouse_left, mouse_right;
     HeimVec2f mouse_pos;
     HeimVec2f mouse_delta;

@@ -3,15 +3,19 @@
 #include "core/heim_logger.h"
 #include "math/heim_vec.h"
 
+#define MAX_KEYS 1024
+
 static HeimInput input = {0};
 
 void heim_input_create(GLFWwindow *window) {
     input.window = window;
     input.input_queue = heim_event_queue_create();
+    input.keys = heim_bitmask_create(MAX_KEYS);
 }
 
 void heim_input_destroy() {
     heim_event_queue_destroy(input.input_queue);
+    heim_bitmask_destroy(input.keys);
 }
 
 void heim_input_init() {
@@ -30,11 +34,11 @@ void heim_input_update() {
         HeimEvent event = heim_event_pop(input.input_queue);
         switch (event.type) {
             case HEIM_EVENT_TYPE_KEY_DOWN:
-                input.keys[event.data.i[0]] = true;
+                heim_bitmask_set(input.keys, event.data.i[0]);
                 break;
 
             case HEIM_EVENT_TYPE_KEY_UP:
-                input.keys[event.data.i[0]] = false;
+                heim_bitmask_unset(input.keys, event.data.i[0]);
                 break;
 
             case HEIM_EVENT_TYPE_MOUSE_DOWN:
@@ -68,7 +72,7 @@ void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int acti
     (void)window;    // Fix for unused parameter warning
     (void)scancode;  // Fix for unused parameter warning
 
-    if (key >= 0 && key < 1024) {
+    if (key >= 0 && key < MAX_KEYS) {
         HeimEvent event;
         if (action == GLFW_PRESS) {
             event = (HeimEvent){
@@ -158,10 +162,10 @@ void heim_input_mouse_hide(bool hide) {
 }
 
 bool heim_input_key_pressed(int key) {
-    return input.keys[key];
+    return heim_bitmask_get(input.keys, key);
 }
 bool heim_input_key_released(int key) {
-    return !input.keys[key];
+    return !heim_bitmask_get(input.keys, key);
 }
 
 bool heim_input_mouse_pressed(int button) {
