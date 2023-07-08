@@ -7,7 +7,7 @@ src = "engine"
 include_dir = "engine/include"
 type = 'dll'
 cflags = " -g -Wall -Wextra `pkg-config --cflags freetype2`"
-libs = "-lGLEW -lglfw `pkg-config --libs freetype2` -lm"
+libs = "-lGLEW -lglfw `pkg-config --libs freetype2` -lassimp -lm"
 
 [[targets]]
 name = "testbed"

@@ -10,8 +10,6 @@
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
 
-float total_time = 0.0f;
-
 HeimEntity entity1, entity2, entity3, fps_entity;
 HeimObj *object1, *object2, *object3;
 HeimTexture *tex1, *tex2, *tex3;
