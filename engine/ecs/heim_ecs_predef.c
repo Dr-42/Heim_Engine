@@ -33,6 +33,7 @@ void heim_load_predef_systems() {
     heim_pbr_model_renderer_init("assets/hdr/newport_loft.hdr");
     heim_model_renderer_init();
     heim_ui_sprite_render_system_init();
+    heim_ui_text_render_system_init();
     heim_ecs_register_system(heim_pbr_model_renderer_system);
     heim_ecs_register_system(heim_model_renderer_system);
     heim_ecs_register_system(heim_ui_sprite_render_system);
@@ -40,6 +41,7 @@ void heim_load_predef_systems() {
 }
 
 void heim_unload_predef_systems() {
+    heim_ui_text_render_system_free();
     heim_ui_sprite_render_system_free();
     heim_model_renderer_free();
     heim_pbr_model_renderer_free();

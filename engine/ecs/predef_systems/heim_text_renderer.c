@@ -3,6 +3,16 @@
 #include "ecs/predef_comps/heim_ui_text.h"
 #include "ecs/predef_comps/heim_uitransform.h"
 #include "ecs/predef_systems/heim_ui_text_renderer.h"
+#include "renderer/heim_shader.h"
+
+static struct {
+    HeimShader* shader;
+} text_render_system;
+
+void heim_ui_text_render_system_init() {
+    text_render_system.shader = heim_shader_create();
+    heim_shader_init(text_render_system.shader, "assets/shaders/text.vert", "assets/shaders/text.frag");
+}
 
 void heim_ui_text_render_system(HeimEntity entity, float dt) {
     (void)dt;
@@ -22,5 +32,9 @@ void heim_ui_text_render_system(HeimEntity entity, float dt) {
     HeimUiTransform* ui_transform = heim_ecs_get_component_data(entity, get_ui_transform_component());
 
     HeimVec3f color = (HeimVec3f){ui_transform->color.x, ui_transform->color.y, ui_transform->color.z};
-    heim_font_render_text(ui_text->font, ui_text->text, ui_transform->position, ui_transform->size.x, color);
+    heim_font_render_text(ui_text->font, text_render_system.shader, ui_text->text, ui_transform->position, ui_transform->size.x, color);
+}
+
+void heim_ui_text_render_system_free() {
+    heim_shader_free(text_render_system.shader);
 }

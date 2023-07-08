@@ -15,9 +15,6 @@ static float* verts = NULL;
 
 HeimFont* heim_font_create(HeimVec2f size) {
     HeimFont* font = HEIM_MALLOC(HeimFont, HEIM_MEMORY_TYPE_RENDERER);
-    HeimShader* shader = heim_shader_create();
-    heim_shader_init(shader, "assets/shaders/text.vert", "assets/shaders/text.frag");
-    font->shader = shader;
     font->size = size;
     glGenVertexArrays(1, &font->vao);
     glGenBuffers(1, &font->vbo);
@@ -32,7 +29,6 @@ HeimFont* heim_font_create(HeimVec2f size) {
 }
 
 void heim_font_free(HeimFont* font) {
-    heim_shader_free(font->shader);
     heim_vector_destroy(verts);
     HEIM_FREE(font, HEIM_MEMORY_TYPE_RENDERER);
 }
@@ -115,11 +111,11 @@ void heim_font_init(HeimFont* font, char* path, uint32_t size) {
     FT_Done_FreeType(ft);
 }
 
-void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float scale, HeimVec3f color) {
-    heim_shader_bind(font->shader);
-    heim_shader_set_uniform3f(font->shader, "textColor", color);
-    heim_shader_set_uniform_mat4(font->shader, "projection", heim_mat4_ortho(0.0f, font->size.x, font->size.y, 0.0f, -0.9f, 1.0f));
-    heim_shader_set_uniform1i(font->shader, "text", 0);
+void heim_font_render_text(HeimFont* font, HeimShader* shader, char* text, HeimVec2f position, float scale, HeimVec3f color) {
+    heim_shader_bind(shader);
+    heim_shader_set_uniform3f(shader, "textColor", color);
+    heim_shader_set_uniform_mat4(shader, "projection", heim_mat4_ortho(0.0f, font->size.x, font->size.y, 0.0f, -0.9f, 1.0f));
+    heim_shader_set_uniform1i(shader, "text", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->vao);
 
