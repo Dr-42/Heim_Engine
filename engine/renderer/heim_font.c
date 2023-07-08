@@ -11,6 +11,8 @@
 
 #include "core/heim_memory.h"
 
+static float* verts = NULL;
+
 HeimFont* heim_font_create(HeimVec2f size) {
     HeimFont* font = HEIM_MALLOC(HeimFont, HEIM_MEMORY_TYPE_RENDERER);
     HeimShader* shader = heim_shader_create();
@@ -31,6 +33,7 @@ HeimFont* heim_font_create(HeimVec2f size) {
 
 void heim_font_free(HeimFont* font) {
     heim_shader_free(font->shader);
+    heim_vector_destroy(verts);
     HEIM_FREE(font, HEIM_MEMORY_TYPE_RENDERER);
 }
 
@@ -120,7 +123,9 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->vao);
 
-    float* verts = heim_vector_create(float);
+    if (!verts) {
+        verts = heim_vector_create(float);
+    }
     for (uint8_t* c = (uint8_t*)text; *c; c++) {
         HeimCharacter ch = font->characters[*c];
 
@@ -152,7 +157,7 @@ void heim_font_render_text(HeimFont* font, char* text, HeimVec2f position, float
     glBindBuffer(GL_ARRAY_BUFFER, font->vbo);
     glBufferData(GL_ARRAY_BUFFER, heim_vector_length(verts) * 4, verts, GL_DYNAMIC_DRAW);
     glDrawArrays(GL_TRIANGLES, 0, heim_vector_length(verts));
-    heim_vector_destroy(verts);
+    heim_vector_clear(verts);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
