@@ -3,18 +3,15 @@
 #include "core/heim_logger.h"
 #include "math/heim_vec.h"
 
-static HeimInput input = {
-    .keys = {false},
-    .mouse_left = false,
-    .mouse_right = false,
-    .mouse_pos = {0.0f, 0.0f},
-    .mouse_delta = {0.0f, 0.0f},
-    .mouse_grabbed = false,
-    .mouse_hidden = false,
-    .window = NULL};
+static HeimInput input = {0};
 
 void heim_input_create(GLFWwindow *window) {
     input.window = window;
+    input.input_queue = heim_event_queue_create();
+}
+
+void heim_input_destroy() {
+    heim_event_queue_destroy(input.input_queue);
 }
 
 void heim_input_init() {
@@ -27,9 +24,44 @@ void heim_input_init() {
         HEIM_LOG_ERROR("Input: Window is NULL");
     }
 }
-
 void heim_input_update() {
-    glfwPollEvents();
+    input.mouse_delta = (HeimVec2f){0.0f, 0.0f};
+    while (!heim_event_queue_is_empty(input.input_queue)) {
+        HeimEvent event = heim_event_pop(input.input_queue);
+        switch (event.type) {
+            case HEIM_EVENT_TYPE_KEY_DOWN:
+                input.keys[event.data.i[0]] = true;
+                break;
+
+            case HEIM_EVENT_TYPE_KEY_UP:
+                input.keys[event.data.i[0]] = false;
+                break;
+
+            case HEIM_EVENT_TYPE_MOUSE_DOWN:
+                if (event.data.i[0] == GLFW_MOUSE_BUTTON_LEFT) {
+                    input.mouse_left = true;
+                } else if (event.data.i[0] == GLFW_MOUSE_BUTTON_RIGHT) {
+                    input.mouse_right = true;
+                }
+                break;
+
+            case HEIM_EVENT_TYPE_MOUSE_UP:
+                if (event.data.i[0] == GLFW_MOUSE_BUTTON_LEFT) {
+                    input.mouse_left = false;
+                } else if (event.data.i[0] == GLFW_MOUSE_BUTTON_RIGHT) {
+                    input.mouse_right = false;
+                }
+                break;
+
+            case HEIM_EVENT_TYPE_MOUSE_MOVE:
+                input.mouse_pos = event.data.vec2f[0];
+                input.mouse_delta = heim_vec2f_sub(event.data.vec2f[0], event.data.vec2f[1]);
+                break;
+            default:
+                break;
+        }
+    }
+    heim_event_queue_clear(input.input_queue);
 }
 
 void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int action, int /*mods*/) {
@@ -37,11 +69,22 @@ void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int acti
     (void)scancode;  // Fix for unused parameter warning
 
     if (key >= 0 && key < 1024) {
+        HeimEvent event;
         if (action == GLFW_PRESS) {
-            input.keys[key] = true;
+            event = (HeimEvent){
+                .type = HEIM_EVENT_TYPE_KEY_DOWN,
+                .data = (HeimEventData){
+                    .i = {key},
+                }};
         } else if (action == GLFW_RELEASE) {
-            input.keys[key] = false;
+            event = (HeimEvent){
+                .type = HEIM_EVENT_TYPE_KEY_UP,
+                .data = (HeimEventData){
+                    .i = {key},
+                }};
         }
+
+        heim_event_push(input.input_queue, event);
     }
 }
 
@@ -49,29 +92,53 @@ void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action
     (void)window;  // Fix for unused parameter warning
     (void)mods;    // Fix for unused parameter warning
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        HeimEvent event;
         if (action == GLFW_PRESS) {
-            input.mouse_left = true;
+            event = (HeimEvent){
+                .type = HEIM_EVENT_TYPE_MOUSE_DOWN,
+                .data = (HeimEventData){
+                    .i = {button},
+                }};
         } else if (action == GLFW_RELEASE) {
-            input.mouse_left = false;
+            event = (HeimEvent){
+                .type = HEIM_EVENT_TYPE_MOUSE_UP,
+                .data = (HeimEventData){
+                    .i = {button},
+                }};
         }
+        heim_event_push(input.input_queue, event);
     } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        HeimEvent event;
         if (action == GLFW_PRESS) {
-            input.mouse_right = true;
+            event = (HeimEvent){
+                .type = HEIM_EVENT_TYPE_MOUSE_DOWN,
+                .data = (HeimEventData){
+                    .i = {button},
+                }};
         } else if (action == GLFW_RELEASE) {
-            input.mouse_right = false;
+            event = (HeimEvent){
+                .type = HEIM_EVENT_TYPE_MOUSE_UP,
+                .data = (HeimEventData){
+                    .i = {button},
+                }};
         }
+        heim_event_push(input.input_queue, event);
     }
 }
 
+HeimVec2f mouse_last_pos = {0.0f, 0.0f};
 void heim_input_cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
-    input.mouse_delta.x = (float)xpos - input.mouse_pos.x;
-    input.mouse_delta.y = (float)ypos - input.mouse_pos.y;
-
-    input.mouse_pos.x = (float)xpos;
-    input.mouse_pos.y = (float)ypos;
+    (void)window;  // Fix for unused parameter warning
+    HeimEvent event = (HeimEvent){
+        .type = HEIM_EVENT_TYPE_MOUSE_MOVE,
+        .data = (HeimEventData){
+            .vec2f = {(HeimVec2f){xpos, ypos}, mouse_last_pos},
+        }};
+    heim_event_push(input.input_queue, event);
+    mouse_last_pos = (HeimVec2f){xpos, ypos};
 
     if (input.mouse_grabbed) {
-        glfwSetCursorPos(window, (double)input.mouse_pos.x, (double)input.mouse_pos.y);
+        glfwSetCursorPos(window, xpos, ypos);
     }
 }
 
@@ -119,6 +186,5 @@ HeimVec2f heim_input_mouse_position() {
 }
 HeimVec2f heim_input_mouse_delta() {
     HeimVec2f delta = input.mouse_delta;
-    input.mouse_delta = (HeimVec2f){0.0f, 0.0f};
     return delta;
 }

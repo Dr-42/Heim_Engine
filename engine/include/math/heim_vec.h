@@ -31,6 +31,7 @@ typedef struct {
 /// @param b vec 2
 /// @return
 HeimVec2f heim_vec2f_add(HeimVec2f a, HeimVec2f b);
+HeimVec2f heim_vec2f_sub(HeimVec2f a, HeimVec2f b);
 
 HeimVec3f heim_vec3f_add(HeimVec3f a, HeimVec3f b);
 HeimVec3f heim_vec3f_sub(HeimVec3f a, HeimVec3f b);

@@ -13,8 +13,8 @@ typedef union HeimEventData {
     uint64_t u64[2];
     int64_t i64[2];
     double d[2];
-    HeimVec4f vec4;
-    HeimVec2f vec2[2];
+    HeimVec4f vec4f;
+    HeimVec2f vec2f[2];
 } HeimEventData;
 
 typedef enum HeimEventType {
@@ -43,7 +43,7 @@ typedef struct HeimEventQueue {
     uint32_t count;
 } HeimEventQueue;
 
-HeimEventQueue *heim_event_queue_create(uint32_t size);
+HeimEventQueue *heim_event_queue_create();
 void heim_event_queue_destroy(HeimEventQueue *queue);
 
 void heim_event_push(HeimEventQueue *queue, HeimEvent event);

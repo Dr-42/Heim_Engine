@@ -4,6 +4,10 @@ HeimVec2f heim_vec2f_add(HeimVec2f a, HeimVec2f b) {
     return (HeimVec2f){a.x + b.x, a.y + b.y};
 }
 
+HeimVec2f heim_vec2f_sub(HeimVec2f a, HeimVec2f b) {
+    return (HeimVec2f){a.x - b.x, a.y - b.y};
+}
+
 HeimVec3f heim_vec3f_add(HeimVec3f a, HeimVec3f b) {
     return (HeimVec3f){a.x + b.x, a.y + b.y, a.z + b.z};
 }

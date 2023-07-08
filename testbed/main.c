@@ -225,9 +225,6 @@ void testbed_update(float dt) {
     }
 
     HeimVec2f mouseDelta = heim_input_mouse_delta();
-
-    // Reorient camera without yaw. Readjust the up and front vectors.
-
     if (frame_count) {
         if (mouseDelta.x != 0.0f || mouseDelta.y != 0.0f || mouseDelta.x < 0.5f || mouseDelta.y < 0.5f) {
             camera->yaw -= mouseDelta.x * sensitivity * dt;

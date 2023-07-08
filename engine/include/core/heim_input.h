@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
+#include "core/heim_event.h"
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include "math/heim_vec.h"
@@ -18,6 +19,8 @@ typedef struct HeimInput {
     bool mouse_grabbed;
     bool mouse_hidden;
 
+    HeimEventQueue *input_queue;
+
     GLFWwindow *window;
 } HeimInput;
 
@@ -28,6 +31,9 @@ void heim_input_create(GLFWwindow *window);
 
 /// @brief Initializes the HeimInput struct.
 void heim_input_init();
+
+/// @brief Destroys the HeimInput struct.
+void heim_input_destroy();
 
 /// @brief Updates the HeimInput struct.
 void heim_input_update();

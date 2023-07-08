@@ -3,7 +3,7 @@
 #include "core/heim_memory.h"
 #include "core/utils/heim_vector.h"
 
-HeimEventQueue *heim_event_queue_create(uint32_t size) {
+HeimEventQueue *heim_event_queue_create() {
     HeimEventQueue *queue = HEIM_MALLOC(HeimEventQueue, HEIM_MEMORY_TYPE_BASE);
     queue->events = heim_vector_create(HeimEvent);
     queue->count = 0;
