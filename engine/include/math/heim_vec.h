@@ -39,3 +39,5 @@ HeimVec3f heim_vec3f_mul(HeimVec3f a, float b);
 float heim_vec3f_dot(HeimVec3f a, HeimVec3f b);
 HeimVec3f heim_vec3f_cross(HeimVec3f a, HeimVec3f b);
 HeimVec3f heim_vec3f_normalize(HeimVec3f a);
+
+HeimVec3f heim_vec3f_from_vec4f(HeimVec4f a);

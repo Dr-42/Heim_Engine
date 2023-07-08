@@ -30,3 +30,7 @@ HeimVec3f heim_vec3f_normalize(HeimVec3f a) {
     float length = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
     return (HeimVec3f){a.x / length, a.y / length, a.z / length};
 }
+
+HeimVec3f heim_vec3f_from_vec4f(HeimVec4f a) {
+    return (HeimVec3f){a.x, a.y, a.z};
+}
