@@ -4,9 +4,8 @@
 
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
-#include "core/utils/heim_vector.h"
 
-#define DATA_SIZE(x) x % 64 == 0 ? x / 64 : (x / 64) + 1
+#define DATA_SIZE(x) (x % 64 == 0) ? x / 64 : (x / 64) + 1
 
 HeimBitmask* heim_bitmask_create(uint64_t size) {
     HeimBitmask* bitmask = HEIM_MALLOC(HeimBitmask, HEIM_MEMORY_TYPE_BASE);
@@ -57,8 +56,8 @@ void heim_bitmask_unset(HeimBitmask* bitmask, uint64_t index) {
 }
 bool heim_bitmask_get(HeimBitmask* bitmask, uint64_t index) {
     if (bitmask == NULL) {
-        HEIM_LOG_WARN("Bitmask is NULL");
-        return;
+        HEIM_LOG_WARN("Bitmask is NULL returning false");
+        return false;
     }
     if (index >= bitmask->size) {
         HEIM_LOG_ERROR("Bitmask index out of range");
