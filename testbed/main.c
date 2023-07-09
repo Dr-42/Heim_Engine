@@ -178,14 +178,22 @@ void testbed_update(float dt) {
         heim_engine_should_close(true);
     }
 
-    if (heim_input_key_pressed(GLFW_KEY_LEFT_SHIFT)) {
-        heim_ecs_remove_component(entity2, get_pbr_model_component());
-        heim_ecs_add_component(entity2, get_pbr_model_component(), &model3);
+    if (heim_input_key_down(GLFW_KEY_LEFT_SHIFT)) {
+        if (heim_ecs_has_component(entity2, get_pbr_model_component())) {
+            if (heim_ecs_get_component_data(entity2, get_pbr_model_component()) == &model2) {
+                heim_ecs_remove_component(entity2, get_pbr_model_component());
+                heim_ecs_add_component(entity2, get_pbr_model_component(), &model3);
+            }
+        }
     }
 
-    if (heim_input_key_pressed(GLFW_KEY_LEFT_ALT)) {
-        heim_ecs_remove_component(entity2, get_pbr_model_component());
-        heim_ecs_add_component(entity2, get_pbr_model_component(), &model2);
+    if (heim_input_key_up(GLFW_KEY_LEFT_SHIFT)) {
+        if (heim_ecs_has_component(entity2, get_pbr_model_component())) {
+            if (heim_ecs_get_component_data(entity2, get_pbr_model_component()) == &model3) {
+                heim_ecs_remove_component(entity2, get_pbr_model_component());
+                heim_ecs_add_component(entity2, get_pbr_model_component(), &model2);
+            }
+        }
     }
 
     if (heim_input_key_pressed(GLFW_KEY_W)) {

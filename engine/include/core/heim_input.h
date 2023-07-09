@@ -13,7 +13,9 @@
 /// @brief HeimInput is a struct that contains all the information needed to handle input.
 typedef struct HeimInput {
     HeimBitmask *keys;
+    HeimBitmask *keys_last_frame;
     bool mouse_left, mouse_right;
+    bool mouse_left_last_frame, mouse_right_last_frame;
     HeimVec2f mouse_pos;
     HeimVec2f mouse_delta;
 
@@ -52,6 +54,10 @@ bool heim_input_key_released(int key);
 
 bool heim_input_mouse_pressed(int button);
 bool heim_input_mouse_released(int button);
+bool heim_input_key_down(int key);
+bool heim_input_key_up(int key);
+bool heim_input_mouse_down(int button);
+bool heim_input_mouse_up(int button);
 
 HeimVec2f heim_input_mouse_position();
 HeimVec2f heim_input_mouse_delta();

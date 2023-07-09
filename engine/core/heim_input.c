@@ -11,11 +11,13 @@ void heim_input_create(GLFWwindow *window) {
     input.window = window;
     input.input_queue = heim_event_queue_create();
     input.keys = heim_bitmask_create(MAX_KEYS);
+    input.keys_last_frame = heim_bitmask_create(MAX_KEYS);
 }
 
 void heim_input_destroy() {
     heim_event_queue_destroy(input.input_queue);
     heim_bitmask_destroy(input.keys);
+    heim_bitmask_destroy(input.keys_last_frame);
 }
 
 void heim_input_init() {
@@ -30,6 +32,9 @@ void heim_input_init() {
 }
 void heim_input_update() {
     input.mouse_delta = (HeimVec2f){0.0f, 0.0f};
+    heim_bitmask_copy(input.keys_last_frame, input.keys);
+    input.mouse_left_last_frame = input.mouse_left;
+    input.mouse_right_last_frame = input.mouse_right;
     while (!heim_event_queue_is_empty(input.input_queue)) {
         HeimEvent event = heim_event_pop(input.input_queue);
         switch (event.type) {
@@ -65,7 +70,6 @@ void heim_input_update() {
                 break;
         }
     }
-    heim_event_queue_clear(input.input_queue);
 }
 
 void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int action, int /*mods*/) {
@@ -181,6 +185,34 @@ bool heim_input_mouse_released(int button) {
         return !input.mouse_left;
     } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
         return !input.mouse_right;
+    }
+    return false;
+}
+
+bool heim_input_key_down(int key) {
+    return heim_bitmask_get(input.keys, key) && !heim_bitmask_get(input.keys_last_frame, key);
+}
+
+bool heim_input_key_up(int key) {
+    return !heim_bitmask_get(input.keys, key) && heim_bitmask_get(input.keys_last_frame, key);
+}
+
+bool heim_input_mouse_down(int button) {
+    switch (button) {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            return input.mouse_left && !input.mouse_left_last_frame;
+        case GLFW_MOUSE_BUTTON_RIGHT:
+            return input.mouse_right && !input.mouse_right_last_frame;
+    }
+    return false;
+}
+
+bool heim_input_mouse_up(int button) {
+    switch (button) {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            return !input.mouse_left && input.mouse_left_last_frame;
+        case GLFW_MOUSE_BUTTON_RIGHT:
+            return !input.mouse_right && input.mouse_right_last_frame;
     }
     return false;
 }
