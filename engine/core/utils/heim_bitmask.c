@@ -53,7 +53,7 @@ bool heim_bitmask_get(HeimBitmask* bitmask, uint64_t index) {
 }
 
 void heim_bitmask_clear(HeimBitmask* bitmask) {
-    uint64_t data_size = (bitmask->size / 64) + 1;
+    uint64_t data_size = heim_vector_length(bitmask->data);
     heim_memzero(bitmask->data, data_size * 64);
 }
 
