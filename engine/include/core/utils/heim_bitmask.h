@@ -14,9 +14,7 @@ void heim_bitmask_destroy(HeimBitmask* bitmask);
 void heim_bitmask_set(HeimBitmask* bitmask, uint64_t index);
 void heim_bitmask_unset(HeimBitmask* bitmask, uint64_t index);
 bool heim_bitmask_get(HeimBitmask* bitmask, uint64_t index);
-
 void heim_bitmask_clear(HeimBitmask* bitmask);
-
 void heim_bitmask_resize(HeimBitmask* bitmask, uint64_t size);
-
+void heim_bitmask_copy(HeimBitmask* dest, HeimBitmask* src);
 void heim_bitmask_push_set(HeimBitmask* bitmask);
