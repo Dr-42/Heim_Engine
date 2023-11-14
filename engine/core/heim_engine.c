@@ -65,7 +65,7 @@ void heim_engine_should_close(bool should_close) {
 void heim_engine_cleanup() {
     HEIM_LOG_INFO("Cleaned up Heim Engine");
     heim_input_destroy();
-    heim_window_close(heim_window_get_window());
+    heim_window_close();
     heim_memory_close();
 }
 

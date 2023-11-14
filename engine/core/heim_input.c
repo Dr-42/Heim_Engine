@@ -72,9 +72,10 @@ void heim_input_update() {
     }
 }
 
-void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int action, int /*mods*/) {
+void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     (void)window;    // Fix for unused parameter warning
     (void)scancode;  // Fix for unused parameter warning
+    (void)mods;      // Fix for unused parameter warning
 
     if (key >= 0 && key < MAX_KEYS) {
         HeimEvent event;
@@ -90,6 +91,8 @@ void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int acti
                 .data = (HeimEventData){
                     .i = {key},
                 }};
+        } else {
+            return;
         }
 
         heim_event_push(input.input_queue, event);
@@ -113,6 +116,8 @@ void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action
                 .data = (HeimEventData){
                     .i = {button},
                 }};
+        } else {
+            return;
         }
         heim_event_push(input.input_queue, event);
     } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
@@ -129,6 +134,8 @@ void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action
                 .data = (HeimEventData){
                     .i = {button},
                 }};
+        } else {
+            return;
         }
         heim_event_push(input.input_queue, event);
     }

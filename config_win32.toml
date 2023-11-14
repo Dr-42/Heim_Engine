@@ -1,19 +1,19 @@
 [build]
-compiler = "gcc"
+compiler = "clang"
 
 [[targets]]
 name = "libheimdall-engine"
 src = "engine"
 include_dir = "engine/include"
 type = 'dll'
-cflags = " -g -Wall -Wextra `pkg-config --cflags freetype2`"
-libs = "-lglew32 -lglfw3 -lopengl32 `pkg-config --libs freetype2` -lassimp -lm"
+cflags = " -ggdb -gcodeview -Wall -Wextra `pkg-config --cflags freetype2` `pkg-config --cflags cglm`"
+libs = "-lglew32 -lglfw3 -lopengl32 `pkg-config --libs freetype2` `pkg-config --libs cglm` -lassimp -lm -l dbghelp -Wl,--pdb="
 
 [[targets]]
 name = "testbed"
 src = "testbed"
 include_dir = "testbed/include"
 type = "exe"
-cflags = "-g -Wall -Wextra"
-libs = ""
+cflags = "-ggdb -gcodeview -Wall -Wextra"
+libs = "-l dbghelp -Wl,--pdb="
 deps = ["libheimdall-engine"]

@@ -3,6 +3,9 @@
 #include <memory.h>
 #include <string.h>
 
+#define DR42_TRACE_IMPLEMENTATION
+#include "core/utils/trace.h"
+
 static HeimMemory memory = {
     .total_size = 0,
     .total_allocations = 0,
@@ -61,7 +64,9 @@ void *heim_malloc(size_t size, HEIM_MEMORY_TYPE type, const char *file, int line
     // Add the new AllocationInfo to the start of the list
     info->next = head;
     head = info;
-
+    printf("Allocated %d bytes at %p\n", size, ptr);
+    print_trace();
+    printf("--------------------------------------\n");
     return ptr;
 }
 

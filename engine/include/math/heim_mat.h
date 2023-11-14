@@ -3,12 +3,12 @@
 #include "math/heim_vec.h"
 
 typedef struct {
-    float m[4][4];
-} HeimMat4;
+    float m[4][4] __attribute__((aligned(16)));
+} __attribute__((aligned(16))) HeimMat4;
 
 typedef struct {
-    float m[3][3];
-} HeimMat3;
+    float m[3][3] __attribute__((aligned(16)));
+} __attribute__((aligned(16))) HeimMat3;
 
 void heim_mat4_print(HeimMat4 mat);
 
