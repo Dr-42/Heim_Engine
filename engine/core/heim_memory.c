@@ -1,10 +1,12 @@
 #include "core/heim_memory.h"
+#include "core/heim_logger.h"
 
 #include <memory.h>
 #include <string.h>
 
 #define DR42_TRACE_IMPLEMENTATION
 #include "core/utils/trace.h"
+#define TRACE_SIZE 1024
 
 static HeimMemory memory = {
     .total_size = 0,
@@ -24,10 +26,20 @@ typedef struct AllocationInfo {
     void *ptr;                    // Pointer to the allocated memory
     const char *file;             // File where allocation happened
     int line;                     // Line where allocation happened
+    char trace[TRACE_SIZE];       // Trace of the call stack
     struct AllocationInfo *next;  // Pointer to the next allocation info
 } AllocationInfo;
 
+typedef struct {
+    void *ptr;                      // Pointer to the allocated memory
+    const char *file;               // File where allocation happened
+    int line;                       // Line where allocation happened
+    char trace[TRACE_SIZE];         // Trace of the call stack
+    struct DeallocationInfo *next;  // Pointer to the next deallocation info
+} DeallocationInfo;
+
 static AllocationInfo *head = NULL;
+static DeallocationInfo *deallocated = NULL;
 
 void heim_memory_close() {
     if (memory.total_allocations != memory.total_freed) {
@@ -60,13 +72,30 @@ void *heim_malloc(size_t size, HEIM_MEMORY_TYPE type, const char *file, int line
     info->ptr = ptr;
     info->file = file;
     info->line = line;
+    sprint_trace(info->trace);
 
     // Add the new AllocationInfo to the start of the list
     info->next = head;
     head = info;
-    printf("Allocated %d bytes at %p\n", size, ptr);
-    print_trace();
-    printf("--------------------------------------\n");
+
+    // If the allocation is on a previously freed memory location, remove it from the deallocated list
+    DeallocationInfo *curr = deallocated;
+    DeallocationInfo *prev = NULL;
+    while (curr != NULL) {
+        if (curr->ptr == ptr) {
+            if (prev == NULL) {
+                // It's the first element in the list
+                deallocated = (DeallocationInfo *)curr->next;
+            } else {
+                // It's not the first element
+                prev->next = curr->next;
+            }
+            free(curr);
+            break;
+        }
+        prev = curr;
+        curr = (DeallocationInfo *)curr->next;
+    }
     return ptr;
 }
 
@@ -82,11 +111,29 @@ void *heim_calloc(size_t nmemb, size_t size, HEIM_MEMORY_TYPE type, const char *
     info->ptr = ptr;
     info->file = file;
     info->line = line;
-
-    // Add the new AllocationInfo to the start of the list
+    sprint_trace(info->trace);
+    //  Add the new AllocationInfo to the start of the list
     info->next = head;
     head = info;
 
+    // If the allocation is on a previously freed memory location, remove it from the deallocated list
+    DeallocationInfo *curr = deallocated;
+    DeallocationInfo *prev = NULL;
+    while (curr != NULL) {
+        if (curr->ptr == ptr) {
+            if (prev == NULL) {
+                // It's the first element in the list
+                deallocated = (DeallocationInfo *)curr->next;
+            } else {
+                // It's not the first element
+                prev->next = curr->next;
+            }
+            free(curr);
+            break;
+        }
+        prev = curr;
+        curr = (DeallocationInfo *)curr->next;
+    }
     return ptr;
 }
 
@@ -101,6 +148,7 @@ void *heim_realloc(void *ptr, size_t size, HEIM_MEMORY_TYPE type, const char *fi
         if (current->ptr == ptr) {
             current->file = file;
             current->line = line;
+            sprint_trace(current->trace);
             break;
         }
         current = current->next;
@@ -113,10 +161,44 @@ void *heim_realloc(void *ptr, size_t size, HEIM_MEMORY_TYPE type, const char *fi
         current->ptr = new_ptr;
     }
 
+    // If the allocation is on a previously freed memory location, remove it from the deallocated list
+    DeallocationInfo *curr = deallocated;
+    DeallocationInfo *prev = NULL;
+    while (curr != NULL) {
+        if (curr->ptr == ptr) {
+            if (prev == NULL) {
+                // It's the first element in the list
+                deallocated = (DeallocationInfo *)curr->next;
+            } else {
+                // It's not the first element
+                prev->next = curr->next;
+            }
+            free(curr);
+            break;
+        }
+        prev = curr;
+        curr = (DeallocationInfo *)curr->next;
+    }
     return new_ptr;
 }
 
 void heim_free(void *ptr, HEIM_MEMORY_TYPE type) {
+    // Check if the pointer was already freed
+    DeallocationInfo *curr = deallocated;
+    while (curr != NULL) {
+        if (curr->ptr == ptr) {
+            HEIM_LOG_WARN("-----------------------------------------------");
+            HEIM_LOG_WARN("Double free detected: pointer %p, file %s, line %d", curr->ptr, curr->file, curr->line);
+            HEIM_LOG_WARN("Previous free Trace:\n%s", curr->trace);
+            char trace[TRACE_SIZE];
+            sprint_trace(trace);
+            HEIM_LOG_WARN("Current free Trace:\n%s", trace);
+            HEIM_LOG_WARN("-----------------------------------------------\n");
+            return;
+        }
+        curr = (DeallocationInfo *)curr->next;
+    }
+
     memory.total_freed++;
     memory.type_counts[type]--;
 
@@ -138,6 +220,18 @@ void heim_free(void *ptr, HEIM_MEMORY_TYPE type) {
         previous = current;
         current = current->next;
     }
+
+    // Create a new DeallocationInfo
+    DeallocationInfo *info = (DeallocationInfo *)malloc(sizeof(DeallocationInfo));
+    info->ptr = ptr;
+    info->file = current->file;
+    info->line = current->line;
+    char trace[TRACE_SIZE];
+    sprint_trace(trace);
+    strcpy(info->trace, trace);
+    // Add the new DeallocationInfo to the start of the list
+    info->next = (struct DeallocationInfo *)deallocated;
+    deallocated = info;
 
     free(ptr);
 }
