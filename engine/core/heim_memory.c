@@ -53,6 +53,7 @@ void heim_memory_close() {
         AllocationInfo *current = head;
         while (current != NULL) {
             HEIM_LOG_WARN("Unfreed allocation: pointer %p, file %s, line %d", current->ptr, current->file, current->line);
+            HEIM_LOG_WARN("Allocation Trace:\n%s", current->trace);
             current = current->next;
         }
     } else {
