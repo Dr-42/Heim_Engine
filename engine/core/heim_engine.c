@@ -3,17 +3,40 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <signal.h>
 
 #include "core/heim_memory.h"
 #include "core/heim_windowing.h"
 #include "math/heim_vec.h"
+#include "core/utils/trace.h"
 
 HeimEngine heim = {
     .running = false,
     .fullscreen = false,
 };
 
+void heim_engine_handle_segfault(int sig) {
+    #ifdef __linux__
+    HEIM_LOG_ERROR("Heim Engine crashed with signal %s", strsignal(sig));
+    #endif
+    #ifdef _WIN64
+    HEIM_LOG_ERROR("Heim Engine crashed with signal %d", sig);
+    #endif
+    print_trace();
+    heim_engine_shutdown();
+}
+
+void set_signal_handlers() {
+    signal(SIGINT, heim_engine_shutdown);
+    signal(SIGTERM, heim_engine_shutdown);
+    signal(SIGABRT, heim_engine_shutdown);
+    signal(SIGSEGV, heim_engine_handle_segfault);
+}
+
 void heim_engine_new(char *title) {
+    heim_logger_init(NULL, HEIM_LOG_LEVEL_ALL);
+    set_signal_handlers();
     heim_window_new(title);
     HEIM_LOG_INFO("Created new Heim Engine");
 }
@@ -45,7 +68,6 @@ void heim_engine_init(void (*init)()) {
         HEIM_LOG_ERROR("Failed to initialize window");
     }
 
-    heim_logger_init(NULL, HEIM_LOG_LEVEL_ALL);
     heim_ecs_create();
 
     heim.running = true;
