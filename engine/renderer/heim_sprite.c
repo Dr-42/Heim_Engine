@@ -1,12 +1,7 @@
 #include "renderer/heim_sprite.h"
 
-#include <cglm/cglm.h>
-
-#include "core/heim_logger.h"
 #include "core/heim_memory.h"
 #include "math/heim_mat.h"
-#include "math/heim_math_common.h"
-#include "renderer/heim_shader.h"
 
 HeimSprite* heim_create_sprite(HeimTexture* texture) {
     HeimSprite* sprite = HEIM_MALLOC(HeimSprite, HEIM_MEMORY_TYPE_RENDERER);

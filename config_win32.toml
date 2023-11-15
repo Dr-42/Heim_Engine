@@ -6,8 +6,8 @@ name = "libheimdall-engine"
 src = "engine"
 include_dir = "engine/include"
 type = 'dll'
-cflags = " -ggdb -gcodeview -Wall -Wextra `pkg-config --cflags freetype2` `pkg-config --cflags cglm`"
-libs = "-lglew32 -lglfw3 -lopengl32 `pkg-config --libs freetype2` `pkg-config --libs cglm` -lassimp -lm -l dbghelp -Wl,--pdb="
+cflags = " -ggdb -gcodeview -Wall -Wextra `pkg-config --cflags freetype2`"
+libs = "-lglew32 -lglfw3 -lopengl32 `pkg-config --libs freetype2` -lassimp -lm -l dbghelp -Wl,--pdb="
 
 [[targets]]
 name = "testbed"
