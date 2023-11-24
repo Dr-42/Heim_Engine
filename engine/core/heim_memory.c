@@ -6,7 +6,7 @@
 
 #define DR42_TRACE_IMPLEMENTATION
 #include "core/utils/trace.h"
-#define TRACE_SIZE 1024
+#define TRACE_SIZE 100
 
 static HeimMemory memory = {
     .total_size = 0,
@@ -26,7 +26,8 @@ typedef struct AllocationInfo {
     void *ptr;                    // Pointer to the allocated memory
     const char *file;             // File where allocation happened
     int line;                     // Line where allocation happened
-    char trace[TRACE_SIZE];       // Trace of the call stack
+    void* trace[TRACE_SIZE];       // Trace of the call stack
+    int trace_size;               // Size of the trace
     struct AllocationInfo *next;  // Pointer to the next allocation info
 } AllocationInfo;
 
@@ -34,7 +35,8 @@ typedef struct {
     void *ptr;                      // Pointer to the allocated memory
     const char *file;               // File where allocation happened
     int line;                       // Line where allocation happened
-    char trace[TRACE_SIZE];         // Trace of the call stack
+    void* trace[TRACE_SIZE];         // Trace of the call stack
+    int trace_size;                 // Size of the trace
     struct DeallocationInfo *next;  // Pointer to the next deallocation info
 } DeallocationInfo;
 
@@ -53,7 +55,11 @@ void heim_memory_close() {
         AllocationInfo *current = head;
         while (current != NULL) {
             HEIM_LOG_WARN("Unfreed allocation: pointer %p, file %s, line %d", current->ptr, current->file, current->line);
-            HEIM_LOG_WARN("Allocation Trace:\n%s", current->trace);
+            char* trace_print_buf = (char*)malloc(1024);
+            memset(trace_print_buf, 0, 1024);
+            sprint_intermediate_trace(current->trace, trace_print_buf, 1, 1024);
+            HEIM_LOG_WARN("Allocation Trace:\n%s", trace_print_buf);
+            free(trace_print_buf);
             current = current->next;
         }
     } else {
@@ -73,7 +79,7 @@ void *heim_malloc(size_t size, HEIM_MEMORY_TYPE type, const char *file, int line
     info->ptr = ptr;
     info->file = file;
     info->line = line;
-    sprint_trace(info->trace);
+    info->trace_size = get_intermediate_trace(info->trace, 100);
 
     // Add the new AllocationInfo to the start of the list
     info->next = head;
@@ -112,7 +118,7 @@ void *heim_calloc(size_t nmemb, size_t size, HEIM_MEMORY_TYPE type, const char *
     info->ptr = ptr;
     info->file = file;
     info->line = line;
-    sprint_trace(info->trace);
+    info->trace_size = get_intermediate_trace(info->trace, 100);
     //  Add the new AllocationInfo to the start of the list
     info->next = head;
     head = info;
@@ -149,7 +155,7 @@ void *heim_realloc(void *ptr, size_t size, HEIM_MEMORY_TYPE type, const char *fi
         if (current->ptr == ptr) {
             current->file = file;
             current->line = line;
-            sprint_trace(current->trace);
+            current->trace_size = get_intermediate_trace(current->trace, 100);
             break;
         }
         current = current->next;
@@ -190,11 +196,16 @@ void heim_free(void *ptr, HEIM_MEMORY_TYPE type) {
         if (curr->ptr == ptr) {
             HEIM_LOG_WARN("-----------------------------------------------");
             HEIM_LOG_WARN("Double free detected: pointer %p, file %s, line %d", curr->ptr, curr->file, curr->line);
-            HEIM_LOG_WARN("Previous free Trace:\n%s", curr->trace);
-            char trace[TRACE_SIZE];
-            sprint_trace(trace);
-            HEIM_LOG_WARN("Current free Trace:\n%s", trace);
+            char* trace_print_buf = (char*)malloc(1024);
+            memset(trace_print_buf, 0, 1024);
+            sprint_intermediate_trace(curr->trace, trace_print_buf, 1, 1024);
+            memset(trace_print_buf, 0, 1024);
+            HEIM_LOG_WARN("Previous free Trace:\n%s", trace_print_buf);
+            memset(trace_print_buf, 0, 1024);
+            sprint_trace(trace_print_buf);
+            HEIM_LOG_WARN("Current free Trace:\n%s", trace_print_buf);
             HEIM_LOG_WARN("-----------------------------------------------\n");
+            free(trace_print_buf);
             return;
         }
         curr = (DeallocationInfo *)curr->next;
@@ -227,9 +238,7 @@ void heim_free(void *ptr, HEIM_MEMORY_TYPE type) {
     info->ptr = ptr;
     info->file = current->file;
     info->line = current->line;
-    char trace[TRACE_SIZE];
-    sprint_trace(trace);
-    strcpy(info->trace, trace);
+    info->trace_size = get_intermediate_trace(info->trace, TRACE_SIZE);
     // Add the new DeallocationInfo to the start of the list
     info->next = (struct DeallocationInfo *)deallocated;
     deallocated = info;

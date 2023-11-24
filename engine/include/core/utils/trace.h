@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DR42_TRACE_H
+#define DR42_TRACE_H
 
 /* --------------------------------------------------------------------------
 Copyright 2023 Dr. Spandan Roy
@@ -64,11 +65,17 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #define sprint_trace(buffer) _sprint_trace(buffer, 1);
 #endif
 
+int get_intermediate_trace(void** stack, size_t size);
+int sprint_intermediate_trace(void** stack, char* buffer, size_t offset, size_t size);
+
 // Private functions
 void _print_trace(size_t offset);
 int _fprint_trace(FILE* fp, size_t offset);
 int _sprint_trace(char* buffer, size_t offset);
 
+#endif
+
+//#define DR42_TRACE_IMPLEMENTATION
 #ifdef DR42_TRACE_IMPLEMENTATION
 
 #include <stdio.h>
@@ -106,6 +113,64 @@ int _fprint_trace(FILE* fp, size_t offset){
 
 #define MAX_STACK_FRAMES 64
 void* buffer[MAX_STACK_FRAMES];
+
+int get_intermediate_trace(void** stack, size_t size){
+   return backtrace(stack, size);
+}
+int sprint_intermediate_trace(void** stack, char* buffer, size_t offset, size_t size){
+  readlink("/proc/self/exe", prg_name, 1024);
+  buffer[0] = '\0';
+  char tmp[1024];
+  for (size_t i = offset + 1; i < size; i++) {
+    // Execute addr2line and get prettified names
+    char addr2line_cmd[512];
+    void* addr = stack[i] - 1;
+    Dl_info info;
+    if (dladdr(addr, &info) != 0) {
+      void* offset = (void*)((char*)addr - (char*)info.dli_fbase);
+      sprintf(addr2line_cmd, "addr2line -p -f -e %s %p", info.dli_fname, offset);
+    } else {
+      sprintf(addr2line_cmd, "addr2line -p -f -e %s %p", prg_name, addr);
+    }
+    char line[512];
+    FILE* addr2line = popen(addr2line_cmd, "r");
+    fgets(line, 512, addr2line);
+    pclose(addr2line);
+    if(line[0] == '?') {
+      sprintf(addr2line_cmd, "addr2line -p -f -e %s %p", prg_name, addr);
+      FILE* addr2line = popen(addr2line_cmd, "r");
+      fgets(line, 512, addr2line);
+      pclose(addr2line);
+    }
+    // Remove pwd from path
+    char* pwd = getenv("PWD");
+    char* pwd_pos = strstr(line, pwd);
+    if (pwd_pos != NULL) {
+      // Preserve text before pwd
+      char* line_pos = line;
+      char* pwd_pos = strstr(line, pwd);
+      while (line_pos != pwd_pos) {
+	strncat(buffer, line_pos, 1);
+	line_pos++;
+      }
+      // Skip pwd
+      line_pos += strlen(pwd);
+      // Skip slash
+      line_pos++;
+      // Print rest of line
+      sprintf(tmp, "%s", line_pos);
+    } else {
+      sprintf(tmp, "%s", line);
+    }
+    strcat(buffer, tmp);
+    // Stop at main
+    if (strstr(line, "main at") != NULL) {
+      break;
+    }
+  }
+  buffer[strlen(buffer) - 1] = '\0';
+  return strlen(buffer);
+}
 
 int _sprint_trace(char* buff, size_t offset){
   readlink("/proc/self/exe", prg_name, 1024);
@@ -162,10 +227,62 @@ int _sprint_trace(char* buff, size_t offset){
   buff[strlen(buff) - 1] = '\0';
   return strlen(buff);
 }
+
 #endif
 #ifdef _WIN64
 #include <windows.h>
 #include <dbghelp.h>
+
+int get_intermediate_trace(void** stack, size_t size){
+    HANDLE       	process;
+    process = GetCurrentProcess();
+    SymInitialize( process, NULL, TRUE );
+    int ret = CaptureStackBackTrace(1, size, stack, NULL);
+    return ret;
+}
+
+int sprint_intermediate_trace(void** stack, char* buffer, size_t offset, size_t size){
+    HANDLE       	process;
+    process = GetCurrentProcess();
+    SymInitialize( process, NULL, TRUE );
+  SYMBOL_INFO  * symbol;
+  symbol               = ( SYMBOL_INFO * )calloc( sizeof( SYMBOL_INFO ) + 256 * sizeof( char ), 1 );
+  symbol->MaxNameLen   = 255;
+  symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
+
+  IMAGEHLP_LINE64 line;
+  line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+
+  for(size_t i = offset; i < size; i++ ){
+    char tmp[1024];
+    SymFromAddr( process, ( DWORD64 )( stack[ i ]  - 1), 0, symbol );
+    // Get filename and line number from the address of the function call
+    DWORD displacement;
+    if (SymGetLineFromAddr64(process, (DWORD64)(stack[i] - 1), &displacement, &line)) {
+      char filename[1024];
+      // Remove cwd from filename
+      GetCurrentDirectory(1024, filename);
+      char* cwd_ptr = strstr(line.FileName, filename);
+      if (cwd_ptr != NULL) {
+	strcpy(filename, cwd_ptr + strlen(filename) + 1);
+      }
+      // Print the stack trace
+      snprintf(tmp, 1024, "%s at %s:%lu\n", symbol->Name, filename, line.LineNumber );
+    } else {
+      // Unable to get source file information
+      snprintf(tmp, 1024, "%s at (unknown)\n", symbol->Name);
+    }
+    strcat(buffer, tmp);
+    if (strcmp(symbol->Name, "main") == 0) {
+      // Stop printing the stack trace after reaching main
+      break;
+    }
+  }
+  strcat(buffer, "\n");
+  free( symbol );
+  buffer[strlen(buffer) - 1] = '\0';
+  return strlen(buffer);
+}
 
 int _sprint_trace(char* buffer, size_t offset){
   buffer[0] = '\0';
