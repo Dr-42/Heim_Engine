@@ -35,7 +35,6 @@ typedef struct HeimEcs {
 
     uint64_t entity_count;
     uint64_t component_count;
-
 } HeimEcs;
 
 /// @brief Creates a new ECS Manager

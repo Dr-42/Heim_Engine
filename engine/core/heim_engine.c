@@ -24,13 +24,13 @@ void heim_engine_handle_segfault(int sig) {
     HEIM_LOG_ERROR("Heim Engine crashed with signal %d", sig);
     #endif
     print_trace();
-    heim_engine_shutdown();
+    exit(EXIT_FAILURE);
 }
 
 void set_signal_handlers() {
-    signal(SIGINT, heim_engine_shutdown);
-    signal(SIGTERM, heim_engine_shutdown);
-    signal(SIGABRT, heim_engine_shutdown);
+    signal(SIGINT, exit);
+    signal(SIGTERM, exit);
+    signal(SIGABRT, exit);
     signal(SIGSEGV, heim_engine_handle_segfault);
 }
 
@@ -97,7 +97,8 @@ void heim_engine_free() {
     glfwTerminate();
 }
 
-void heim_engine_shutdown() {
+void heim_engine_shutdown(void (*shutdown)()) {
+    shutdown();
     heim_ecs_close();
     heim_logger_close();
     heim_engine_cleanup();

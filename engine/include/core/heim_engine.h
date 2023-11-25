@@ -18,7 +18,6 @@ typedef struct HeimEngine {
 
 /// @brief Creates a new HeimEngine.
 /// @param title The title of the window.
-/// @return Pointer to the new HeimEngine struct.
 void heim_engine_new(char *title);
 
 /// @brief Sets the window size.
@@ -35,7 +34,6 @@ void heim_engine_set_fullscreen(bool fullscreen);
 bool heim_engine_is_fullscreen();
 
 /// @brief Initializes the HeimEngine struct.
-/// @param heim Pointer to the HeimEngine struct.
 /// @param init Pointer to the user init function.
 void heim_engine_init(void (*init)(void));
 
@@ -45,8 +43,7 @@ void heim_engine_init(void (*init)(void));
 void heim_engine_run(void (*update)(float dt));
 
 /// @brief Frees the HeimEngine struct.
-/// @param heim Pointer to the HeimEngine struct.
-void heim_engine_shutdown();
+void heim_engine_shutdown(void (*shutdown)());
 
 /// @brief Sets the should close flag.
 /// @param heim Pointer to the HeimEngine struct.

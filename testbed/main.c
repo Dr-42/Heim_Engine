@@ -127,7 +127,7 @@ void testbed_init() {
 
     camera_entity = heim_ecs_create_entity();
     camera = heim_camera_new(
-        90.0f,
+        60.0f,
         (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
         0.1f,
         100.0f,
@@ -275,16 +275,7 @@ void testbed_update(float dt) {
     frame_count++;
 }
 
-int main(void) {
-    heim_engine_new("Heim Engine Testbed");
-    heim_engine_set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT);
-    heim_engine_set_window_top_left(400, 100);
-
-    heim_engine_init(testbed_init);
-    heim_input_mouse_hide(true);
-    heim_input_mouse_grab(true);
-    heim_engine_run(testbed_update);
-
+void testbed_free(){
     heim_texture_free(tex1);
     heim_obj_free(object1);
 
@@ -311,7 +302,18 @@ int main(void) {
     heim_texture_free(cube_ao);
 
     heim_font_free(font);
+}
 
-    heim_engine_shutdown();
+int main(void) {
+    heim_engine_new("Heim Engine Testbed");
+    heim_engine_set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT);
+    heim_engine_set_window_top_left(400, 100);
+
+    heim_engine_init(testbed_init);
+    heim_input_mouse_hide(true);
+    heim_input_mouse_grab(true);
+    heim_engine_run(testbed_update);
+
+    heim_engine_shutdown(testbed_free);
     return 0;
 }
