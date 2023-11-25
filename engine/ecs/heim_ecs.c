@@ -112,7 +112,7 @@ uint64_t heim_ecs_get_entity_count() {
 void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < heim_vector_length(ecs->systems); i++) {
         if (ecs->systems[i] != 0) {
-            if (ecs->systems[i] == heim_pbr_model_renderer_system) {
+            if (i == 0) {
                 // Clear the camera framebuffers
                 for (HeimEntity entity = 0; entity < ecs->entity_count; entity++) {
                     if (heim_ecs_has_component(entity, get_camera_component())) {

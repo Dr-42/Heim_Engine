@@ -1,28 +1,30 @@
 #include "ecs/predef_systems/heim_model_renderer.h"
 
-#include "core/heim_input.h"
-#include "core/heim_windowing.h"
 #include "ecs/heim_ecs_predef.h"
 #include "ecs/predef_comps/heim_camera.h"
+#include "ecs/predef_comps/heim_world.h"
 #include "math/heim_mat.h"
-#include "math/heim_math_common.h"
 #include "renderer/heim_shader.h"
 
 static struct {
     HeimShader* shader;
+    HeimWorld* world;
 } model_render_system;
+
 void heim_model_renderer_init() {
     model_render_system.shader = heim_shader_create();
     heim_shader_init(model_render_system.shader, "assets/shaders/model.vert", "assets/shaders/model.frag");
 }
 
-void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, HeimCamera* camera, HeimTransform* camera_transform) {
+void heim_model_render(HeimModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale) {
     HeimMat4 model_matrix = heim_mat4_identity();
     model_matrix = heim_mat4_translate(model_matrix, position);
     model_matrix = heim_mat4_rotate(model_matrix, rotation.x, (HeimVec3f){1.0f, 0.0f, 0.5f});
     model_matrix = heim_mat4_rotate(model_matrix, rotation.y, (HeimVec3f){0.0f, 1.0f, 0.0f});
     model_matrix = heim_mat4_rotate(model_matrix, rotation.z, (HeimVec3f){0.0f, 0.0f, 1.0f});
     model_matrix = heim_mat4_scale(model_matrix, scale);
+    HeimCamera* camera = model_render_system.world->camera;
+    HeimTransform* camera_transform = model_render_system.world->camera_transform;
 
     heim_shader_bind(model_render_system.shader);
     heim_shader_set_uniform_mat4(model_render_system.shader, "model", model_matrix);
@@ -85,26 +87,20 @@ void heim_model_renderer_system(HeimEntity entity, float dt) {
     HeimModel* model = heim_ecs_get_component_data(entity, get_model_component());
     HeimTransform* transform = heim_ecs_get_component_data(entity, get_transform_component());
 
-    HeimEntity camera = 0;
-
     for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
-        if (!heim_ecs_has_component(i, get_camera_component())) {
+        if (!heim_ecs_has_component(i, get_world_component())) {
             continue;
         }
-
-        camera = i;
+        model_render_system.world = heim_ecs_get_component_data(i, get_world_component());
         break;
     }
 
-    if (!camera) {
-        HEIM_LOG_WARN("No camera found");
-        return;
+    if (!model_render_system.world) {
+        HEIM_LOG_WARN("No world found");
+        //return;
     }
 
-    HeimCamera* camera_data = heim_ecs_get_component_data(camera, get_camera_component());
-    HeimTransform* camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
-
-    heim_model_render(model, transform->position, transform->rotation, transform->size, camera_data, camera_transform);
+    heim_model_render(model, transform->position, transform->rotation, transform->size);
 }
 void heim_model_renderer_free() {
     heim_shader_free(model_render_system.shader);

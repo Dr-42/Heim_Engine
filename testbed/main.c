@@ -6,10 +6,19 @@
 #include <renderer/heim_obj.h>
 #include <renderer/heim_sprite.h>
 #include <renderer/heim_texture.h>
+#include <renderer/heim_skybox.h>
 
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
 
+HeimEntity world_entity;
+HeimWorld world;
+HeimSkybox *skybox;
+HeimEntity camera_entity;
+HeimCamera *camera;
+HeimTransform camera_transform = {
+    .position = (HeimVec3f){0.0f, 0.0f, 3.0f},
+};
 HeimEntity entity1, entity2, entity3, fps_entity;
 HeimObj *object1, *object2, *object3;
 HeimTexture *tex1, *tex2, *tex3;
@@ -20,11 +29,6 @@ HeimSprite *sprite;
 HeimUiTransform ui_transform;
 HeimUiSprite ui_sprite;
 
-HeimEntity camera_entity;
-HeimCamera *camera;
-HeimTransform camera_transform = {
-    .position = (HeimVec3f){0.0f, 0.0f, 3.0f},
-};
 HeimTexture *brun_albedo, *brun_normal, *brun_metallic, *brun_roughness, *brun_ao;
 HeimTexture *cube_albedo, *cube_normal, *cube_metallic, *cube_roughness, *cube_ao;
 
@@ -42,9 +46,31 @@ HeimUiText fps_text;
 char text[256];
 
 void testbed_init() {
+    world_entity = heim_ecs_create_entity();
+    skybox = heim_skybox_create("assets/hdr/rathaus.hdr");
     entity1 = heim_ecs_create_entity();
     object1 = heim_obj_load("assets/models/Brunhilda1.obj");
     tex1 = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
+    camera_entity = heim_ecs_create_entity();
+    camera = heim_camera_new(
+        80.0f,
+        (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
+        0.1f,
+        100.0f,
+        true,
+        WINDOW_WIDTH, WINDOW_HEIGHT);
+    camera->clear_color = (HeimVec4f){0.1f, 0.1f, 0.1f, 1.0f};
+    camera->front = (HeimVec3f){0.0f, 0.0f, -1.0f};
+    camera->up = (HeimVec3f){0.0f, 1.0f, 0.0f};
+    heim_ecs_add_component(camera_entity, get_camera_component(), camera);
+    heim_ecs_add_component(camera_entity, get_transform_component(), &camera_transform);
+    world = (HeimWorld){
+        .skybox = skybox,
+        .camera = camera,
+        .camera_transform = &camera_transform,
+    };
+
+    heim_ecs_add_component(world_entity, get_world_component(), &world);
 
     model1 = (HeimModel){object1, tex1};
     transform1 = (HeimTransform){
@@ -73,15 +99,6 @@ void testbed_init() {
     cube_metallic = heim_texture_create("assets/textures/rust/metallic.png");
     cube_roughness = heim_texture_create("assets/textures/rust/roughness.png");
     cube_ao = heim_texture_create("assets/textures/rust/ao.png");
-    /*
-    object2 = heim_obj_load("assets/models/teapot.obj");
-
-    brun_albedo = heim_texture_create("assets/textures/teapot/albedo.png");
-    brun_normal = heim_texture_create("assets/textures/teapot/normal.png");
-    brun_metallic = heim_texture_create("assets/textures/teapot/roughness.png");
-    brun_roughness = heim_texture_create("assets/textures/teapot/roughness.png");
-    brun_ao = heim_texture_create("assets/textures/teapot/ao.png");
-    */
 
     model2 = (HeimPBRModel){
         .obj = object2,
@@ -124,20 +141,6 @@ void testbed_init() {
 
     heim_ecs_add_component(entity3, get_ui_transform_component(), &ui_transform);
     heim_ecs_add_component(entity3, get_ui_sprite_component(), &ui_sprite);
-
-    camera_entity = heim_ecs_create_entity();
-    camera = heim_camera_new(
-        60.0f,
-        (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
-        0.1f,
-        100.0f,
-        true,
-        WINDOW_WIDTH, WINDOW_HEIGHT);
-    camera->clear_color = (HeimVec4f){0.1f, 0.1f, 0.1f, 1.0f};
-    camera->front = (HeimVec3f){0.0f, 0.0f, -1.0f};
-    camera->up = (HeimVec3f){0.0f, 1.0f, 0.0f};
-    heim_ecs_add_component(camera_entity, get_camera_component(), camera);
-    heim_ecs_add_component(camera_entity, get_transform_component(), &camera_transform);
 
     camera_surface_entity = heim_ecs_create_entity();
     camera_surface_sprite = heim_create_sprite(camera->texture);
@@ -276,6 +279,7 @@ void testbed_update(float dt) {
 }
 
 void testbed_free(){
+    heim_skybox_destroy(skybox);
     heim_texture_free(tex1);
     heim_obj_free(object1);
 

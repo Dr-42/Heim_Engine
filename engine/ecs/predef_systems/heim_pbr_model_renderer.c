@@ -1,29 +1,22 @@
 #include "ecs/predef_systems/heim_pbr_model_renderer.h"
 
-#include "core/heim_input.h"
-#include "core/heim_windowing.h"
 #include "ecs/heim_ecs_predef.h"
-#include "ecs/predef_comps/heim_camera.h"
 #include "math/heim_mat.h"
-#include "math/heim_math_common.h"
-#include "renderer/heim_skybox.h"
+#include "ecs/predef_comps/heim_world.h"
 
 float total_time = 0.0f;
 
 static struct {
     HeimShader* shader;
-    HeimSkybox* skybox;
-    HeimCamera* camera;
-    HeimTransform* camera_transform;
+    HeimWorld* world;
 } pbr_model_render_system;
 
-void heim_pbr_model_renderer_init(const char* skybox_path) {
+void heim_pbr_model_renderer_init() {
     pbr_model_render_system.shader = heim_shader_create();
     heim_shader_init(pbr_model_render_system.shader, "assets/shaders/model_pbr.vert", "assets/shaders/model_pbr.frag");
-    pbr_model_render_system.skybox = heim_skybox_create(skybox_path);
 }
 
-void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, HeimCamera* camera, HeimTransform* camera_transform, float dt) {
+void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, float dt) {
     HeimMat4 model_matrix = heim_mat4_identity();
     model_matrix = heim_mat4_translate(model_matrix, position);
     model_matrix = heim_mat4_rotate(model_matrix, rotation.x, (HeimVec3f){1.0f, 0.0f, 0.5f});
@@ -39,6 +32,8 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     // Update the camera rotation
     HeimVec3f yawAxis = {0.0f, 1.0f, 0.0f};
     HeimVec3f pitchAxis = {1.0f, 0.0f, 0.0f};
+    HeimCamera* camera = pbr_model_render_system.world->camera;
+    HeimTransform* camera_transform = pbr_model_render_system.world->camera_transform;
     cameraRotation = heim_mat4_rotate(cameraRotation, camera->yaw, yawAxis);
     cameraRotation = heim_mat4_rotate(cameraRotation, camera->pitch, pitchAxis);
 
@@ -101,13 +96,13 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     HeimMat3 normal_matrix = heim_mat3_transpose(heim_mat3_from_mat4(model_matrix));
     heim_shader_set_uniform_mat3(pbr_model_render_system.shader, "normalMatrix", normal_matrix);
 
-    heim_skybox_bind(pbr_model_render_system.skybox);
+    heim_skybox_bind(pbr_model_render_system.world->skybox);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "irradianceMap", 0);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "prefilterMap", 1);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "brdfLUT", 2);
     heim_obj_render(model->obj);
 
-    heim_skybox_render_background(pbr_model_render_system.skybox, view_matrix, projection_matrix);
+    heim_skybox_render_background(pbr_model_render_system.world->skybox, view_matrix, projection_matrix);
     if (camera->render_to_texture) {
         heim_camera_unbind(camera);
     }
@@ -127,11 +122,24 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
         return;
     }
 
+    for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
+        if (!heim_ecs_has_component(i, get_world_component())) {
+            continue;
+        }
+        pbr_model_render_system.world = heim_ecs_get_component_data(i, get_world_component());
+        break;
+    }
+
+    if (!pbr_model_render_system.world) {
+        HEIM_LOG_WARN("No world found");
+        //return;
+    }
+
     HeimPBRModel* model = heim_ecs_get_component_data(entity, get_pbr_model_component());
     HeimTransform* transform = heim_ecs_get_component_data(entity, get_transform_component());
 
-    HeimEntity camera = 0;
-    if (pbr_model_render_system.camera == NULL) {
+    /* HeimEntity camera = 0;
+    if (pbr_model_render_system.world->camera == NULL) {
         for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
             if (!heim_ecs_has_component(i, get_camera_component())) {
                 continue;
@@ -143,16 +151,16 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
             HEIM_LOG_WARN("No camera found");
             return;
         }
-        pbr_model_render_system.camera = heim_ecs_get_component_data(camera, get_camera_component());
-        pbr_model_render_system.camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
+        pbr_model_render_system.world->camera = heim_ecs_get_component_data(camera, get_camera_component());
+        pbr_model_render_system.world->camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
     }
-
+    */
     if (model && transform) {
-        heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, pbr_model_render_system.camera, pbr_model_render_system.camera_transform, dt);
+        heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, dt);
     }
 }
 
 void heim_pbr_model_renderer_free() {
     heim_shader_free(pbr_model_render_system.shader);
-    heim_skybox_destroy(pbr_model_render_system.skybox);
+    //heim_skybox_destroy(pbr_model_render_system.skybox);
 }

@@ -7,3 +7,4 @@
 #include "ecs/predef_comps/heim_ui_sprite.h"
 #include "ecs/predef_comps/heim_ui_text.h"
 #include "ecs/predef_comps/heim_uitransform.h"
+#include "ecs/predef_comps/heim_world.h"
