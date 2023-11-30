@@ -13,6 +13,7 @@ typedef struct HeimTexture {
 HeimTexture* heim_texture_create(char* path);
 
 HeimTexture* heim_texture_create_empty_slot(uint32_t width, uint32_t height, uint32_t channels);
+HeimTexture* heim_texture_create_color(uint8_t* color);
 void heim_texture_free(HeimTexture* texture);
 
 uint32_t heim_texture_get_id(HeimTexture* texture);

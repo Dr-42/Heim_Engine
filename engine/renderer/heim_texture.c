@@ -73,6 +73,23 @@ HeimTexture* heim_texture_create_empty_slot(uint32_t width, uint32_t height, uin
     return tex;
 }
 
+HeimTexture* heim_texture_create_color(uint8_t* color) {
+    HeimTexture* tex = HEIM_MALLOC(HeimTexture, HEIM_MEMORY_TYPE_RENDERER);
+
+    glGenTextures(1, &tex->id);
+    glBindTexture(GL_TEXTURE_2D, tex->id);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, color);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    tex->width = 1;
+    tex->height = 1;
+    tex->channels = 3;
+
+    return tex;
+}
+
 void heim_texture_free(HeimTexture* texture) {
     glDeleteTextures(1, &texture->id);
     HEIM_FREE(texture, HEIM_MEMORY_TYPE_RENDERER);

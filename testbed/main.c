@@ -19,17 +19,18 @@ HeimCamera *camera;
 HeimTransform camera_transform = {
     .position = (HeimVec3f){0.0f, 0.0f, 3.0f},
 };
-HeimEntity entity1, entity2, entity3, fps_entity;
-HeimObj *object1, *object2, *object3;
+HeimEntity entity1, entity2, entity3, entity4, fps_entity;
+HeimObj *object1, *object2, *object3, *object4;
 HeimTexture *tex1, *tex2, *tex3;
 HeimModel model1;
-HeimPBRModel model2, model3;
-HeimTransform transform1, transform2;
+HeimPBRModel model2, model3, model4;
+HeimTransform transform1, transform2, transform3;
 HeimSprite *sprite;
 HeimUiTransform ui_transform;
 HeimUiSprite ui_sprite;
 
 HeimTexture *brun_albedo, *brun_normal, *brun_metallic, *brun_roughness, *brun_ao;
+HeimTexture *maria_albedo, *maria_normal, *maria_metallic, *maria_roughness, *maria_ao;
 HeimTexture *cube_albedo, *cube_normal, *cube_metallic, *cube_roughness, *cube_ao;
 
 HeimEntity camera_surface_entity;
@@ -47,7 +48,7 @@ char text[256];
 
 void testbed_init() {
     world_entity = heim_ecs_create_entity();
-    skybox = heim_skybox_create("assets/hdr/rathaus.hdr");
+    skybox = heim_skybox_create("assets/hdr/autumn.hdr");
     entity1 = heim_ecs_create_entity();
     object1 = heim_obj_load("assets/models/Brunhilda1.obj");
     tex1 = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
@@ -92,6 +93,15 @@ void testbed_init() {
     brun_roughness = heim_texture_create("assets/textures/brunhilda/DefaultMaterial_Roughness.png");
     brun_ao = heim_texture_create("assets/textures/brunhilda/DefaultMaterial_Mixed_AO.png");
 
+    entity4 = heim_ecs_create_entity();
+    object4 = heim_obj_load("assets/models/Maria.fbx");
+
+    maria_albedo = heim_texture_create("assets/textures/Maria/maria_diffuse.png");
+    maria_normal = heim_texture_create("assets/textures/Maria/maria_normal.png");
+    maria_metallic = heim_texture_create("assets/textures/Maria/maria_specular.png");
+    maria_roughness = heim_texture_create("assets/textures/Maria/maria_height.png");
+    maria_ao = heim_texture_create("assets/textures/Maria/maria_ao.png");
+
     object3 = heim_obj_load("assets/models/cube.obj");
 
     cube_albedo = heim_texture_create("assets/textures/rust/albedo.png");
@@ -109,6 +119,15 @@ void testbed_init() {
         .aoMap = brun_ao,
     };
 
+    model4 = (HeimPBRModel){
+        .obj = object4,
+        .albedoMap = maria_albedo,
+        .normalMap = maria_normal,
+        .metallicMap = maria_metallic,
+        .roughnessMap = maria_roughness,
+        .aoMap = maria_ao,
+    };
+
     model3 = (HeimPBRModel){
         .obj = object3,
         .albedoMap = cube_albedo,
@@ -124,8 +143,17 @@ void testbed_init() {
         .size = {1.0f, 1.0f, 1.0f},
     };
 
+    transform3 = (HeimTransform){
+        .position = {1.5f, -0.5f, 0.0f},
+        .rotation = {0.0f, 0.0f, 0.0f},
+        .size = {0.007f, 0.007f, 0.007f},
+    };
+
     heim_ecs_add_component(entity2, get_pbr_model_component(), &model2);
     heim_ecs_add_component(entity2, get_transform_component(), &transform2);
+
+    heim_ecs_add_component(entity4, get_pbr_model_component(), &model4);
+    heim_ecs_add_component(entity4, get_transform_component(), &transform3);
 
     entity3 = heim_ecs_create_entity();
     tex3 = heim_texture_create("./assets/textures/Heim.png");
@@ -286,6 +314,7 @@ void testbed_free(){
     heim_texture_free(tex2);
     heim_obj_free(object2);
     heim_obj_free(object3);
+    heim_obj_free(object4);
 
     heim_texture_free(tex3);
     heim_sprite_free(sprite);
@@ -298,6 +327,12 @@ void testbed_free(){
     heim_texture_free(brun_metallic);
     heim_texture_free(brun_roughness);
     heim_texture_free(brun_ao);
+
+    heim_texture_free(maria_albedo);
+    heim_texture_free(maria_normal);
+    heim_texture_free(maria_metallic);
+    heim_texture_free(maria_roughness);
+    heim_texture_free(maria_ao);
 
     heim_texture_free(cube_albedo);
     heim_texture_free(cube_normal);
