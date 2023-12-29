@@ -7,6 +7,8 @@
 #include <renderer/heim_sprite.h>
 #include <renderer/heim_texture.h>
 #include <renderer/heim_skybox.h>
+#include <renderer/heim_animator.h>
+#include <renderer/heim_skeletal_model.h>
 
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
@@ -45,6 +47,13 @@ HeimFont *font;
 HeimUiTransform fps_transform;
 HeimUiText fps_text;
 char text[256];
+
+HeimSkeletalModel *skeletal_model;
+HeimAnimator *animator;
+HeimTransform skeletal_transform;
+HeimEntity skeletal_entity;
+HeimSkeletalModelComp skeletal_model_comp;
+
 
 void testbed_init() {
     world_entity = heim_ecs_create_entity();
@@ -148,6 +157,11 @@ void testbed_init() {
         .rotation = {0.0f, 0.0f, 0.0f},
         .size = {0.007f, 0.007f, 0.007f},
     };
+    skeletal_transform = (HeimTransform){
+        .position = {2.5f, -0.5f, 0.0f},
+        .rotation = {0.0f, 0.0f, 0.0f},
+        .size = {0.007f, 0.007f, 0.007f},
+    };
 
     heim_ecs_add_component(entity2, get_pbr_model_component(), &model2);
     heim_ecs_add_component(entity2, get_transform_component(), &transform2);
@@ -194,6 +208,23 @@ void testbed_init() {
 
     heim_ecs_add_component(fps_entity, get_ui_transform_component(), &fps_transform);
     heim_ecs_add_component(fps_entity, get_ui_text_component(), &fps_text);
+
+    skeletal_entity = heim_ecs_create_entity();
+    skeletal_model = heim_skeletal_model_create("assets/models/Maria.fbx", false);
+    heim_skeletal_model_set_albedo(skeletal_model, maria_albedo);
+    heim_skeletal_model_set_normal(skeletal_model, maria_normal);
+    heim_skeletal_model_set_specular(skeletal_model, maria_metallic);
+    heim_skeletal_model_set_roughness(skeletal_model, maria_roughness);
+    heim_skeletal_model_set_ao(skeletal_model, maria_ao);
+    animator = animator_init("assets/models/Maria.fbx", skeletal_model);
+
+    skeletal_model_comp = (HeimSkeletalModelComp){
+        .model = skeletal_model,
+        .animator = animator,
+    };
+
+    heim_ecs_add_component(skeletal_entity, get_skeletal_model_component(), &skeletal_model_comp);
+    heim_ecs_add_component(skeletal_entity, get_transform_component(), &skeletal_transform);
 }
 
 float speed = 2.0f;

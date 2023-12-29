@@ -20,22 +20,22 @@ typedef struct HeimSkeletalModel {
     HeimTexture *roughness;
     HeimTexture *ao;
 
-    HeimSkeletalMesh *meshes;
+    HeimSkeletalMesh **meshes;
     bool gamma_corrected;
     heim_bone_info_t* bone_info_map;
     int32_t bone_counter;
 } HeimSkeletalModel;
 
-HeimSkeletalModel* heim_m_skeletal_model_create(const char* path, bool gamma_corrected);
-void heim_m_skeletal_model_destroy(HeimSkeletalModel* model);
+HeimSkeletalModel* heim_skeletal_model_create(const char* path, bool gamma_corrected);
+void heim_skeletal_model_destroy(HeimSkeletalModel* model);
 
-void heim_m_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo);
-void heim_m_skeletal_model_set_normal(HeimSkeletalModel* model, HeimTexture* normal);
-void heim_m_skeletal_model_set_specular(HeimSkeletalModel* model, HeimTexture* specular);
-void heim_m_skeletal_model_set_roughness(HeimSkeletalModel* model, HeimTexture* roughness);
-void heim_m_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao);
+void heim_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo);
+void heim_skeletal_model_set_normal(HeimSkeletalModel* model, HeimTexture* normal);
+void heim_skeletal_model_set_specular(HeimSkeletalModel* model, HeimTexture* specular);
+void heim_skeletal_model_set_roughness(HeimSkeletalModel* model, HeimTexture* roughness);
+void heim_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao);
 
-void heim_m_skeletal_model_draw(HeimSkeletalModel* model, HeimShader* shader);
+void heim_skeletal_model_draw(HeimSkeletalModel* model);
 
 int32_t find_bone_index(heim_bone_info_t* bone_info_map, const char* name);
 

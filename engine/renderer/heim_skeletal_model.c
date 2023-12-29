@@ -1,5 +1,3 @@
-#pragma once
-
 #include <assimp/cimport.h>
 #include <assimp/mesh.h>
 #include <assimp/scene.h>
@@ -20,25 +18,21 @@ HeimSkeletalMesh* process_mesh(HeimSkeletalModel* model, struct aiMesh* mesh);
 void set_vertex_bone_data(HeimSkeletalMeshVertex* vertex, int bone_id, float weight);
 void extract_bone_weight_for_vertices(HeimSkeletalModel* model, HeimSkeletalMeshVertex* vertices, struct aiMesh* mesh);
 
-HeimSkeletalModel* heim_m_skeletal_model_create(const char* path, bool gamma_corrected){
+HeimSkeletalModel* heim_skeletal_model_create(const char* path, bool gamma_corrected){
     HeimSkeletalModel* model = HEIM_MALLOC(HeimSkeletalModel, HEIM_MEMORY_TYPE_RENDERER);
     memset(model, 0, sizeof(HeimSkeletalModel));
     model->gamma_corrected = gamma_corrected;
-    model->meshes = heim_vector_create(HeimSkeletalMesh);
+    model->meshes = heim_vector_create(HeimSkeletalMesh*);
     model->bone_info_map = heim_vector_create(heim_bone_info_t);
     load_model(model, path);
     return model;
 }
 
-void heim_m_skeletal_model_destroy(HeimSkeletalModel* model){
+void heim_skeletal_model_destroy(HeimSkeletalModel* model){
     for (size_t i = 0; i < heim_vector_length(model->meshes); i++) {
-        for (size_t j = 0; j < heim_vector_length(model->meshes[i].vertices); j++) {
-            heim_vector_destroy(model->meshes[i].vertices[j].ids);
-            heim_vector_destroy(model->meshes[i].vertices[j].weights);
-        }
-        heim_vector_destroy(model->meshes[i].vertices);
-        heim_vector_destroy(model->meshes[i].indices);
-        heim_skeletal_mesh_destroy(&model->meshes[i]);
+        heim_vector_destroy(model->meshes[i]->vertices);
+        heim_vector_destroy(model->meshes[i]->indices);
+        heim_skeletal_mesh_destroy(model->meshes[i]);
     }
     heim_vector_destroy(model->meshes);
     for (size_t i = 0; i < heim_vector_length(model->bone_info_map); i++) {
@@ -49,30 +43,30 @@ void heim_m_skeletal_model_destroy(HeimSkeletalModel* model){
 }
 
 
-void heim_m_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo){
+void heim_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo){
     model->albedo = albedo;
 }
 
-void heim_m_skeletal_model_set_normal(HeimSkeletalModel* model, HeimTexture* normal){
+void heim_skeletal_model_set_normal(HeimSkeletalModel* model, HeimTexture* normal){
     model->normal = normal;
 }
 
-void heim_m_skeletal_model_set_specular(HeimSkeletalModel* model, HeimTexture* specular){
+void heim_skeletal_model_set_specular(HeimSkeletalModel* model, HeimTexture* specular){
     model->specular = specular;
 }
 
-void heim_m_skeletal_model_set_roughness(HeimSkeletalModel* model, HeimTexture* roughness){
+void heim_skeletal_model_set_roughness(HeimSkeletalModel* model, HeimTexture* roughness){
     model->roughness = roughness;
 }
 
-void heim_m_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao){
+void heim_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao){
     model->ao = ao;
 }
 
 
-void heim_m_skeletal_model_draw(HeimSkeletalModel* model, HeimShader* shader){
+void heim_skeletal_model_draw(HeimSkeletalModel* model){
     for (size_t i = 0; i < heim_vector_length(model->meshes); i++) {
-        heim_skeletal_mesh_draw(&model->meshes[i], shader);
+        heim_skeletal_mesh_draw(model->meshes[i]);
     }
 }
 

@@ -102,7 +102,7 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "brdfLUT", 2);
     heim_obj_render(model->obj);
 
-    heim_skybox_render_background(pbr_model_render_system.world->skybox, view_matrix, projection_matrix);
+    //heim_skybox_render_background(pbr_model_render_system.world->skybox, view_matrix, projection_matrix);
     if (camera->render_to_texture) {
         heim_camera_unbind(camera);
     }
