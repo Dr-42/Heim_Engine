@@ -26,6 +26,8 @@ typedef struct {
     float x, y, z, w;
 } HeimVec4f;
 
+float heim_deg_to_rad(float deg);
+
 /// @brief Add two HeimVec2f vectors
 /// @param a vec 1
 /// @param b vec 2
@@ -42,3 +44,11 @@ HeimVec3f heim_vec3f_cross(HeimVec3f a, HeimVec3f b);
 HeimVec3f heim_vec3f_normalize(HeimVec3f a);
 
 HeimVec3f heim_vec3f_from_vec4f(HeimVec4f a);
+HeimVec3f heim_vec3f_mix(HeimVec3f a, HeimVec3f b, float t);
+
+HeimVec4f heim_vec4f_from_vec3f(HeimVec3f a);
+float heim_vec4f_dot(HeimVec4f a, HeimVec4f b);
+HeimVec4f heim_vec4f_mix(HeimVec4f a, HeimVec4f b, float t);
+HeimVec4f heim_vec4f_normalize(HeimVec4f a);
+HeimVec4f heim_vec4f_mul(HeimVec4f a, float b);
+HeimVec4f heim_quat_slerp(HeimVec4f a, HeimVec4f b, float t);

@@ -1,8 +1,6 @@
 #include "math/heim_mat.h"
 
 #include <stdio.h>
-
-#include "math/heim_math_common.h"
 #include "math/heim_vec.h"
 
 void heim_mat4_print(HeimMat4 mat) {
@@ -35,7 +33,7 @@ HeimMat4 heim_mat4_translate(HeimMat4 m, HeimVec3f vec) {
 
 HeimMat4 heim_mat4_rotate(HeimMat4 m, float degrees, HeimVec3f axis) {
     HeimMat4 rot = {0};
-    float radians = degrees * HEIM_PI / 180.0f;
+    float radians = degrees * M_PI / 180.0f;
     float c = cosf(radians);
     float s = sinf(radians);    
     float omc = 1.0f - c;
@@ -117,7 +115,7 @@ HeimMat4 heim_mat4_ortho(float left, float right, float bottom, float top, float
 
 HeimMat4 heim_mat4_perspective(float fov, float aspect, float near, float far) {
     HeimMat4 mat = {0};
-    float f = 1.0f / tanf(fov * 0.5f * HEIM_PI / 180.0f);
+    float f = 1.0f / tanf(fov * 0.5f * M_PI / 180.0f);
     float fn = 1.0f / (near - far);
 
     mat.m[0][0] = f / aspect;
@@ -212,4 +210,46 @@ HeimMat3 heim_mat3_from_mat4(HeimMat4 mat) {
     result.m[2][1] = mat.m[2][1];
     result.m[2][2] = mat.m[2][2];
     return result;
+}
+
+HeimMat4 heim_mat4_from_quat(HeimVec4f q){
+    float w, x, y, z,
+    xx, yy, zz,
+    xy, yz, xz,
+    wx, wy, wz, norm, s;
+
+    norm = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
+    s    = norm > 0.0f ? 2.0f / norm : 0.0f;
+
+    x = q.x;
+    y = q.y;
+    z = q.z;
+    w = q.w;
+
+    xx = s * x * x;   xy = s * x * y;   wx = s * w * x;
+    yy = s * y * y;   yz = s * y * z;   wy = s * w * y;
+    zz = s * z * z;   xz = s * x * z;   wz = s * w * z;
+
+    HeimMat4 dest = {0};
+
+    dest.m[0][0] = 1.0f - yy - zz;
+    dest.m[1][1] = 1.0f - xx - zz;
+    dest.m[2][2] = 1.0f - xx - yy;
+
+    dest.m[0][1] = xy + wz;
+    dest.m[1][2] = yz + wx;
+    dest.m[2][0] = xz + wy;
+
+    dest.m[1][0] = xy - wz;
+    dest.m[2][1] = yz - wx;
+    dest.m[0][2] = xz - wy;
+
+    dest.m[0][3] = 0.0f;
+    dest.m[1][3] = 0.0f;
+    dest.m[2][3] = 0.0f;
+    dest.m[3][0] = 0.0f;
+    dest.m[3][1] = 0.0f;
+    dest.m[3][2] = 0.0f;
+    dest.m[3][3] = 1.0f;
+    return dest;
 }

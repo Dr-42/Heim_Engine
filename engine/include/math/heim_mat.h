@@ -32,3 +32,5 @@ HeimMat3 heim_mat3_identity();
 HeimMat3 heim_mat3_transpose(HeimMat3 mat);
 HeimMat3 heim_mat3_inverse(HeimMat3 mat);
 HeimMat3 heim_mat3_from_mat4(HeimMat4 mat);
+
+HeimMat4 heim_mat4_from_quat(HeimVec4f quat);
