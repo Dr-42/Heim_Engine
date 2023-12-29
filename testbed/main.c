@@ -10,8 +10,8 @@
 #include <renderer/heim_sprite.h>
 #include <renderer/heim_texture.h>
 
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 768
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 
 HeimEntity world_entity;
 HeimWorld world;
@@ -56,7 +56,7 @@ HeimSkeletalModelComp skeletal_model_comp;
 
 void testbed_init() {
     world_entity = heim_ecs_create_entity();
-    skybox = heim_skybox_create("assets/hdr/autumn.hdr");
+    skybox = heim_skybox_create("assets/hdr/studio.hdr");
     entity1 = heim_ecs_create_entity();
     object1 = heim_obj_load("assets/models/Brunhilda1.obj");
     tex1 = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
@@ -195,9 +195,9 @@ void testbed_init() {
     font = heim_font_create((HeimVec2f){WINDOW_WIDTH, WINDOW_HEIGHT});
     heim_font_init(font, "assets/fonts/typewriter.ttf", 32);
     fps_transform = (HeimUiTransform){
-        .position = {1.0f, 10.0f},
+        .position = {10.0f, 30.0f},
         .size = {1.0f, 1.0f},
-        .color = (HeimVec4f){1.0f, 1.0f, 1.0f, 1.0f},
+        .color = (HeimVec4f){0.4f, 0.2f, 0.4f, 1.0f},
     };
 
     fps_text = (HeimUiText){
@@ -403,7 +403,8 @@ void testbed_free() {
 int main(void) {
     heim_engine_new("Heim Engine Testbed");
     heim_engine_set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT);
-    heim_engine_set_window_top_left(400, 100);
+    heim_engine_set_window_top_left(0, 0);
+    heim_engine_set_fullscreen(true);
 
     heim_engine_init(testbed_init);
     heim_input_mouse_hide(true);
