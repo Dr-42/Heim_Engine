@@ -14,7 +14,7 @@ HeimVec3f interpolate_scaling(HeimBone* bone, float animation_time);
 HeimBone* bone_init(const char* name, int32_t id, const struct aiNodeAnim* channel) {
     HeimBone* bone = HEIM_MALLOC(HeimBone, HEIM_MEMORY_TYPE_RENDERER);
     memset(bone, 0, sizeof(HeimBone));
-    bone->name = HEIM_CALLOC(char, strlen(name) + 1, HEIM_MEMORY_TYPE_RENDERER);
+    bone->name = heim_malloc(strlen(name) + 1, HEIM_MEMORY_TYPE_RENDERER, __FILE__, __LINE__);
     strcpy(bone->name, name);
     bone->id = id;
     bone->num_positions = channel->mNumPositionKeys;

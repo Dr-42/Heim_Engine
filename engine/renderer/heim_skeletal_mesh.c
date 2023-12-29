@@ -40,8 +40,6 @@ HeimSkeletalMesh* heim_skeletal_mesh_create(HeimSkeletalMeshVertex* vertices, ui
 
 void heim_skeletal_mesh_destroy(HeimSkeletalMesh* mesh){
     HEIM_FREE(mesh, HEIM_MEMORY_TYPE_RENDERER);
-    (void)mesh;
-    todo();
 }
 
 void heim_skeletal_mesh_draw(HeimSkeletalMesh* mesh){

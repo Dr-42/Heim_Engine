@@ -18,7 +18,7 @@ typedef struct assimp_node_data_t {
 typedef struct HeimAnimation {
     float duration;
     int32_t ticks_per_second;
-    HeimBone* bones;
+    HeimBone** bones;
     assimp_node_data_t root_node;
     heim_bone_info_t* bone_info_map;
     char* name;

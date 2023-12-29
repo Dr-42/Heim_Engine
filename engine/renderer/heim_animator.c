@@ -1,26 +1,27 @@
 #include "renderer/heim_animator.h"
-#include "renderer/heim_animation.h"
-#include "renderer/skeletal_utils/heim_bone.h"
-#include "renderer/heim_skeletal_model.h"
+
+#include <assert.h>
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <stddef.h>
+#include <stdio.h>
+
 #include "core/utils/heim_vector.h"
 #include "math/heim_mat.h"
 #include "math/heim_vec.h"
-
-#include <stddef.h>
-#include <stdio.h>
-#include <assert.h>
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "renderer/heim_animation.h"
+#include "renderer/heim_skeletal_model.h"
+#include "renderer/skeletal_utils/heim_bone.h"
 
 HeimAnimator* animator_init(const char* path, HeimSkeletalModel* model) {
     HeimAnimator* animator = malloc(sizeof(HeimAnimator));
     memset(animator, 0, sizeof(HeimAnimator));
-    animator->animations = heim_vector_create(HeimAnimation);
+    animator->animations = heim_vector_create(HeimAnimation*);
     const struct aiScene* scene = aiImportFile(path, aiProcess_Triangulate);
     assert(scene && scene->mRootNode);
     for (uint32_t i = 0; i < scene->mNumAnimations; i++) {
-        printf("%u] Animation name: %s\n",i, scene->mAnimations[i]->mName.data);
+        printf("%u] Animation name: %s\n", i, scene->mAnimations[i]->mName.data);
         HeimAnimation* animation = animation_init(scene, scene->mAnimations[i], model);
         heim_vector_push(animator->animations, animation);
     }
@@ -51,11 +52,11 @@ void animator_update(HeimAnimator* animator, float dt) {
         animator->current_time += animator->current_animation->ticks_per_second * dt;
         animator->current_time = fmod(animator->current_time, animator->current_animation->duration);
         HeimMat4 identity = heim_mat4_identity();
-        if(animator->blend_animation) {
+        if (animator->blend_animation) {
             animator->blend_time += animator->blend_animation->ticks_per_second * dt;
             animator->blend_time = fmod(animator->blend_time, animator->blend_animation->duration);
             animator->blend_factor += dt * animator->blend_speed;
-            if(animator->blend_factor >= 1.0f) {
+            if (animator->blend_factor >= 1.0f) {
                 animator->current_animation = animator->blend_animation;
                 animator->blend_animation = NULL;
                 animator->blend_factor = 0.0f;
@@ -79,14 +80,14 @@ void calculate_bone_transform(HeimAnimator* animator, const struct assimp_node_d
     HeimVec3f position;
     HeimVec4f rotation;
     HeimVec3f scale;
-    if(bone) {
+    if (bone) {
         bone_update(bone, animator->current_time);
         position = bone->local_position;
         rotation = bone->local_rotation;
         scale = bone->local_scale;
-        if(animator->blend_animation) {
+        if (animator->blend_animation) {
             HeimBone* blend_bone = find_bone(animator->blend_animation, node_name);
-            if(blend_bone) {
+            if (blend_bone) {
                 bone_update(blend_bone, animator->blend_time);
                 HeimVec3f blend_position = blend_bone->local_position;
                 HeimVec4f blend_rotation = blend_bone->local_rotation;
@@ -110,20 +111,20 @@ void calculate_bone_transform(HeimAnimator* animator, const struct assimp_node_d
     }
     HeimMat4 global_transform = heim_mat4_multiply(parent_transform, node_transform);
     heim_bone_info_t* bone_info_map = animator->current_animation->bone_info_map;
-    if(find_bone_index(bone_info_map, node_name) != -1) {
+    if (find_bone_index(bone_info_map, node_name) != -1) {
         int32_t bone_idx = find_bone_index(bone_info_map, node_name);
         heim_bone_info_t bone_info = bone_info_map[bone_idx];
         size_t bone_index = bone_info.id;
         HeimMat4 offset = bone_info.offset;
         animator->final_bone_matrices[bone_index] = heim_mat4_multiply(global_transform, offset);
     }
-    for(int32_t i = 0; i < node->children_count; i++) {
+    for (int32_t i = 0; i < node->children_count; i++) {
         calculate_bone_transform(animator, &node->children[i], global_transform);
     }
 }
 
-void animator_switch_animation(HeimAnimator* animator, size_t index){
-    if(index < heim_vector_length(animator->animations)) {
+void animator_switch_animation(HeimAnimator* animator, size_t index) {
+    if (index < heim_vector_length(animator->animations)) {
         /*
         animator->current_animation = animator->animations[index];
         animator->current_time = 0.0f;

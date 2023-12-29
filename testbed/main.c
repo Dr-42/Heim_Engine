@@ -2,13 +2,13 @@
 #include <ecs/heim_ecs_predef.h>
 #include <ecs/predef_comps/heim_all_predef_comps.h>
 #include <math/heim_math_common.h>
+#include <renderer/heim_animator.h>
 #include <renderer/heim_font.h>
 #include <renderer/heim_obj.h>
+#include <renderer/heim_skeletal_model.h>
+#include <renderer/heim_skybox.h>
 #include <renderer/heim_sprite.h>
 #include <renderer/heim_texture.h>
-#include <renderer/heim_skybox.h>
-#include <renderer/heim_animator.h>
-#include <renderer/heim_skeletal_model.h>
 
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
@@ -53,7 +53,6 @@ HeimAnimator *animator;
 HeimTransform skeletal_transform;
 HeimEntity skeletal_entity;
 HeimSkeletalModelComp skeletal_model_comp;
-
 
 void testbed_init() {
     world_entity = heim_ecs_create_entity();
@@ -334,10 +333,34 @@ void testbed_update(float dt) {
             heim_engine_set_fullscreen(!heim_engine_is_fullscreen());
         }
     }
+
+    // Switch animations
+    if (heim_input_key_pressed(GLFW_KEY_1)) {
+        animator_switch_animation(animator, 0);
+    } else if (heim_input_key_pressed(GLFW_KEY_2)) {
+        animator_switch_animation(animator, 1);
+    } else if (heim_input_key_pressed(GLFW_KEY_3)) {
+        animator_switch_animation(animator, 2);
+    } else if (heim_input_key_pressed(GLFW_KEY_4)) {
+        animator_switch_animation(animator, 3);
+    } else if (heim_input_key_pressed(GLFW_KEY_5)) {
+        animator_switch_animation(animator, 4);
+    } else if (heim_input_key_pressed(GLFW_KEY_6)) {
+        animator_switch_animation(animator, 5);
+    } else if (heim_input_key_pressed(GLFW_KEY_7)) {
+        animator_switch_animation(animator, 6);
+    } else if (heim_input_key_pressed(GLFW_KEY_8)) {
+        animator_switch_animation(animator, 7);
+    } else if (heim_input_key_pressed(GLFW_KEY_9)) {
+        animator_switch_animation(animator, 8);
+    } else if (heim_input_key_pressed(GLFW_KEY_0)) {
+        animator_switch_animation(animator, 9);
+    }
+
     frame_count++;
 }
 
-void testbed_free(){
+void testbed_free() {
     heim_skybox_destroy(skybox);
     heim_texture_free(tex1);
     heim_obj_free(object1);
@@ -370,6 +393,9 @@ void testbed_free(){
     heim_texture_free(cube_metallic);
     heim_texture_free(cube_roughness);
     heim_texture_free(cube_ao);
+
+    heim_skeletal_model_destroy(skeletal_model);
+    animator_free(animator);
 
     heim_font_free(font);
 }
