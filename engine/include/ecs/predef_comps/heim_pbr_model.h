@@ -1,15 +1,7 @@
 #pragma once
 
-#include <stdint.h>
-
-#include "renderer/heim_obj.h"
-#include "renderer/heim_texture.h"
+#include "renderer/heim_model.h"
 
 typedef struct HeimPBRModel {
-    HeimObj* obj;
-    HeimTexture* albedoMap;
-    HeimTexture* normalMap;
-    HeimTexture* metallicMap;
-    HeimTexture* roughnessMap;
-    HeimTexture* aoMap;
+    HeimModel* model;
 } HeimPBRModel;

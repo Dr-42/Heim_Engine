@@ -4,11 +4,11 @@
 #include <math/heim_math_common.h>
 #include <renderer/heim_animator.h>
 #include <renderer/heim_font.h>
-#include <renderer/heim_obj.h>
 #include <renderer/heim_skeletal_model.h>
 #include <renderer/heim_skybox.h>
 #include <renderer/heim_sprite.h>
 #include <renderer/heim_texture.h>
+#include <stdint.h>
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -22,10 +22,9 @@ HeimTransform camera_transform = {
     .position = (HeimVec3f){0.0f, 0.0f, 3.0f},
 };
 HeimEntity entity1, entity2, entity3, entity4, fps_entity;
-HeimObj *object1, *object2, *object3, *object4;
-HeimTexture *tex1, *tex2, *tex3;
-HeimModel model1;
-HeimPBRModel model2, model3, model4;
+HeimModel *object1, *object2, *object3, *object4;
+HeimTexture *tex1, *tex2, *tex3, *tex1normal, *tex1metallic, *tex1roughness, *tex1ao;
+HeimPBRModel model1, model2, model3, model4;
 HeimTransform transform1, transform2, transform3;
 HeimSprite *sprite;
 HeimUiTransform ui_transform;
@@ -58,8 +57,20 @@ void testbed_init() {
     world_entity = heim_ecs_create_entity();
     skybox = heim_skybox_create("assets/hdr/studio.hdr");
     entity1 = heim_ecs_create_entity();
-    object1 = heim_obj_load("assets/models/Brunhilda1.obj");
+    object1 = heim_model_create("assets/models/Brunhilda1.obj", false);
     tex1 = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
+    uint8_t white[4] = {255, 255, 255, 255};
+    tex1normal = heim_texture_create_color(white);
+    tex1metallic = heim_texture_create_color(white);
+    tex1roughness = heim_texture_create_color(white);
+    tex1ao = heim_texture_create_color(white);
+
+    heim_model_set_albedo(object1, tex1);
+    heim_model_set_normal(object1, tex1normal);
+    heim_model_set_specular(object1, tex1metallic);
+    heim_model_set_roughness(object1, tex1roughness);
+    heim_model_set_ao(object1, tex1ao);
+
     camera_entity = heim_ecs_create_entity();
     camera = heim_camera_new(
         80.0f,
@@ -81,19 +92,21 @@ void testbed_init() {
 
     heim_ecs_add_component(world_entity, get_world_component(), &world);
 
-    model1 = (HeimModel){object1, tex1};
+    model1 = (HeimPBRModel){
+        .model = object1,
+    };
     transform1 = (HeimTransform){
         .position = {-0.5f, -0.5f, 0.0f},
         .rotation = {0.0f, 0.0f, 0.0f},
         .size = {1.0f, 1.0f, 1.0f},
     };
 
-    heim_ecs_add_component(entity1, get_model_component(), &model1);
+    heim_ecs_add_component(entity1, get_pbr_model_component(), &model1);
     heim_ecs_add_component(entity1, get_transform_component(), &transform1);
 
     entity2 = heim_ecs_create_entity();
     tex2 = heim_texture_create("assets/textures/susan.png");
-    object2 = heim_obj_load("assets/models/Brunhilda1.obj");
+    object2 = heim_model_create("assets/models/Brunhilda1.obj", false);
 
     brun_albedo = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
     brun_normal = heim_texture_create("assets/textures/brunhilda/Brunhilda_normals.png");
@@ -101,8 +114,14 @@ void testbed_init() {
     brun_roughness = heim_texture_create("assets/textures/brunhilda/DefaultMaterial_Roughness.png");
     brun_ao = heim_texture_create("assets/textures/brunhilda/DefaultMaterial_Mixed_AO.png");
 
+    heim_model_set_albedo(object2, brun_albedo);
+    heim_model_set_normal(object2, brun_normal);
+    heim_model_set_specular(object2, brun_metallic);
+    heim_model_set_roughness(object2, brun_roughness);
+    heim_model_set_ao(object2, brun_ao);
+
     entity4 = heim_ecs_create_entity();
-    object4 = heim_obj_load("assets/models/Maria.fbx");
+    object4 = heim_model_create("assets/models/Maria.fbx", false);
 
     maria_albedo = heim_texture_create("assets/textures/Maria/maria_diffuse.png");
     maria_normal = heim_texture_create("assets/textures/Maria/maria_normal.png");
@@ -110,7 +129,13 @@ void testbed_init() {
     maria_roughness = heim_texture_create("assets/textures/Maria/maria_height.png");
     maria_ao = heim_texture_create("assets/textures/Maria/maria_ao.png");
 
-    object3 = heim_obj_load("assets/models/cube.obj");
+    heim_model_set_albedo(object4, maria_albedo);
+    heim_model_set_normal(object4, maria_normal);
+    heim_model_set_specular(object4, maria_metallic);
+    heim_model_set_roughness(object4, maria_roughness);
+    heim_model_set_ao(object4, maria_ao);
+
+    object3 = heim_model_create("assets/models/cube.obj", false);
 
     cube_albedo = heim_texture_create("assets/textures/rust/albedo.png");
     cube_normal = heim_texture_create("assets/textures/rust/normal.png");
@@ -118,31 +143,22 @@ void testbed_init() {
     cube_roughness = heim_texture_create("assets/textures/rust/roughness.png");
     cube_ao = heim_texture_create("assets/textures/rust/ao.png");
 
-    model2 = (HeimPBRModel){
-        .obj = object2,
-        .albedoMap = brun_albedo,
-        .normalMap = brun_normal,
-        .metallicMap = brun_metallic,
-        .roughnessMap = brun_roughness,
-        .aoMap = brun_ao,
-    };
+    heim_model_set_albedo(object3, cube_albedo);
+    heim_model_set_normal(object3, cube_normal);
+    heim_model_set_specular(object3, cube_metallic);
+    heim_model_set_roughness(object3, cube_roughness);
+    heim_model_set_ao(object3, cube_ao);
 
-    model4 = (HeimPBRModel){
-        .obj = object4,
-        .albedoMap = maria_albedo,
-        .normalMap = maria_normal,
-        .metallicMap = maria_metallic,
-        .roughnessMap = maria_roughness,
-        .aoMap = maria_ao,
+    model2 = (HeimPBRModel){
+        .model = object2,
     };
 
     model3 = (HeimPBRModel){
-        .obj = object3,
-        .albedoMap = cube_albedo,
-        .normalMap = cube_normal,
-        .metallicMap = cube_metallic,
-        .roughnessMap = cube_roughness,
-        .aoMap = cube_ao,
+        .model = object3,
+    };
+
+    model4 = (HeimPBRModel){
+        .model = object4,
     };
 
     transform2 = (HeimTransform){
@@ -363,12 +379,16 @@ void testbed_update(float dt) {
 void testbed_free() {
     heim_skybox_destroy(skybox);
     heim_texture_free(tex1);
-    heim_obj_free(object1);
+    heim_texture_free(tex1normal);
+    heim_texture_free(tex1metallic);
+    heim_texture_free(tex1roughness);
+    heim_texture_free(tex1ao);
+    heim_model_destroy(object1);
 
     heim_texture_free(tex2);
-    heim_obj_free(object2);
-    heim_obj_free(object3);
-    heim_obj_free(object4);
+    heim_model_destroy(object2);
+    heim_model_destroy(object3);
+    heim_model_destroy(object4);
 
     heim_texture_free(tex3);
     heim_sprite_free(sprite);

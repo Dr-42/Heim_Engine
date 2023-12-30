@@ -26,7 +26,6 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
 
     heim_shader_bind(pbr_model_render_system.shader);
     heim_shader_set_uniform_mat4(pbr_model_render_system.shader, "model", model_matrix);
-    // Assuming you have a HeimMat4 and HeimVec3f structures and functions defined somewhere
     HeimMat4 cameraRotation = heim_mat4_identity();  // Initialize to identity matrix
 
     // Update the camera rotation
@@ -60,15 +59,15 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
         heim_camera_bind(camera);
     }
 
-    heim_texture_bind(model->albedoMap, 3);
+    heim_texture_bind(model->model->albedo, 3);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "albedoMap", 3);
-    heim_texture_bind(model->normalMap, 4);
+    heim_texture_bind(model->model->normal, 4);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "normalMap", 4);
-    heim_texture_bind(model->metallicMap, 5);
+    heim_texture_bind(model->model->specular, 5);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "metallicMap", 5);
-    heim_texture_bind(model->roughnessMap, 6);
+    heim_texture_bind(model->model->roughness, 6);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "roughnessMap", 6);
-    heim_texture_bind(model->aoMap, 7);
+    heim_texture_bind(model->model->ao, 7);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "aoMap", 7);
 
     heim_shader_set_uniform3f(pbr_model_render_system.shader, "camPos", camera_transform->position);
@@ -100,9 +99,9 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "irradianceMap", 0);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "prefilterMap", 1);
     heim_shader_set_uniform1i(pbr_model_render_system.shader, "brdfLUT", 2);
-    heim_obj_render(model->obj);
+    heim_model_draw(model->model);
 
-    //heim_skybox_render_background(pbr_model_render_system.world->skybox, view_matrix, projection_matrix);
+    heim_skybox_render_background(pbr_model_render_system.world->skybox, view_matrix, projection_matrix);
     if (camera->render_to_texture) {
         heim_camera_unbind(camera);
     }
@@ -137,24 +136,6 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
 
     HeimPBRModel* model = heim_ecs_get_component_data(entity, get_pbr_model_component());
     HeimTransform* transform = heim_ecs_get_component_data(entity, get_transform_component());
-
-    /* HeimEntity camera = 0;
-    if (pbr_model_render_system.world->camera == NULL) {
-        for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
-            if (!heim_ecs_has_component(i, get_camera_component())) {
-                continue;
-            }
-            camera = i;
-            break;
-        }
-        if (!camera) {
-            HEIM_LOG_WARN("No camera found");
-            return;
-        }
-        pbr_model_render_system.world->camera = heim_ecs_get_component_data(camera, get_camera_component());
-        pbr_model_render_system.world->camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
-    }
-    */
     if (model && transform) {
         heim_pbr_model_render(model, transform->position, transform->rotation, transform->size, dt);
     }
@@ -162,5 +143,4 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
 
 void heim_pbr_model_renderer_free() {
     heim_shader_free(pbr_model_render_system.shader);
-    //heim_skybox_destroy(pbr_model_render_system.skybox);
 }

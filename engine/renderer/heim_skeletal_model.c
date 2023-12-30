@@ -11,12 +11,12 @@
 #include "renderer/heim_skeletal_mesh.h"
 #include "renderer/skeletal_utils/assimp_glm_helpers.h"
 
-void load_model(HeimSkeletalModel* model, const char* path);
-void process_node(HeimSkeletalModel* model, struct aiNode* node, const struct aiScene* scene);
-void set_vertex_bone_data_to_default(HeimSkeletalMeshVertex* vertex);
-HeimSkeletalMesh* process_mesh(HeimSkeletalModel* model, struct aiMesh* mesh);
-void set_vertex_bone_data(HeimSkeletalMeshVertex* vertex, int bone_id, float weight);
-void extract_bone_weight_for_vertices(HeimSkeletalModel* model, HeimSkeletalMeshVertex* vertices, struct aiMesh* mesh);
+static void load_model(HeimSkeletalModel* model, const char* path);
+static void process_node(HeimSkeletalModel* model, struct aiNode* node, const struct aiScene* scene);
+static void set_vertex_bone_data_to_default(HeimSkeletalMeshVertex* vertex);
+static HeimSkeletalMesh* process_mesh(HeimSkeletalModel* model, struct aiMesh* mesh);
+static void set_vertex_bone_data(HeimSkeletalMeshVertex* vertex, int bone_id, float weight);
+static void extract_bone_weight_for_vertices(HeimSkeletalModel* model, HeimSkeletalMeshVertex* vertices, struct aiMesh* mesh);
 
 HeimSkeletalModel* heim_skeletal_model_create(const char* path, bool gamma_corrected){
     HeimSkeletalModel* model = HEIM_MALLOC(HeimSkeletalModel, HEIM_MEMORY_TYPE_RENDERER);

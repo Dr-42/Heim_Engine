@@ -35,7 +35,6 @@ void heim_skeletal_model_render(HeimSkeletalModel* model, HeimAnimator* animator
 
     heim_shader_bind(skeletal_model_render_system.shader);
     heim_shader_set_uniform_mat4(skeletal_model_render_system.shader, "model", model_matrix);
-    // Assuming you have a HeimMat4 and HeimVec3f structures and functions defined somewhere
     HeimMat4 cameraRotation = heim_mat4_identity();  // Initialize to identity matrix
 
     // Update the camera rotation
@@ -159,24 +158,6 @@ void heim_skeletal_model_renderer_system(HeimEntity entity, float dt) {
 
     HeimSkeletalModelComp* model = heim_ecs_get_component_data(entity, get_skeletal_model_component());
     HeimTransform* transform = heim_ecs_get_component_data(entity, get_transform_component());
-
-    /* HeimEntity camera = 0;
-    if (skeletal_model_render_system.world->camera == NULL) {
-        for (size_t i = 0; i < heim_ecs_get_entity_count(); i++) {
-            if (!heim_ecs_has_component(i, get_camera_component())) {
-                continue;
-            }
-            camera = i;
-            break;
-        }
-        if (!camera) {
-            HEIM_LOG_WARN("No camera found");
-            return;
-        }
-        skeletal_model_render_system.world->camera = heim_ecs_get_component_data(camera, get_camera_component());
-        skeletal_model_render_system.world->camera_transform = heim_ecs_get_component_data(camera, get_transform_component());
-    }
-    */
     if (model && transform) {
         heim_skeletal_model_render(model->model, model->animator, transform->position, transform->rotation, transform->size, dt);
     }
@@ -184,5 +165,4 @@ void heim_skeletal_model_renderer_system(HeimEntity entity, float dt) {
 
 void heim_skeletal_model_renderer_free() {
     heim_shader_free(skeletal_model_render_system.shader);
-    //heim_skybox_destroy(skeletal_model_render_system.skybox);
 }
