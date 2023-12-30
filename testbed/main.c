@@ -215,7 +215,7 @@ void testbed_init() {
     heim_skeletal_model_set_specular(skeletal_model, maria_metallic);
     heim_skeletal_model_set_roughness(skeletal_model, maria_roughness);
     heim_skeletal_model_set_ao(skeletal_model, maria_ao);
-    animator = animator_init("assets/models/Maria.fbx", skeletal_model);
+    animator = heim_animator_init("assets/models/Maria.fbx", skeletal_model);
 
     skeletal_model_comp = (HeimSkeletalModelComp){
         .model = skeletal_model,
@@ -336,25 +336,25 @@ void testbed_update(float dt) {
 
     // Switch animations
     if (heim_input_key_pressed(GLFW_KEY_1)) {
-        animator_switch_animation(animator, 0);
+        heim_animator_switch_animation(animator, 0);
     } else if (heim_input_key_pressed(GLFW_KEY_2)) {
-        animator_switch_animation(animator, 1);
+        heim_animator_switch_animation(animator, 1);
     } else if (heim_input_key_pressed(GLFW_KEY_3)) {
-        animator_switch_animation(animator, 2);
+        heim_animator_switch_animation(animator, 2);
     } else if (heim_input_key_pressed(GLFW_KEY_4)) {
-        animator_switch_animation(animator, 3);
+        heim_animator_switch_animation(animator, 3);
     } else if (heim_input_key_pressed(GLFW_KEY_5)) {
-        animator_switch_animation(animator, 4);
+        heim_animator_switch_animation(animator, 4);
     } else if (heim_input_key_pressed(GLFW_KEY_6)) {
-        animator_switch_animation(animator, 5);
+        heim_animator_switch_animation(animator, 5);
     } else if (heim_input_key_pressed(GLFW_KEY_7)) {
-        animator_switch_animation(animator, 6);
+        heim_animator_switch_animation(animator, 6);
     } else if (heim_input_key_pressed(GLFW_KEY_8)) {
-        animator_switch_animation(animator, 7);
+        heim_animator_switch_animation(animator, 7);
     } else if (heim_input_key_pressed(GLFW_KEY_9)) {
-        animator_switch_animation(animator, 8);
+        heim_animator_switch_animation(animator, 8);
     } else if (heim_input_key_pressed(GLFW_KEY_0)) {
-        animator_switch_animation(animator, 9);
+        heim_animator_switch_animation(animator, 9);
     }
 
     frame_count++;
@@ -395,7 +395,7 @@ void testbed_free() {
     heim_texture_free(cube_ao);
 
     heim_skeletal_model_destroy(skeletal_model);
-    animator_free(animator);
+    heim_animator_free(animator);
 
     heim_font_free(font);
 }

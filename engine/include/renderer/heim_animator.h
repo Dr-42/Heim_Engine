@@ -14,11 +14,11 @@ typedef struct HeimAnimator {
     float delta_time;
 } HeimAnimator;
 
-HeimAnimator* animator_init(const char* path, HeimSkeletalModel* model);
-void animator_free(HeimAnimator* animator);
-void animator_update(HeimAnimator* animator, float dt);
-void animator_switch_animation(HeimAnimator* animator, size_t index);
-void animator_play_animation(HeimAnimator* animator, HeimAnimation* animation);
-void calculate_bone_transform(HeimAnimator* animator, const struct assimp_node_data_t* node, HeimMat4 parent_transform);
+HeimAnimator* heim_animator_init(const char* path, HeimSkeletalModel* model);
+void heim_animator_free(HeimAnimator* animator);
+void heim_animator_update(HeimAnimator* animator, float dt);
+void heim_animator_switch_animation(HeimAnimator* animator, size_t index);
+void heim_animator_play_animation(HeimAnimator* animator, HeimAnimation* animation);
+void heim_animator_calculate_bone_transform(HeimAnimator* animator, const struct assimp_node_data_t* node, HeimMat4 parent_transform);
 
 

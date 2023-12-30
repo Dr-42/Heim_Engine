@@ -17,7 +17,7 @@ void read_missing_bones(HeimAnimation* animation, const struct aiAnimation* ai_a
 void read_heirarchy_data(assimp_node_data_t* assimp_node_data, const struct aiNode* src);
 void free_heirarchy_data(assimp_node_data_t* assimp_node_data);
 
-HeimAnimation* animation_init(const struct aiScene* scene, struct aiAnimation* animation, HeimSkeletalModel* model) {
+HeimAnimation* heim_animation_init(const struct aiScene* scene, struct aiAnimation* animation, HeimSkeletalModel* model) {
     HeimAnimation* anim = heim_malloc(sizeof(HeimAnimation), HEIM_MEMORY_TYPE_RENDERER, __FILE__, __LINE__);
     memset(anim, 0, sizeof(HeimAnimation));
     anim->duration = animation->mDuration;
@@ -30,9 +30,9 @@ HeimAnimation* animation_init(const struct aiScene* scene, struct aiAnimation* a
     return anim;
 }
 
-void animation_free(HeimAnimation* animation) {
+void heim_animation_free(HeimAnimation* animation) {
     for (size_t i = 0; i < heim_vector_length(animation->bones); i++) {
-        bone_free(animation->bones[i]);
+        heim_bone_free(animation->bones[i]);
     }
     heim_vector_destroy(animation->bones);
     free_heirarchy_data(&animation->root_node);
@@ -40,7 +40,7 @@ void animation_free(HeimAnimation* animation) {
     HEIM_FREE(animation, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-HeimBone* find_bone(HeimAnimation* animation, const char* name) {
+HeimBone* heim_animation_find_bone(HeimAnimation* animation, const char* name) {
     for (size_t i = 0; i < heim_vector_length(animation->bones); i++) {
         if (strcmp(animation->bones[i]->name, name) == 0) {
             return animation->bones[i];
@@ -67,7 +67,7 @@ void read_missing_bones(HeimAnimation* animation, const struct aiAnimation* ai_a
             bone_count++;
         }
         int32_t bone_idx = find_bone_index(bone_info_map, bone_name);
-        HeimBone* bone = bone_init(channel->mNodeName.data, bone_info_map[bone_idx].id, channel);
+        HeimBone* bone = heim_bone_init(channel->mNodeName.data, bone_info_map[bone_idx].id, channel);
         heim_vector_push(animation->bones, bone);
     }
     animation->bone_info_map = bone_info_map;

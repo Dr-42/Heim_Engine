@@ -10,8 +10,11 @@ float get_scale_factor(float last_time_stamp, float next_time_stamp, float anima
 HeimVec3f interpolate_position(HeimBone* bone, float animation_time);
 HeimVec4f interpolate_rotation(HeimBone* bone, float animation_time);
 HeimVec3f interpolate_scaling(HeimBone* bone, float animation_time);
+int32_t heim_bone_get_poisiton_index(HeimBone* bone, float animation_time);
+int32_t heim_bone_get_rotation_index(HeimBone* bone, float animation_time);
+int32_t heim_bone_get_scale_index(HeimBone* bone, float animation_time);
 
-HeimBone* bone_init(const char* name, int32_t id, const struct aiNodeAnim* channel) {
+HeimBone* heim_bone_init(const char* name, int32_t id, const struct aiNodeAnim* channel) {
     HeimBone* bone = HEIM_MALLOC(HeimBone, HEIM_MEMORY_TYPE_RENDERER);
     memset(bone, 0, sizeof(HeimBone));
     bone->name = heim_malloc(strlen(name) + 1, HEIM_MEMORY_TYPE_RENDERER, __FILE__, __LINE__);
@@ -52,7 +55,7 @@ HeimBone* bone_init(const char* name, int32_t id, const struct aiNodeAnim* chann
     return bone;
 }
 
-void bone_free(HeimBone* bone){
+void heim_bone_free(HeimBone* bone){
     HEIM_FREE(bone->name, HEIM_MEMORY_TYPE_RENDERER);
     heim_vector_destroy(bone->positions);
     heim_vector_destroy(bone->rotations);
@@ -60,13 +63,13 @@ void bone_free(HeimBone* bone){
     HEIM_FREE(bone, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void bone_update(HeimBone* bone, float animation_time) {
+void heim_bone_update(HeimBone* bone, float animation_time) {
     bone->local_position = interpolate_position(bone, animation_time);
     bone->local_rotation = interpolate_rotation(bone, animation_time);
     bone->local_scale = interpolate_scaling(bone, animation_time);
 }
 
-int32_t get_poisiton_index(HeimBone* bone, float animation_time) {
+int32_t heim_bone_get_poisiton_index(HeimBone* bone, float animation_time) {
     if (bone->num_positions == 1) {
         return 0;
     }
@@ -79,7 +82,7 @@ int32_t get_poisiton_index(HeimBone* bone, float animation_time) {
     return 0;
 }
 
-int32_t get_rotation_index(HeimBone* bone, float animation_time) {
+int32_t heim_bone_get_rotation_index(HeimBone* bone, float animation_time) {
     if (bone->num_rotations == 1) {
         return 0;
     }
@@ -92,7 +95,7 @@ int32_t get_rotation_index(HeimBone* bone, float animation_time) {
     return 0;
 }
 
-int32_t get_scale_index(HeimBone* bone, float animation_time) {
+int32_t heim_bone_get_scale_index(HeimBone* bone, float animation_time) {
     if (bone->num_scales == 1) {
         return 0;
     }
@@ -115,7 +118,7 @@ HeimVec3f interpolate_position(HeimBone* bone, float animation_time) {
     if (bone->num_positions == 1) {
         return bone->positions[0].position;
     }
-    int32_t p0_index = get_poisiton_index(bone, animation_time);
+    int32_t p0_index = heim_bone_get_poisiton_index(bone, animation_time);
     int32_t p1_index = p0_index + 1;
     float scale_factor = get_scale_factor(bone->positions[p0_index].time_stamp, bone->positions[p1_index].time_stamp, animation_time);
     HeimVec3f final_position = heim_vec3f_mix(bone->positions[p0_index].position, bone->positions[p1_index].position, scale_factor);
@@ -128,7 +131,7 @@ HeimVec4f interpolate_rotation(HeimBone* bone, float animation_time) {
         HeimVec4f dest = heim_vec4f_normalize(bone->rotations[0].orientation);
         return dest;
     }
-    int32_t p0_index = get_rotation_index(bone, animation_time);
+    int32_t p0_index = heim_bone_get_rotation_index(bone, animation_time);
     int32_t p1_index = p0_index + 1;
     float scale_factor = get_scale_factor(bone->rotations[p0_index].time_stamp, bone->rotations[p1_index].time_stamp, animation_time);
 
@@ -141,7 +144,7 @@ HeimVec3f interpolate_scaling(HeimBone* bone, float animation_time) {
     if(bone->num_scales == 1) {
         return bone->scales[0].scale;
     }
-    int32_t p0_index = get_scale_index(bone, animation_time);
+    int32_t p0_index = heim_bone_get_scale_index(bone, animation_time);
     int32_t p1_index = p0_index + 1;
     float scale_factor = get_scale_factor(bone->scales[p0_index].time_stamp, bone->scales[p1_index].time_stamp, animation_time);
     HeimVec3f final_scale = heim_vec3f_mix(bone->scales[p0_index].scale, bone->scales[p1_index].scale, scale_factor);

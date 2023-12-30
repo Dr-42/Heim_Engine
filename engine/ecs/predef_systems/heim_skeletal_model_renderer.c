@@ -109,7 +109,7 @@ void heim_skeletal_model_render(HeimSkeletalModel* model, HeimAnimator* animator
     heim_shader_set_uniform1i(skeletal_model_render_system.shader, "irradianceMap", 0);
     heim_shader_set_uniform1i(skeletal_model_render_system.shader, "prefilterMap", 1);
     heim_shader_set_uniform1i(skeletal_model_render_system.shader, "brdfLUT", 2);
-    animator_update(animator, dt);
+    heim_animator_update(animator, dt);
     heim_shader_set_uniform1i(skeletal_model_render_system.shader, "numBones", (int)heim_vector_length(animator->final_bone_matrices));
     BoneMatrices boneMatrices;
     memcpy(boneMatrices.finalBonesMatrices, animator->final_bone_matrices, sizeof(HeimMat4) * heim_vector_length(animator->final_bone_matrices));

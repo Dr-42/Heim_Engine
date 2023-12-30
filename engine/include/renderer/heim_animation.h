@@ -24,6 +24,6 @@ typedef struct HeimAnimation {
     char* name;
 } HeimAnimation;
 
-HeimAnimation* animation_init(const struct aiScene* scene, struct aiAnimation* animation, HeimSkeletalModel* model);
-void animation_free(HeimAnimation* animation);
-HeimBone* find_bone(HeimAnimation* animation, const char* name);
+HeimAnimation* heim_animation_init(const struct aiScene* scene, struct aiAnimation* animation, HeimSkeletalModel* model);
+void heim_animation_free(HeimAnimation* animation);
+HeimBone* heim_animation_find_bone(HeimAnimation* heim_animation, const char* name);

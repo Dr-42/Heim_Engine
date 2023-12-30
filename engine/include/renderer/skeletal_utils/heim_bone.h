@@ -37,10 +37,7 @@ typedef struct HeimBone {
 	int32_t id;
 } HeimBone;
 
-HeimBone* bone_init(const char* name, int32_t id, const struct aiNodeAnim* channel);
-void bone_free(HeimBone* bone);
-void bone_update(HeimBone* bone, float animation_time);
-int32_t get_poisiton_index(HeimBone* bone, float animation_time);
-int32_t get_rotation_index(HeimBone* bone, float animation_time);
-int32_t get_scale_index(HeimBone* bone, float animation_time);
+HeimBone* heim_bone_init(const char* name, int32_t id, const struct aiNodeAnim* channel);
+void heim_bone_free(HeimBone* bone);
+void heim_bone_update(HeimBone* bone, float animation_time);
 
