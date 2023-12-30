@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "core/utils/heim_vector.h"
+#include "core/heim_memory.h"
 #include "renderer/heim_skeletal_model.h"
 #include "renderer/skeletal_utils/assimp_glm_helpers.h"
 #include "renderer/skeletal_utils/heim_bone.h"

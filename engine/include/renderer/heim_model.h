@@ -11,10 +11,9 @@ typedef struct HeimModel {
     HeimTexture *ao;
 
     HeimMesh **meshes;
-    bool gamma_corrected;
 } HeimModel;
 
-HeimModel* heim_model_create(const char* path, bool gamma_corrected);
+HeimModel* heim_model_create(const char* path);
 void heim_model_destroy(HeimModel* model);
 
 void heim_model_set_albedo(HeimModel* model, HeimTexture* albedo);

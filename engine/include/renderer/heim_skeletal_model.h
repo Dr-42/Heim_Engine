@@ -5,7 +5,6 @@
 #include "math/heim_mat.h"
 #include "renderer/heim_skeletal_mesh.h"
 #include "renderer/heim_texture.h"
-#include "renderer/heim_shader.h"
 
 typedef struct heim_bone_info_t {
     int32_t id;
@@ -21,12 +20,11 @@ typedef struct HeimSkeletalModel {
     HeimTexture *ao;
 
     HeimSkeletalMesh **meshes;
-    bool gamma_corrected;
     heim_bone_info_t* bone_info_map;
     int32_t bone_counter;
 } HeimSkeletalModel;
 
-HeimSkeletalModel* heim_skeletal_model_create(const char* path, bool gamma_corrected);
+HeimSkeletalModel* heim_skeletal_model_create(const char* path);
 void heim_skeletal_model_destroy(HeimSkeletalModel* model);
 
 void heim_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo);

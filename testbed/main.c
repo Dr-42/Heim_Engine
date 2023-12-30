@@ -57,7 +57,7 @@ void testbed_init() {
     world_entity = heim_ecs_create_entity();
     skybox = heim_skybox_create("assets/hdr/studio.hdr");
     entity1 = heim_ecs_create_entity();
-    object1 = heim_model_create("assets/models/Brunhilda1.obj", false);
+    object1 = heim_model_create("assets/models/Brunhilda1.obj");
     tex1 = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
     uint8_t white[4] = {255, 255, 255, 255};
     tex1normal = heim_texture_create_color(white);
@@ -106,7 +106,7 @@ void testbed_init() {
 
     entity2 = heim_ecs_create_entity();
     tex2 = heim_texture_create("assets/textures/susan.png");
-    object2 = heim_model_create("assets/models/Brunhilda1.obj", false);
+    object2 = heim_model_create("assets/models/Brunhilda1.obj");
 
     brun_albedo = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
     brun_normal = heim_texture_create("assets/textures/brunhilda/Brunhilda_normals.png");
@@ -121,7 +121,7 @@ void testbed_init() {
     heim_model_set_ao(object2, brun_ao);
 
     entity4 = heim_ecs_create_entity();
-    object4 = heim_model_create("assets/models/Maria.fbx", false);
+    object4 = heim_model_create("assets/models/Maria.fbx");
 
     maria_albedo = heim_texture_create("assets/textures/Maria/maria_diffuse.png");
     maria_normal = heim_texture_create("assets/textures/Maria/maria_normal.png");
@@ -135,7 +135,7 @@ void testbed_init() {
     heim_model_set_roughness(object4, maria_roughness);
     heim_model_set_ao(object4, maria_ao);
 
-    object3 = heim_model_create("assets/models/cube.obj", false);
+    object3 = heim_model_create("assets/models/cube.obj");
 
     cube_albedo = heim_texture_create("assets/textures/rust/albedo.png");
     cube_normal = heim_texture_create("assets/textures/rust/normal.png");
@@ -225,7 +225,7 @@ void testbed_init() {
     heim_ecs_add_component(fps_entity, get_ui_text_component(), &fps_text);
 
     skeletal_entity = heim_ecs_create_entity();
-    skeletal_model = heim_skeletal_model_create("assets/models/Maria.fbx", false);
+    skeletal_model = heim_skeletal_model_create("assets/models/Maria.fbx");
     heim_skeletal_model_set_albedo(skeletal_model, maria_albedo);
     heim_skeletal_model_set_normal(skeletal_model, maria_normal);
     heim_skeletal_model_set_specular(skeletal_model, maria_metallic);

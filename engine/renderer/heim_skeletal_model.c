@@ -18,10 +18,9 @@ static HeimSkeletalMesh* process_mesh(HeimSkeletalModel* model, struct aiMesh* m
 static void set_vertex_bone_data(HeimSkeletalMeshVertex* vertex, int bone_id, float weight);
 static void extract_bone_weight_for_vertices(HeimSkeletalModel* model, HeimSkeletalMeshVertex* vertices, struct aiMesh* mesh);
 
-HeimSkeletalModel* heim_skeletal_model_create(const char* path, bool gamma_corrected){
+HeimSkeletalModel* heim_skeletal_model_create(const char* path){
     HeimSkeletalModel* model = HEIM_MALLOC(HeimSkeletalModel, HEIM_MEMORY_TYPE_RENDERER);
     memset(model, 0, sizeof(HeimSkeletalModel));
-    model->gamma_corrected = gamma_corrected;
     model->meshes = heim_vector_create(HeimSkeletalMesh*);
     model->bone_info_map = heim_vector_create(heim_bone_info_t);
     load_model(model, path);

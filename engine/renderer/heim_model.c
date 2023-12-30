@@ -13,10 +13,9 @@ static void load_model(HeimModel* model, const char* path);
 static void process_node(HeimModel* model, struct aiNode* node, const struct aiScene* scene);
 static HeimMesh* process_mesh(struct aiMesh* mesh);
 
-HeimModel* heim_model_create(const char* path, bool gamma_corrected){
+HeimModel* heim_model_create(const char* path){
     HeimModel* model = HEIM_MALLOC(HeimModel, HEIM_MEMORY_TYPE_RENDERER);
     memset(model, 0, sizeof(HeimModel));
-    model->gamma_corrected = gamma_corrected;
     model->meshes = heim_vector_create(HeimMesh*);
     load_model(model, path);
     return model;

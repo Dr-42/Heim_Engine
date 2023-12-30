@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include "core/heim_memory.h"
 #include "core/utils/heim_vector.h"
 #include "math/heim_mat.h"
 #include "math/heim_vec.h"
@@ -15,7 +16,7 @@
 #include "renderer/skeletal_utils/heim_bone.h"
 
 HeimAnimator* heim_animator_init(const char* path, HeimSkeletalModel* model) {
-    HeimAnimator* animator = malloc(sizeof(HeimAnimator));
+    HeimAnimator* animator = HEIM_MALLOC(HeimAnimator, HEIM_MEMORY_TYPE_RENDERER);
     memset(animator, 0, sizeof(HeimAnimator));
     animator->animations = heim_vector_create(HeimAnimation*);
     const struct aiScene* scene = aiImportFile(path, aiProcess_Triangulate);
@@ -43,7 +44,7 @@ void heim_animator_free(HeimAnimator* animator) {
     }
     heim_vector_destroy(animator->animations);
     heim_vector_destroy(animator->final_bone_matrices);
-    free(animator);
+    HEIM_FREE(animator, HEIM_MEMORY_TYPE_RENDERER);
 }
 
 void heim_animator_update(HeimAnimator* animator, float dt) {
