@@ -16,6 +16,13 @@ HeimEngine heim = {
     .fullscreen = false,
 };
 
+#ifdef _WIN64
+int32_t NvOptimusEnablement = 0x00000001;
+#endif
+#ifdef __linux__
+#endif
+
+
 void heim_engine_handle_segfault(int sig) {
     #ifdef __linux__
     HEIM_LOG_ERROR("Heim Engine crashed with signal %s", strsignal(sig));
@@ -35,6 +42,10 @@ void set_signal_handlers() {
 }
 
 void heim_engine_new(char *title) {
+    #ifdef __linux__
+    setenv("__NV_PRIME_RENDER_OFFLOAD", "1", 1);
+    setenv("__GLX_VENDOR_LIBRARY_NAME", "nvidia", 1);
+    #endif
     heim_logger_init(NULL, HEIM_LOG_LEVEL_ALL);
     set_signal_handlers();
     heim_window_new(title);

@@ -424,11 +424,11 @@ int main(void) {
     heim_engine_new("Heim Engine Testbed");
     heim_engine_set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT);
     heim_engine_set_window_top_left(0, 0);
-    heim_engine_set_fullscreen(true);
 
     heim_engine_init(testbed_init);
     heim_input_mouse_hide(true);
     heim_input_mouse_grab(true);
+    heim_engine_set_fullscreen(true);
     heim_engine_run(testbed_update);
 
     heim_engine_shutdown(testbed_free);
