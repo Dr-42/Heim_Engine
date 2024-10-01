@@ -20,13 +20,9 @@ void heim_shader_free(HeimShader* shader) {
     HEIM_FREE(shader, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void heim_shader_bind(HeimShader* shader) {
-    glUseProgram(shader->program);
-}
+void heim_shader_bind(HeimShader* shader) { glUseProgram(shader->program); }
 
-void heim_shader_unbind() {
-    glUseProgram(0);
-}
+void heim_shader_unbind() { glUseProgram(0); }
 
 uint64_t heim_shader_get_file_size(const char* file_path) {
     FILE* fp = fopen(file_path, "r");
@@ -142,22 +138,8 @@ void heim_shader_set_uniform4f(HeimShader* shader, const char* name, HeimVec4f v
 
 void heim_shader_set_uniform_mat4(HeimShader* shader, const char* name, HeimMat4 value) {
     float m[16] = {
-        value.m[0][0],
-        value.m[0][1],
-        value.m[0][2],
-        value.m[0][3],
-        value.m[1][0],
-        value.m[1][1],
-        value.m[1][2],
-        value.m[1][3],
-        value.m[2][0],
-        value.m[2][1],
-        value.m[2][2],
-        value.m[2][3],
-        value.m[3][0],
-        value.m[3][1],
-        value.m[3][2],
-        value.m[3][3],
+        value.m[0][0], value.m[0][1], value.m[0][2], value.m[0][3], value.m[1][0], value.m[1][1], value.m[1][2], value.m[1][3],
+        value.m[2][0], value.m[2][1], value.m[2][2], value.m[2][3], value.m[3][0], value.m[3][1], value.m[3][2], value.m[3][3],
     };
 
     glUniformMatrix4fv(glGetUniformLocation(shader->program, name), 1, GL_FALSE, m);
@@ -165,15 +147,8 @@ void heim_shader_set_uniform_mat4(HeimShader* shader, const char* name, HeimMat4
 
 void heim_shader_set_uniform_mat3(HeimShader* shader, const char* name, HeimMat3 value) {
     float m[9] = {
-        value.m[0][0],
-        value.m[0][1],
-        value.m[0][2],
-        value.m[1][0],
-        value.m[1][1],
-        value.m[1][2],
-        value.m[2][0],
-        value.m[2][1],
-        value.m[2][2],
+        value.m[0][0], value.m[0][1], value.m[0][2], value.m[1][0], value.m[1][1],
+        value.m[1][2], value.m[2][0], value.m[2][1], value.m[2][2],
     };
 
     glUniformMatrix3fv(glGetUniformLocation(shader->program, name), 1, GL_FALSE, m);

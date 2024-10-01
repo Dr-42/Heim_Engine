@@ -7,21 +7,13 @@ HeimSprite* heim_create_sprite(HeimTexture* texture) {
     HeimSprite* sprite = HEIM_MALLOC(HeimSprite, HEIM_MEMORY_TYPE_RENDERER);
     sprite->texture = texture;
 
-    sprite->vertices[0] = (Vertex){
-        (HeimVec3f){1.0f, 1.0f, 0.0f},
-        (HeimVec2f){1.0f, 1.0f}};
+    sprite->vertices[0] = (Vertex){(HeimVec3f){1.0f, 1.0f, 0.0f}, (HeimVec2f){1.0f, 1.0f}};
 
-    sprite->vertices[1] = (Vertex){
-        (HeimVec3f){1.0f, 0.0f, 0.0f},
-        (HeimVec2f){1.0f, 0.0f}};
+    sprite->vertices[1] = (Vertex){(HeimVec3f){1.0f, 0.0f, 0.0f}, (HeimVec2f){1.0f, 0.0f}};
 
-    sprite->vertices[2] = (Vertex){
-        (HeimVec3f){0.0f, 0.0f, 0.0f},
-        (HeimVec2f){0.0f, 0.0f}};
+    sprite->vertices[2] = (Vertex){(HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec2f){0.0f, 0.0f}};
 
-    sprite->vertices[3] = (Vertex){
-        (HeimVec3f){0.0f, 1.0f, 0.0f},
-        (HeimVec2f){0.0f, 1.0f}};
+    sprite->vertices[3] = (Vertex){(HeimVec3f){0.0f, 1.0f, 0.0f}, (HeimVec2f){0.0f, 1.0f}};
 
     uint16_t indices[] = {0, 3, 1, 1, 3, 2};
 

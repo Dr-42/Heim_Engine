@@ -25,7 +25,8 @@ typedef struct BoneMatrices {
 
 static float to_time = 0.0f;
 
-void heim_skeletal_model_render(HeimSkeletalModel* model, HeimAnimator* animator, HeimVec3f position, HeimVec3f rotation, HeimVec3f scale, float dt) {
+void heim_skeletal_model_render(HeimSkeletalModel* model, HeimAnimator* animator, HeimVec3f position, HeimVec3f rotation,
+                                HeimVec3f scale, float dt) {
     HeimMat4 model_matrix = heim_mat4_identity();
     model_matrix = heim_mat4_translate(model_matrix, position);
     model_matrix = heim_mat4_rotate(model_matrix, rotation.x, (HeimVec3f){1.0f, 0.0f, 0.5f});
@@ -57,7 +58,8 @@ void heim_skeletal_model_render(HeimSkeletalModel* model, HeimAnimator* animator
     view_matrix = heim_mat4_translate(view_matrix, camera_transform->position);
 
     // Camera has front, right and up axes defined
-    view_matrix = heim_mat4_lookat(camera_transform->position, heim_vec3f_add(camera_transform->position, camera->front), camera->up);
+    view_matrix =
+        heim_mat4_lookat(camera_transform->position, heim_vec3f_add(camera_transform->position, camera->front), camera->up);
 
     HeimMat4 projection_matrix = heim_mat4_perspective(camera->fov, camera->aspect, camera->near, camera->far);
 
@@ -109,9 +111,11 @@ void heim_skeletal_model_render(HeimSkeletalModel* model, HeimAnimator* animator
     heim_shader_set_uniform1i(skeletal_model_render_system.shader, "prefilterMap", 1);
     heim_shader_set_uniform1i(skeletal_model_render_system.shader, "brdfLUT", 2);
     heim_animator_update(animator, dt);
-    heim_shader_set_uniform1i(skeletal_model_render_system.shader, "numBones", (int)heim_vector_length(animator->final_bone_matrices));
+    heim_shader_set_uniform1i(skeletal_model_render_system.shader, "numBones",
+                              (int)heim_vector_length(animator->final_bone_matrices));
     BoneMatrices boneMatrices;
-    memcpy(boneMatrices.finalBonesMatrices, animator->final_bone_matrices, sizeof(HeimMat4) * heim_vector_length(animator->final_bone_matrices));
+    memcpy(boneMatrices.finalBonesMatrices, animator->final_bone_matrices,
+           sizeof(HeimMat4) * heim_vector_length(animator->final_bone_matrices));
     GLuint ubo;
     glGenBuffers(1, &ubo);
     glBindBuffer(GL_UNIFORM_BUFFER, ubo);
@@ -153,7 +157,7 @@ void heim_skeletal_model_renderer_system(HeimEntity entity, float dt) {
 
     if (!skeletal_model_render_system.world) {
         HEIM_LOG_WARN("No world found");
-        //return;
+        // return;
     }
 
     HeimSkeletalModelComp* model = heim_ecs_get_component_data(entity, get_skeletal_model_component());
@@ -163,6 +167,4 @@ void heim_skeletal_model_renderer_system(HeimEntity entity, float dt) {
     }
 }
 
-void heim_skeletal_model_renderer_free() {
-    heim_shader_free(skeletal_model_render_system.shader);
-}
+void heim_skeletal_model_renderer_free() { heim_shader_free(skeletal_model_render_system.shader); }

@@ -22,14 +22,13 @@ int32_t NvOptimusEnablement = 0x00000001;
 #ifdef __linux__
 #endif
 
-
 void heim_engine_handle_segfault(int sig) {
-    #ifdef __linux__
+#ifdef __linux__
     HEIM_LOG_ERROR("Heim Engine crashed with signal %s", strsignal(sig));
-    #endif
-    #ifdef _WIN64
+#endif
+#ifdef _WIN64
     HEIM_LOG_ERROR("Heim Engine crashed with signal %d", sig);
-    #endif
+#endif
     print_trace();
     exit(EXIT_FAILURE);
 }
@@ -42,10 +41,10 @@ void set_signal_handlers() {
 }
 
 void heim_engine_new(char *title) {
-    #ifdef __linux__
+#ifdef __linux__
     setenv("__NV_PRIME_RENDER_OFFLOAD", "1", 1);
     setenv("__GLX_VENDOR_LIBRARY_NAME", "nvidia", 1);
-    #endif
+#endif
     heim_logger_init(NULL, HEIM_LOG_LEVEL_ALL);
     set_signal_handlers();
     heim_window_new(title);
@@ -70,9 +69,7 @@ void heim_engine_set_fullscreen(bool fullscreen) {
     }
 }
 
-bool heim_engine_is_fullscreen() {
-    return heim.fullscreen;
-}
+bool heim_engine_is_fullscreen() { return heim.fullscreen; }
 
 void heim_engine_init(void (*init)()) {
     if (!heim_window_init()) {
@@ -86,9 +83,7 @@ void heim_engine_init(void (*init)()) {
     init();
 }
 
-void heim_engine_run(void (*update)(float dt)) {
-    heim_window_update(update, &(heim.running));
-}
+void heim_engine_run(void (*update)(float dt)) { heim_window_update(update, &(heim.running)); }
 
 void heim_engine_should_close(bool should_close) {
     heim.running = !should_close;

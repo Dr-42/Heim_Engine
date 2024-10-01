@@ -13,13 +13,13 @@ typedef struct heim_bone_info_t {
 } heim_bone_info_t;
 
 typedef struct HeimSkeletalModel {
-    HeimTexture *albedo;
-    HeimTexture *normal;
-    HeimTexture *specular;
-    HeimTexture *roughness;
-    HeimTexture *ao;
+    HeimTexture* albedo;
+    HeimTexture* normal;
+    HeimTexture* specular;
+    HeimTexture* roughness;
+    HeimTexture* ao;
 
-    HeimSkeletalMesh **meshes;
+    HeimSkeletalMesh** meshes;
     heim_bone_info_t* bone_info_map;
     int32_t bone_counter;
 } HeimSkeletalModel;
@@ -36,4 +36,3 @@ void heim_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao);
 void heim_skeletal_model_draw(HeimSkeletalModel* model);
 
 int32_t find_bone_index(heim_bone_info_t* bone_info_map, const char* name);
-

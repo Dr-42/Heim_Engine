@@ -8,12 +8,7 @@
 #include "core/heim_logger.h"
 
 /// @brief Type of memory allocation.
-typedef enum {
-    HEIM_MEMORY_TYPE_BASE,
-    HEIM_MEMORY_TYPE_ECS,
-    HEIM_MEMORY_TYPE_RENDERER,
-    HEIM_MEMORY_TYPE_COUNT
-} HEIM_MEMORY_TYPE;
+typedef enum { HEIM_MEMORY_TYPE_BASE, HEIM_MEMORY_TYPE_ECS, HEIM_MEMORY_TYPE_RENDERER, HEIM_MEMORY_TYPE_COUNT } HEIM_MEMORY_TYPE;
 
 /// @brief HeimMemory is a struct that contains all the information needed to manage memory.
 typedef struct HeimMemory {

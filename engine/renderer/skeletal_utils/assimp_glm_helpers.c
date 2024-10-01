@@ -1,7 +1,7 @@
 #include "renderer/skeletal_utils/assimp_glm_helpers.h"
 #include "math/heim_vec.h"
 
-HeimMat4 convert_matrix_to_glm(const struct aiMatrix4x4* matrix){
+HeimMat4 convert_matrix_to_glm(const struct aiMatrix4x4* matrix) {
     HeimMat4 dest;
     dest.m[0][0] = matrix->a1;
     dest.m[1][0] = matrix->a2;
@@ -25,7 +25,7 @@ HeimMat4 convert_matrix_to_glm(const struct aiMatrix4x4* matrix){
     return dest;
 }
 
-HeimVec3f get_glm_vec(const struct aiVector3D* vec){
+HeimVec3f get_glm_vec(const struct aiVector3D* vec) {
     HeimVec3f dest;
     dest.x = vec->x;
     dest.y = vec->y;
@@ -33,7 +33,7 @@ HeimVec3f get_glm_vec(const struct aiVector3D* vec){
     return dest;
 }
 
-HeimVec4f get_glm_quat(const struct aiQuaternion* quat){
+HeimVec4f get_glm_quat(const struct aiQuaternion* quat) {
     HeimVec4f dest;
     dest.x = quat->x;
     dest.y = quat->y;
@@ -41,4 +41,3 @@ HeimVec4f get_glm_quat(const struct aiQuaternion* quat){
     dest.w = quat->w;
     return dest;
 }
-

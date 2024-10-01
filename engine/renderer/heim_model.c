@@ -13,7 +13,7 @@ static void load_model(HeimModel* model, const char* path);
 static void process_node(HeimModel* model, struct aiNode* node, const struct aiScene* scene);
 static HeimMesh* process_mesh(struct aiMesh* mesh);
 
-HeimModel* heim_model_create(const char* path){
+HeimModel* heim_model_create(const char* path) {
     HeimModel* model = HEIM_MALLOC(HeimModel, HEIM_MEMORY_TYPE_RENDERER);
     memset(model, 0, sizeof(HeimModel));
     model->meshes = heim_vector_create(HeimMesh*);
@@ -21,7 +21,7 @@ HeimModel* heim_model_create(const char* path){
     return model;
 }
 
-void heim_model_destroy(HeimModel* model){
+void heim_model_destroy(HeimModel* model) {
     for (size_t i = 0; i < heim_vector_length(model->meshes); i++) {
         heim_vector_destroy(model->meshes[i]->vertices);
         heim_vector_destroy(model->meshes[i]->indices);
@@ -31,36 +31,25 @@ void heim_model_destroy(HeimModel* model){
     HEIM_FREE(model, HEIM_MEMORY_TYPE_RENDERER);
 }
 
+void heim_model_set_albedo(HeimModel* model, HeimTexture* albedo) { model->albedo = albedo; }
 
-void heim_model_set_albedo(HeimModel* model, HeimTexture* albedo){
-    model->albedo = albedo;
-}
+void heim_model_set_normal(HeimModel* model, HeimTexture* normal) { model->normal = normal; }
 
-void heim_model_set_normal(HeimModel* model, HeimTexture* normal){
-    model->normal = normal;
-}
+void heim_model_set_specular(HeimModel* model, HeimTexture* specular) { model->specular = specular; }
 
-void heim_model_set_specular(HeimModel* model, HeimTexture* specular){
-    model->specular = specular;
-}
+void heim_model_set_roughness(HeimModel* model, HeimTexture* roughness) { model->roughness = roughness; }
 
-void heim_model_set_roughness(HeimModel* model, HeimTexture* roughness){
-    model->roughness = roughness;
-}
+void heim_model_set_ao(HeimModel* model, HeimTexture* ao) { model->ao = ao; }
 
-void heim_model_set_ao(HeimModel* model, HeimTexture* ao){
-    model->ao = ao;
-}
-
-
-void heim_model_draw(HeimModel* model){
+void heim_model_draw(HeimModel* model) {
     for (size_t i = 0; i < heim_vector_length(model->meshes); i++) {
         heim_mesh_draw(model->meshes[i]);
     }
 }
 
 void load_model(HeimModel* model, const char* path) {
-    const struct aiScene* scene = aiImportFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+    const struct aiScene* scene =
+        aiImportFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         fprintf(stderr, "ERROR::ASSIMP::%s\n", aiGetErrorString());
         return;

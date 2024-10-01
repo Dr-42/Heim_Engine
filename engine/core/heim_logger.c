@@ -17,11 +17,7 @@ static HeimLogger logger = (HeimLogger){
 #define UNI_RESET "\033[0m"
 
 static const char *log_level_names[] = {
-    "DEBUG : ",
-    "INFO : ",
-    "LOG : ",
-    "WARN : ",
-    "ERROR : ",
+    "DEBUG : ", "INFO : ", "LOG : ", "WARN : ", "ERROR : ",
 };
 
 void heim_logger_init(const char *filename, HEIM_LOG_LEVEL level) {

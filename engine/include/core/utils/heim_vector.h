@@ -9,12 +9,7 @@ uint64_t stride = size of each element in bytes
 void* elements
 */
 
-enum {
-    HEIM_VECTOR_CAPACITY,
-    HEIM_VECTOR_LENGTH,
-    HEIM_VECTOR_STRIDE,
-    HEIM_VECTOR_FIELD_LENGTH
-};
+enum { HEIM_VECTOR_CAPACITY, HEIM_VECTOR_LENGTH, HEIM_VECTOR_STRIDE, HEIM_VECTOR_FIELD_LENGTH };
 
 void* _heim_vector_create(uint64_t length, uint64_t stride);
 void _heim_vector_destroy(void* array, const char* file, int line);
@@ -33,11 +28,9 @@ void* _heim_vector_insert_at(void* array, uint64_t index, void* value_ptr);
 #define HEIM_VECTOR_DEFAULT_CAPACITY 1
 #define HEIM_VECTOR_RESIZE_FACTOR 2
 
-#define heim_vector_create(type) \
-    _heim_vector_create(HEIM_VECTOR_DEFAULT_CAPACITY, sizeof(type))
+#define heim_vector_create(type) _heim_vector_create(HEIM_VECTOR_DEFAULT_CAPACITY, sizeof(type))
 
-#define heim_vector_reserve(type, capacity) \
-    _heim_vector_create(capacity, sizeof(type))
+#define heim_vector_reserve(type, capacity) _heim_vector_create(capacity, sizeof(type))
 
 #define heim_vector_destroy(array) _heim_vector_destroy(array, __FILE__, __LINE__);
 
@@ -47,8 +40,7 @@ void* _heim_vector_insert_at(void* array, uint64_t index, void* value_ptr);
         array = _heim_vector_push(array, &temp); \
     } while (0)
 
-#define heim_vector_pop(array, value_ptr) \
-    _heim_vector_pop(array, value_ptr)
+#define heim_vector_pop(array, value_ptr) _heim_vector_pop(array, value_ptr)
 
 #define heim_vector_insert_at(array, index, value)           \
     do {                                                     \
@@ -56,20 +48,14 @@ void* _heim_vector_insert_at(void* array, uint64_t index, void* value_ptr);
         array = _heim_vector_insert_at(array, index, &temp); \
     } while (0)
 
-#define heim_vector_pop_at(array, index, value_ptr) \
-    _heim_vector_pop_at(array, index, value_ptr)
+#define heim_vector_pop_at(array, index, value_ptr) _heim_vector_pop_at(array, index, value_ptr)
 
-#define heim_vector_clear(array) \
-    _heim_vector_field_set(array, HEIM_VECTOR_LENGTH, 0)
+#define heim_vector_clear(array) _heim_vector_field_set(array, HEIM_VECTOR_LENGTH, 0)
 
-#define heim_vector_capacity(array) \
-    _heim_vector_field_get(array, HEIM_VECTOR_CAPACITY)
+#define heim_vector_capacity(array) _heim_vector_field_get(array, HEIM_VECTOR_CAPACITY)
 
-#define heim_vector_length(array) \
-    _heim_vector_field_get(array, HEIM_VECTOR_LENGTH)
+#define heim_vector_length(array) _heim_vector_field_get(array, HEIM_VECTOR_LENGTH)
 
-#define heim_vector_stride(array) \
-    _heim_vector_field_get(array, HEIM_VECTOR_STRIDE)
+#define heim_vector_stride(array) _heim_vector_field_get(array, HEIM_VECTOR_STRIDE)
 
-#define heim_vector_length_set(array, value) \
-    _heim_vector_field_set(array, HEIM_VECTOR_LENGTH, value)
+#define heim_vector_length_set(array, value) _heim_vector_field_set(array, HEIM_VECTOR_LENGTH, value)

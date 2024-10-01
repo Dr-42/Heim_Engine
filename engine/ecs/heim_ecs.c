@@ -101,13 +101,9 @@ void* heim_ecs_get_component_data(HeimEntity entity, HeimComponent component) {
     return component_data[component].data;
 }
 
-void heim_ecs_register_system(HeimSystem system) {
-    heim_vector_push(ecs->systems, system);
-}
+void heim_ecs_register_system(HeimSystem system) { heim_vector_push(ecs->systems, system); }
 
-uint64_t heim_ecs_get_entity_count() {
-    return ecs->entity_count;
-}
+uint64_t heim_ecs_get_entity_count() { return ecs->entity_count; }
 
 void heim_ecs_update(float dt) {
     for (uint64_t i = 0; i < heim_vector_length(ecs->systems); i++) {

@@ -25,7 +25,8 @@ typedef struct HeimCamera {
     HeimVec4f clear_color;
 } HeimCamera;
 
-HeimCamera* heim_camera_new(float fov, float aspect, float near, float far, bool render_to_texture, uint32_t width, uint32_t height);
+HeimCamera* heim_camera_new(float fov, float aspect, float near, float far, bool render_to_texture, uint32_t width,
+                            uint32_t height);
 void heim_camera_free(HeimCamera* camera);
 
 void heim_camera_bind(HeimCamera* camera);

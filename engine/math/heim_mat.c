@@ -35,9 +35,9 @@ HeimMat4 heim_mat4_rotate(HeimMat4 m, float degrees, HeimVec3f axis) {
     HeimMat4 rot = {0};
     float radians = degrees * M_PI / 180.0f;
     float c = cosf(radians);
-    float s = sinf(radians);    
+    float s = sinf(radians);
     float omc = 1.0f - c;
-    
+
     HeimVec3f norm = heim_vec3f_normalize(axis);
     float x = norm.x;
     float y = norm.y;
@@ -78,14 +78,14 @@ HeimMat4 heim_mat4_scale(HeimMat4 m, HeimVec3f vec) {
 
 HeimMat4 heim_mat4_multiply(HeimMat4 a, HeimMat4 b) {
     HeimMat4 mat = {0};
-    for(int i = 0; i < 4; i++) {    
-        for(int j = 0; j < 4; j++) {    
-            mat.m[i][j] = 0;    
-            for(int k = 0; k < 4; k++){    
-                mat.m[i][j] += b.m[i][k] * a.m[k][j];    
-            }    
-        }    
-    }  
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            mat.m[i][j] = 0;
+            for (int k = 0; k < 4; k++) {
+                mat.m[i][j] += b.m[i][k] * a.m[k][j];
+            }
+        }
+    }
     return mat;
 }
 
@@ -183,7 +183,7 @@ HeimMat3 heim_mat3_inverse(HeimMat3 mat) {
         return result;
     }
     float invdet = 1.0f / det;
-    
+
     result.m[0][0] = (mat.m[1][1] * mat.m[2][2] - mat.m[1][2] * mat.m[2][1]) * invdet;
     result.m[0][1] = (mat.m[0][2] * mat.m[2][1] - mat.m[0][1] * mat.m[2][2]) * invdet;
     result.m[0][2] = (mat.m[0][1] * mat.m[1][2] - mat.m[0][2] * mat.m[1][1]) * invdet;
@@ -193,7 +193,6 @@ HeimMat3 heim_mat3_inverse(HeimMat3 mat) {
     result.m[2][0] = (mat.m[1][0] * mat.m[2][1] - mat.m[1][1] * mat.m[2][0]) * invdet;
     result.m[2][1] = (mat.m[0][1] * mat.m[2][0] - mat.m[0][0] * mat.m[2][1]) * invdet;
     result.m[2][2] = (mat.m[0][0] * mat.m[1][1] - mat.m[0][1] * mat.m[1][0]) * invdet;
-
 
     return result;
 }
@@ -212,23 +211,26 @@ HeimMat3 heim_mat3_from_mat4(HeimMat4 mat) {
     return result;
 }
 
-HeimMat4 heim_mat4_from_quat(HeimVec4f q){
-    float w, x, y, z,
-    xx, yy, zz,
-    xy, yz, xz,
-    wx, wy, wz, norm, s;
+HeimMat4 heim_mat4_from_quat(HeimVec4f q) {
+    float w, x, y, z, xx, yy, zz, xy, yz, xz, wx, wy, wz, norm, s;
 
     norm = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
-    s    = norm > 0.0f ? 2.0f / norm : 0.0f;
+    s = norm > 0.0f ? 2.0f / norm : 0.0f;
 
     x = q.x;
     y = q.y;
     z = q.z;
     w = q.w;
 
-    xx = s * x * x;   xy = s * x * y;   wx = s * w * x;
-    yy = s * y * y;   yz = s * y * z;   wy = s * w * y;
-    zz = s * z * z;   xz = s * x * z;   wz = s * w * z;
+    xx = s * x * x;
+    xy = s * x * y;
+    wx = s * w * x;
+    yy = s * y * y;
+    yz = s * y * z;
+    wy = s * w * y;
+    zz = s * z * z;
+    xz = s * x * z;
+    wz = s * w * z;
 
     HeimMat4 dest = {0};
 

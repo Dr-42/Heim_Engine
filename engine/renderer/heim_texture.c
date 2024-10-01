@@ -95,18 +95,10 @@ void heim_texture_free(HeimTexture* texture) {
     HEIM_FREE(texture, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-uint32_t heim_texture_get_id(HeimTexture* texture) {
-    return texture->id;
-}
-uint32_t heim_texture_get_width(HeimTexture* texture) {
-    return texture->width;
-}
-uint32_t heim_texture_get_height(HeimTexture* texture) {
-    return texture->height;
-}
-uint32_t heim_texture_get_channels(HeimTexture* texture) {
-    return texture->channels;
-}
+uint32_t heim_texture_get_id(HeimTexture* texture) { return texture->id; }
+uint32_t heim_texture_get_width(HeimTexture* texture) { return texture->width; }
+uint32_t heim_texture_get_height(HeimTexture* texture) { return texture->height; }
+uint32_t heim_texture_get_channels(HeimTexture* texture) { return texture->channels; }
 
 void heim_texture_bind(HeimTexture* texture, uint32_t slot) {
     glActiveTexture(GL_TEXTURE0 + slot);

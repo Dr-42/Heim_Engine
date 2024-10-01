@@ -26,7 +26,7 @@ typedef struct AllocationInfo {
     void *ptr;                    // Pointer to the allocated memory
     const char *file;             // File where allocation happened
     int line;                     // Line where allocation happened
-    void* trace[TRACE_SIZE];       // Trace of the call stack
+    void *trace[TRACE_SIZE];      // Trace of the call stack
     int trace_size;               // Size of the trace
     struct AllocationInfo *next;  // Pointer to the next allocation info
 } AllocationInfo;
@@ -35,7 +35,7 @@ typedef struct {
     void *ptr;                      // Pointer to the allocated memory
     const char *file;               // File where allocation happened
     int line;                       // Line where allocation happened
-    void* trace[TRACE_SIZE];         // Trace of the call stack
+    void *trace[TRACE_SIZE];        // Trace of the call stack
     int trace_size;                 // Size of the trace
     struct DeallocationInfo *next;  // Pointer to the next deallocation info
 } DeallocationInfo;
@@ -55,7 +55,7 @@ void heim_memory_close() {
         AllocationInfo *current = head;
         while (current != NULL) {
             HEIM_LOG_WARN("Unfreed allocation: pointer %p, file %s, line %d", current->ptr, current->file, current->line);
-            char* trace_print_buf = (char*)malloc(1024);
+            char *trace_print_buf = (char *)malloc(1024);
             memset(trace_print_buf, 0, 1024);
             sprint_intermediate_trace(current->trace, trace_print_buf, 1, 1024);
             HEIM_LOG_WARN("Allocation Trace:\n%s", trace_print_buf);
@@ -196,7 +196,7 @@ void heim_free(void *ptr, HEIM_MEMORY_TYPE type) {
         if (curr->ptr == ptr) {
             HEIM_LOG_WARN("-----------------------------------------------");
             HEIM_LOG_WARN("Double free detected: pointer %p, file %s, line %d", curr->ptr, curr->file, curr->line);
-            char* trace_print_buf = (char*)malloc(1024);
+            char *trace_print_buf = (char *)malloc(1024);
             memset(trace_print_buf, 0, 1024);
             sprint_intermediate_trace(curr->trace, trace_print_buf, 1, 1024);
             memset(trace_print_buf, 0, 1024);
@@ -247,12 +247,6 @@ void heim_free(void *ptr, HEIM_MEMORY_TYPE type) {
 }
 
 // Memory copy
-void *heim_memcpy(void *dest, const void *src, size_t n) {
-    return memcpy(dest, src, n);
-}
-void *heim_memmove(void *dest, const void *src, size_t n) {
-    return memmove(dest, src, n);
-}
-void *heim_memset(void *s, int c, size_t n) {
-    return memset(s, c, n);
-}
+void *heim_memcpy(void *dest, const void *src, size_t n) { return memcpy(dest, src, n); }
+void *heim_memmove(void *dest, const void *src, size_t n) { return memmove(dest, src, n); }
+void *heim_memset(void *s, int c, size_t n) { return memset(s, c, n); }

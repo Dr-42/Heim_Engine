@@ -18,7 +18,7 @@ static HeimSkeletalMesh* process_mesh(HeimSkeletalModel* model, struct aiMesh* m
 static void set_vertex_bone_data(HeimSkeletalMeshVertex* vertex, int bone_id, float weight);
 static void extract_bone_weight_for_vertices(HeimSkeletalModel* model, HeimSkeletalMeshVertex* vertices, struct aiMesh* mesh);
 
-HeimSkeletalModel* heim_skeletal_model_create(const char* path){
+HeimSkeletalModel* heim_skeletal_model_create(const char* path) {
     HeimSkeletalModel* model = HEIM_MALLOC(HeimSkeletalModel, HEIM_MEMORY_TYPE_RENDERER);
     memset(model, 0, sizeof(HeimSkeletalModel));
     model->meshes = heim_vector_create(HeimSkeletalMesh*);
@@ -27,7 +27,7 @@ HeimSkeletalModel* heim_skeletal_model_create(const char* path){
     return model;
 }
 
-void heim_skeletal_model_destroy(HeimSkeletalModel* model){
+void heim_skeletal_model_destroy(HeimSkeletalModel* model) {
     for (size_t i = 0; i < heim_vector_length(model->meshes); i++) {
         heim_vector_destroy(model->meshes[i]->vertices);
         heim_vector_destroy(model->meshes[i]->indices);
@@ -41,36 +41,25 @@ void heim_skeletal_model_destroy(HeimSkeletalModel* model){
     HEIM_FREE(model, HEIM_MEMORY_TYPE_RENDERER);
 }
 
+void heim_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo) { model->albedo = albedo; }
 
-void heim_skeletal_model_set_albedo(HeimSkeletalModel* model, HeimTexture* albedo){
-    model->albedo = albedo;
-}
+void heim_skeletal_model_set_normal(HeimSkeletalModel* model, HeimTexture* normal) { model->normal = normal; }
 
-void heim_skeletal_model_set_normal(HeimSkeletalModel* model, HeimTexture* normal){
-    model->normal = normal;
-}
+void heim_skeletal_model_set_specular(HeimSkeletalModel* model, HeimTexture* specular) { model->specular = specular; }
 
-void heim_skeletal_model_set_specular(HeimSkeletalModel* model, HeimTexture* specular){
-    model->specular = specular;
-}
+void heim_skeletal_model_set_roughness(HeimSkeletalModel* model, HeimTexture* roughness) { model->roughness = roughness; }
 
-void heim_skeletal_model_set_roughness(HeimSkeletalModel* model, HeimTexture* roughness){
-    model->roughness = roughness;
-}
+void heim_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao) { model->ao = ao; }
 
-void heim_skeletal_model_set_ao(HeimSkeletalModel* model, HeimTexture* ao){
-    model->ao = ao;
-}
-
-
-void heim_skeletal_model_draw(HeimSkeletalModel* model){
+void heim_skeletal_model_draw(HeimSkeletalModel* model) {
     for (size_t i = 0; i < heim_vector_length(model->meshes); i++) {
         heim_skeletal_mesh_draw(model->meshes[i]);
     }
 }
 
 void load_model(HeimSkeletalModel* model, const char* path) {
-    const struct aiScene* scene = aiImportFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+    const struct aiScene* scene =
+        aiImportFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         fprintf(stderr, "ERROR::ASSIMP::%s\n", aiGetErrorString());
         return;
@@ -137,8 +126,8 @@ void set_vertex_bone_data(HeimSkeletalMeshVertex* vertex, int bone_id, float wei
     }
 }
 
-int32_t find_bone_index(heim_bone_info_t* bone_info_map, const char* name){
-    for(int32_t i = 0; i < (int32_t)heim_vector_length(bone_info_map); i++) {
+int32_t find_bone_index(heim_bone_info_t* bone_info_map, const char* name) {
+    for (int32_t i = 0; i < (int32_t)heim_vector_length(bone_info_map); i++) {
         if (strcmp(bone_info_map[i].name, name) == 0) {
             return i;
         }
@@ -156,7 +145,7 @@ void extract_bone_weight_for_vertices(HeimSkeletalModel* model, HeimSkeletalMesh
             heim_bone_info_t info = {0};
             info.id = bone_count;
             info.offset = convert_matrix_to_glm(&mesh->mBones[bone_idx]->mOffsetMatrix);
-            //shput(model->bone_info_map, bone_name, info);
+            // shput(model->bone_info_map, bone_name, info);
             info.name = HEIM_CALLOC(char, strlen(bone_name) + 1, HEIM_MEMORY_TYPE_RENDERER);
             strcpy(info.name, bone_name);
             heim_vector_push(model->bone_info_map, info);

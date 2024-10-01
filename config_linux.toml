@@ -1,5 +1,6 @@
 [build]
 compiler = "clang"
+cstandard = "gnu11"
 
 [[targets]]
 name = "libheimdall-engine"

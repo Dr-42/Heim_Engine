@@ -32,7 +32,8 @@ void heim_ui_sprite_render_system(HeimEntity entity, float dt) {
     HeimUiSprite* ui_sprite = heim_ecs_get_component_data(entity, get_ui_sprite_component());
     HeimUiTransform* transform = heim_ecs_get_component_data(entity, get_ui_transform_component());
 
-    HeimMat4 projection = heim_mat4_ortho(0.0f, heim_window_get_window_size().x, heim_window_get_window_size().y, 0.0f, -1.0f, 1.0f);
+    HeimMat4 projection =
+        heim_mat4_ortho(0.0f, heim_window_get_window_size().x, heim_window_get_window_size().y, 0.0f, -1.0f, 1.0f);
     ui_sprite->sprite->projection = projection;
 
     HeimMat4 model = heim_mat4_identity();
@@ -56,6 +57,4 @@ void heim_ui_sprite_render_system(HeimEntity entity, float dt) {
     heim_sprite_render(ui_sprite->sprite);
 }
 
-void heim_ui_sprite_render_system_free() {
-    heim_shader_free(sprite_render_system.shader);
-}
+void heim_ui_sprite_render_system_free() { heim_shader_free(sprite_render_system.shader); }

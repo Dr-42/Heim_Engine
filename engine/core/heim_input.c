@@ -80,17 +80,15 @@ void heim_input_key_callback(GLFWwindow *window, int key, int scancode, int acti
     if (key >= 0 && key < MAX_KEYS) {
         HeimEvent event;
         if (action == GLFW_PRESS) {
-            event = (HeimEvent){
-                .type = HEIM_EVENT_TYPE_KEY_DOWN,
-                .data = (HeimEventData){
-                    .i = {key},
-                }};
+            event = (HeimEvent){.type = HEIM_EVENT_TYPE_KEY_DOWN,
+                                .data = (HeimEventData){
+                                    .i = {key},
+                                }};
         } else if (action == GLFW_RELEASE) {
-            event = (HeimEvent){
-                .type = HEIM_EVENT_TYPE_KEY_UP,
-                .data = (HeimEventData){
-                    .i = {key},
-                }};
+            event = (HeimEvent){.type = HEIM_EVENT_TYPE_KEY_UP,
+                                .data = (HeimEventData){
+                                    .i = {key},
+                                }};
         } else {
             return;
         }
@@ -105,17 +103,15 @@ void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         HeimEvent event;
         if (action == GLFW_PRESS) {
-            event = (HeimEvent){
-                .type = HEIM_EVENT_TYPE_MOUSE_DOWN,
-                .data = (HeimEventData){
-                    .i = {button},
-                }};
+            event = (HeimEvent){.type = HEIM_EVENT_TYPE_MOUSE_DOWN,
+                                .data = (HeimEventData){
+                                    .i = {button},
+                                }};
         } else if (action == GLFW_RELEASE) {
-            event = (HeimEvent){
-                .type = HEIM_EVENT_TYPE_MOUSE_UP,
-                .data = (HeimEventData){
-                    .i = {button},
-                }};
+            event = (HeimEvent){.type = HEIM_EVENT_TYPE_MOUSE_UP,
+                                .data = (HeimEventData){
+                                    .i = {button},
+                                }};
         } else {
             return;
         }
@@ -123,17 +119,15 @@ void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action
     } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
         HeimEvent event;
         if (action == GLFW_PRESS) {
-            event = (HeimEvent){
-                .type = HEIM_EVENT_TYPE_MOUSE_DOWN,
-                .data = (HeimEventData){
-                    .i = {button},
-                }};
+            event = (HeimEvent){.type = HEIM_EVENT_TYPE_MOUSE_DOWN,
+                                .data = (HeimEventData){
+                                    .i = {button},
+                                }};
         } else if (action == GLFW_RELEASE) {
-            event = (HeimEvent){
-                .type = HEIM_EVENT_TYPE_MOUSE_UP,
-                .data = (HeimEventData){
-                    .i = {button},
-                }};
+            event = (HeimEvent){.type = HEIM_EVENT_TYPE_MOUSE_UP,
+                                .data = (HeimEventData){
+                                    .i = {button},
+                                }};
         } else {
             return;
         }
@@ -144,11 +138,10 @@ void heim_input_mouse_button_callback(GLFWwindow *window, int button, int action
 HeimVec2f mouse_last_pos = {0.0f, 0.0f};
 void heim_input_cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     (void)window;  // Fix for unused parameter warning
-    HeimEvent event = (HeimEvent){
-        .type = HEIM_EVENT_TYPE_MOUSE_MOVE,
-        .data = (HeimEventData){
-            .vec2f = {(HeimVec2f){xpos, ypos}, mouse_last_pos},
-        }};
+    HeimEvent event = (HeimEvent){.type = HEIM_EVENT_TYPE_MOUSE_MOVE,
+                                  .data = (HeimEventData){
+                                      .vec2f = {(HeimVec2f){xpos, ypos}, mouse_last_pos},
+                                  }};
     heim_event_push(input.input_queue, event);
     mouse_last_pos = (HeimVec2f){xpos, ypos};
 
@@ -172,12 +165,8 @@ void heim_input_mouse_hide(bool hide) {
     glfwSetInputMode(input.window, GLFW_CURSOR, hide ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
 }
 
-bool heim_input_key_pressed(int key) {
-    return heim_bitmask_get(input.keys, key);
-}
-bool heim_input_key_released(int key) {
-    return !heim_bitmask_get(input.keys, key);
-}
+bool heim_input_key_pressed(int key) { return heim_bitmask_get(input.keys, key); }
+bool heim_input_key_released(int key) { return !heim_bitmask_get(input.keys, key); }
 
 bool heim_input_mouse_pressed(int button) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -196,13 +185,9 @@ bool heim_input_mouse_released(int button) {
     return false;
 }
 
-bool heim_input_key_down(int key) {
-    return heim_bitmask_get(input.keys, key) && !heim_bitmask_get(input.keys_last_frame, key);
-}
+bool heim_input_key_down(int key) { return heim_bitmask_get(input.keys, key) && !heim_bitmask_get(input.keys_last_frame, key); }
 
-bool heim_input_key_up(int key) {
-    return !heim_bitmask_get(input.keys, key) && heim_bitmask_get(input.keys_last_frame, key);
-}
+bool heim_input_key_up(int key) { return !heim_bitmask_get(input.keys, key) && heim_bitmask_get(input.keys_last_frame, key); }
 
 bool heim_input_mouse_down(int button) {
     switch (button) {
@@ -224,9 +209,7 @@ bool heim_input_mouse_up(int button) {
     return false;
 }
 
-HeimVec2f heim_input_mouse_position() {
-    return input.mouse_pos;
-}
+HeimVec2f heim_input_mouse_position() { return input.mouse_pos; }
 HeimVec2f heim_input_mouse_delta() {
     HeimVec2f delta = input.mouse_delta;
     return delta;

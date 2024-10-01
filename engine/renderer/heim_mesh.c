@@ -4,9 +4,10 @@
 
 #include <string.h>
 
-#define todo() { fprintf(stderr, "TODO: %s:%d%d", __FILE__, __LINE__, 0); }
+#define todo() \
+    { fprintf(stderr, "TODO: %s:%d%d", __FILE__, __LINE__, 0); }
 
-HeimMesh* heim_mesh_create(HeimMeshVertex* vertices, uint32_t* indices){
+HeimMesh* heim_mesh_create(HeimMeshVertex* vertices, uint32_t* indices) {
     HeimMesh* mesh = HEIM_MALLOC(HeimMesh, HEIM_MEMORY_TYPE_RENDERER);
     memset(mesh, 0, sizeof(HeimMesh));
     mesh->vertices = vertices;
@@ -33,16 +34,15 @@ HeimMesh* heim_mesh_create(HeimMeshVertex* vertices, uint32_t* indices){
     return mesh;
 }
 
-void heim_mesh_destroy(HeimMesh* mesh){
+void heim_mesh_destroy(HeimMesh* mesh) {
     glDeleteVertexArrays(1, &mesh->vao);
     glDeleteBuffers(1, &mesh->vbo);
     glDeleteBuffers(1, &mesh->ebo);
     HEIM_FREE(mesh, HEIM_MEMORY_TYPE_RENDERER);
 }
 
-void heim_mesh_draw(HeimMesh* mesh){
+void heim_mesh_draw(HeimMesh* mesh) {
     glBindVertexArray(mesh->vao);
     glDrawElements(GL_TRIANGLES, mesh->num_indices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
-

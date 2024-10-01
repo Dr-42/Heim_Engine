@@ -48,7 +48,8 @@ void heim_pbr_model_render(HeimPBRModel* model, HeimVec3f position, HeimVec3f ro
     view_matrix = heim_mat4_translate(view_matrix, camera_transform->position);
 
     // Camera has front, right and up axes defined
-    view_matrix = heim_mat4_lookat(camera_transform->position, heim_vec3f_add(camera_transform->position, camera->front), camera->up);
+    view_matrix =
+        heim_mat4_lookat(camera_transform->position, heim_vec3f_add(camera_transform->position, camera->front), camera->up);
 
     HeimMat4 projection_matrix = heim_mat4_perspective(camera->fov, camera->aspect, camera->near, camera->far);
 
@@ -131,7 +132,7 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
 
     if (!pbr_model_render_system.world) {
         HEIM_LOG_WARN("No world found");
-        //return;
+        // return;
     }
 
     HeimPBRModel* model = heim_ecs_get_component_data(entity, get_pbr_model_component());
@@ -141,6 +142,4 @@ void heim_pbr_model_renderer_system(HeimEntity entity, float dt) {
     }
 }
 
-void heim_pbr_model_renderer_free() {
-    heim_shader_free(pbr_model_render_system.shader);
-}
+void heim_pbr_model_renderer_free() { heim_shader_free(pbr_model_render_system.shader); }

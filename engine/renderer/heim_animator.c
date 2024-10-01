@@ -74,7 +74,8 @@ void heim_animator_play_animation(HeimAnimator* animator, HeimAnimation* animati
     animator->current_time = 0.0f;
 }
 
-void heim_animator_calculate_bone_transform(HeimAnimator* animator, const struct assimp_node_data_t* node, HeimMat4 parent_transform) {
+void heim_animator_calculate_bone_transform(HeimAnimator* animator, const struct assimp_node_data_t* node,
+                                            HeimMat4 parent_transform) {
     char* node_name = node->name;
     HeimMat4 node_transform = node->transformation;
     HeimBone* bone = heim_animation_find_bone(animator->current_animation, node_name);

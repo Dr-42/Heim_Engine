@@ -51,8 +51,8 @@ bool heim_window_init() {
     heim_input_create(heim_window.window);
     heim_input_init();
 
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -93,36 +93,28 @@ void heim_window_update(void (*update)(float dt), bool *running) {
     }
 }
 
-GLFWwindow *heim_window_get_window() {
-    return heim_window.window;
-}
+GLFWwindow *heim_window_get_window() { return heim_window.window; }
 
 void heim_window_set_window_size(HeimVec2ui size) {
     heim_window.window_size = size;
-    if (heim_window.window)
-        glfwSetWindowSize(heim_window.window, size.x, size.y);
+    if (heim_window.window) glfwSetWindowSize(heim_window.window, size.x, size.y);
 }
 void heim_window_set_window_top_left(HeimVec2ui top_left) {
     heim_window.window_top_left = top_left;
-    if (heim_window.window)
-        glfwSetWindowPos(heim_window.window, top_left.x, top_left.y);
+    if (heim_window.window) glfwSetWindowPos(heim_window.window, top_left.x, top_left.y);
 }
-void heim_window_set_window_title(char *title) {
-    heim_window.title = title;
-}
+void heim_window_set_window_title(char *title) { heim_window.title = title; }
 
-HeimVec2ui heim_window_get_window_size() {
-    return heim_window.window_size;
-}
+HeimVec2ui heim_window_get_window_size() { return heim_window.window_size; }
 
 void heim_window_set_fullscreen(bool fullscreen) {
     if (fullscreen) {
-        glfwSetWindowMonitor(heim_window.window, glfwGetPrimaryMonitor(), 0, 0, heim_window.window_size.x, heim_window.window_size.y, GLFW_DONT_CARE);
+        glfwSetWindowMonitor(heim_window.window, glfwGetPrimaryMonitor(), 0, 0, heim_window.window_size.x,
+                             heim_window.window_size.y, GLFW_DONT_CARE);
     } else {
-        glfwSetWindowMonitor(heim_window.window, NULL, heim_window.window_top_left.x, heim_window.window_top_left.y, heim_window.window_size.x, heim_window.window_size.y, GLFW_DONT_CARE);
+        glfwSetWindowMonitor(heim_window.window, NULL, heim_window.window_top_left.x, heim_window.window_top_left.y,
+                             heim_window.window_size.x, heim_window.window_size.y, GLFW_DONT_CARE);
     }
 }
 
-void heim_window_close() {
-    glfwTerminate();
-}
+void heim_window_close() { glfwTerminate(); }

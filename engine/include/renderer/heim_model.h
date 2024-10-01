@@ -4,13 +4,13 @@
 #include "renderer/heim_texture.h"
 
 typedef struct HeimModel {
-    HeimTexture *albedo;
-    HeimTexture *normal;
-    HeimTexture *specular;
-    HeimTexture *roughness;
-    HeimTexture *ao;
+    HeimTexture* albedo;
+    HeimTexture* normal;
+    HeimTexture* specular;
+    HeimTexture* roughness;
+    HeimTexture* ao;
 
-    HeimMesh **meshes;
+    HeimMesh** meshes;
 } HeimModel;
 
 HeimModel* heim_model_create(const char* path);

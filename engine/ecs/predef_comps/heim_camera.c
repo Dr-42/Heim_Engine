@@ -5,7 +5,8 @@
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 
-HeimCamera* heim_camera_new(float fov, float aspect, float near, float far, bool render_to_texture, uint32_t width, uint32_t height) {
+HeimCamera* heim_camera_new(float fov, float aspect, float near, float far, bool render_to_texture, uint32_t width,
+                            uint32_t height) {
     HeimCamera* camera = HEIM_MALLOC(HeimCamera, HEIM_MEMORY_TYPE_ECS);
     camera->fov = fov;
     camera->aspect = aspect;

@@ -1,37 +1,21 @@
 #include "math/heim_vec.h"
 
-float heim_deg_to_rad(float deg) {
-    return deg * (M_PI / 180.0f);
-}
+float heim_deg_to_rad(float deg) { return deg * (M_PI / 180.0f); }
 
-HeimVec2f heim_vec2f_add(HeimVec2f a, HeimVec2f b) {
-    return (HeimVec2f){a.x + b.x, a.y + b.y};
-}
+HeimVec2f heim_vec2f_add(HeimVec2f a, HeimVec2f b) { return (HeimVec2f){a.x + b.x, a.y + b.y}; }
 
-HeimVec2f heim_vec2f_sub(HeimVec2f a, HeimVec2f b) {
-    return (HeimVec2f){a.x - b.x, a.y - b.y};
-}
+HeimVec2f heim_vec2f_sub(HeimVec2f a, HeimVec2f b) { return (HeimVec2f){a.x - b.x, a.y - b.y}; }
 
-HeimVec3f heim_vec3f_add(HeimVec3f a, HeimVec3f b) {
-    return (HeimVec3f){a.x + b.x, a.y + b.y, a.z + b.z};
-}
+HeimVec3f heim_vec3f_add(HeimVec3f a, HeimVec3f b) { return (HeimVec3f){a.x + b.x, a.y + b.y, a.z + b.z}; }
 
-HeimVec3f heim_vec3f_sub(HeimVec3f a, HeimVec3f b) {
-    return (HeimVec3f){a.x - b.x, a.y - b.y, a.z - b.z};
-}
+HeimVec3f heim_vec3f_sub(HeimVec3f a, HeimVec3f b) { return (HeimVec3f){a.x - b.x, a.y - b.y, a.z - b.z}; }
 
-HeimVec3f heim_vec3f_mul(HeimVec3f a, float b) {
-    return (HeimVec3f){a.x * b, a.y * b, a.z * b};
-}
+HeimVec3f heim_vec3f_mul(HeimVec3f a, float b) { return (HeimVec3f){a.x * b, a.y * b, a.z * b}; }
 
-float heim_vec3f_dot(HeimVec3f a, HeimVec3f b) {
-    return (a.x * b.x + a.y * b.y + a.z * b.z);
-}
+float heim_vec3f_dot(HeimVec3f a, HeimVec3f b) { return (a.x * b.x + a.y * b.y + a.z * b.z); }
 
 HeimVec3f heim_vec3f_cross(HeimVec3f a, HeimVec3f b) {
-    return (HeimVec3f){a.y * b.z - a.z * b.y,
-                       a.z * b.x - a.x * b.z,
-                       a.x * b.y - a.y * b.x};
+    return (HeimVec3f){a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x};
 }
 
 HeimVec3f heim_vec3f_normalize(HeimVec3f a) {
@@ -39,14 +23,10 @@ HeimVec3f heim_vec3f_normalize(HeimVec3f a) {
     return (HeimVec3f){a.x / length, a.y / length, a.z / length};
 }
 
-HeimVec3f heim_vec3f_from_vec4f(HeimVec4f a) {
-    return (HeimVec3f){a.x, a.y, a.z};
-}
+HeimVec3f heim_vec3f_from_vec4f(HeimVec4f a) { return (HeimVec3f){a.x, a.y, a.z}; }
 
 HeimVec3f heim_vec3f_mix(HeimVec3f a, HeimVec3f b, float t) {
-    return (HeimVec3f){a.x * (1.0f - t) + b.x * t,
-                       a.y * (1.0f - t) + b.y * t,
-                       a.z * (1.0f - t) + b.z * t};
+    return (HeimVec3f){a.x * (1.0f - t) + b.x * t, a.y * (1.0f - t) + b.y * t, a.z * (1.0f - t) + b.z * t};
 }
 
 HeimVec4f heim_vec4f_normalize(HeimVec4f a) {
@@ -55,25 +35,17 @@ HeimVec4f heim_vec4f_normalize(HeimVec4f a) {
 }
 
 HeimVec4f heim_vec4f_mix(HeimVec4f a, HeimVec4f b, float t) {
-    return (HeimVec4f){a.x * (1.0f - t) + b.x * t,
-                       a.y * (1.0f - t) + b.y * t,
-                       a.z * (1.0f - t) + b.z * t,
+    return (HeimVec4f){a.x * (1.0f - t) + b.x * t, a.y * (1.0f - t) + b.y * t, a.z * (1.0f - t) + b.z * t,
                        a.w * (1.0f - t) + b.w * t};
 }
 
-float heim_vec4f_dot(HeimVec4f a, HeimVec4f b) {
-    return (a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
-}
+float heim_vec4f_dot(HeimVec4f a, HeimVec4f b) { return (a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w); }
 
-HeimVec4f heim_vec4f_from_vec3f(HeimVec3f a) {
-    return (HeimVec4f){a.x, a.y, a.z, 0.0f};
-}
+HeimVec4f heim_vec4f_from_vec3f(HeimVec3f a) { return (HeimVec4f){a.x, a.y, a.z, 0.0f}; }
 
-HeimVec4f heim_vec4f_mul(HeimVec4f a, float b) {
-    return (HeimVec4f){a.x * b, a.y * b, a.z * b, a.w * b};
-}
+HeimVec4f heim_vec4f_mul(HeimVec4f a, float b) { return (HeimVec4f){a.x * b, a.y * b, a.z * b, a.w * b}; }
 
-HeimVec4f heim_quat_slerp(HeimVec4f a, HeimVec4f b, float t){
+HeimVec4f heim_quat_slerp(HeimVec4f a, HeimVec4f b, float t) {
     HeimVec4f result = {0};
     float dot = heim_vec4f_dot(a, b);
     if (dot < 0.0f) {

@@ -35,6 +35,4 @@ void heim_event_queue_clear(HeimEventQueue *queue) {
     queue->count = 0;
 }
 
-bool heim_event_queue_is_empty(HeimEventQueue *queue) {
-    return queue->count == 0;
-}
+bool heim_event_queue_is_empty(HeimEventQueue *queue) { return queue->count == 0; }

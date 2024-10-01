@@ -32,9 +32,8 @@ void heim_ui_text_render_system(HeimEntity entity, float dt) {
     HeimUiTransform* ui_transform = heim_ecs_get_component_data(entity, get_ui_transform_component());
 
     HeimVec3f color = heim_vec3f_from_vec4f(ui_transform->color);
-    heim_font_render_text(ui_text->font, text_render_system.shader, ui_text->text, ui_transform->position, ui_transform->size.x, color);
+    heim_font_render_text(ui_text->font, text_render_system.shader, ui_text->text, ui_transform->position, ui_transform->size.x,
+                          color);
 }
 
-void heim_ui_text_render_system_free() {
-    heim_shader_free(text_render_system.shader);
-}
+void heim_ui_text_render_system_free() { heim_shader_free(text_render_system.shader); }

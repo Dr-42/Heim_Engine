@@ -13,8 +13,8 @@ typedef struct HeimMeshVertex {
 } HeimMeshVertex;
 
 typedef struct HeimMesh {
-    HeimMeshVertex *vertices;
-    uint32_t *indices;
+    HeimMeshVertex* vertices;
+    uint32_t* indices;
     uint32_t num_indices;
 
     GLuint vao;

@@ -64,16 +64,7 @@ void heim_font_init(HeimFont* font, char* path, uint32_t size) {
     uint32_t atlas;
     glGenTextures(1, &atlas);
     glBindTexture(GL_TEXTURE_2D, atlas);
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RED,
-        atlas_width,
-        atlas_height,
-        0,
-        GL_RED,
-        GL_UNSIGNED_BYTE,
-        NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlas_width, atlas_height, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 
     int x = 0;
     for (uint8_t i = 0; i < 128; i++) {
@@ -81,24 +72,16 @@ void heim_font_init(HeimFont* font, char* path, uint32_t size) {
             HEIM_LOG_ERROR("Failed to load glyph");
             continue;
         }
-        glTexSubImage2D(
-            GL_TEXTURE_2D,
-            0,
-            x,
-            0,
-            face->glyph->bitmap.width,
-            face->glyph->bitmap.rows,
-            GL_RED,
-            GL_UNSIGNED_BYTE,
-            face->glyph->bitmap.buffer);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, x, 0, face->glyph->bitmap.width, face->glyph->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE,
+                        face->glyph->bitmap.buffer);
 
-        HeimCharacter character = {
-            .texture_id = atlas,
-            .size = (HeimVec2f){face->glyph->bitmap.width, face->glyph->bitmap.rows},
-            .bearing = (HeimVec2f){face->glyph->bitmap_left, face->glyph->bitmap_top},
-            .advance = face->glyph->advance.x,
-            .tex_coords_start = (HeimVec2f){x / (float)atlas_width, 0},
-            .tex_coords_end = (HeimVec2f){(x + face->glyph->bitmap.width) / (float)atlas_width, face->glyph->bitmap.rows / (float)atlas_height}};
+        HeimCharacter character = {.texture_id = atlas,
+                                   .size = (HeimVec2f){face->glyph->bitmap.width, face->glyph->bitmap.rows},
+                                   .bearing = (HeimVec2f){face->glyph->bitmap_left, face->glyph->bitmap_top},
+                                   .advance = face->glyph->advance.x,
+                                   .tex_coords_start = (HeimVec2f){x / (float)atlas_width, 0},
+                                   .tex_coords_end = (HeimVec2f){(x + face->glyph->bitmap.width) / (float)atlas_width,
+                                                                 face->glyph->bitmap.rows / (float)atlas_height}};
 
         font->characters[i] = character;
         x += face->glyph->bitmap.width;
@@ -131,14 +114,13 @@ void heim_font_render_text(HeimFont* font, HeimShader* shader, char* text, HeimV
         float w = ch.size.x * scale;
         float h = ch.size.y * scale;
 
-        float vertices[6][4] = {
-            {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
-            {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y},
-            {xpos, ypos, ch.tex_coords_start.x, ch.tex_coords_start.y},
+        float vertices[6][4] = {{xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
+                                {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y},
+                                {xpos, ypos, ch.tex_coords_start.x, ch.tex_coords_start.y},
 
-            {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
-            {xpos + w, ypos + h, ch.tex_coords_end.x, ch.tex_coords_end.y},
-            {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y}};
+                                {xpos, ypos + h, ch.tex_coords_start.x, ch.tex_coords_end.y},
+                                {xpos + w, ypos + h, ch.tex_coords_end.x, ch.tex_coords_end.y},
+                                {xpos + w, ypos, ch.tex_coords_end.x, ch.tex_coords_start.y}};
 
         position.x += (ch.advance >> 6) * scale;
 

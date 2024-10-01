@@ -22,7 +22,7 @@ HeimTransform camera_transform = {
     .position = (HeimVec3f){0.0f, 0.0f, 3.0f},
 };
 HeimEntity entity1, entity2, entity3, entity4, fps_entity;
-HeimModel *object1, *object2, *object3, *object4;
+HeimModel *obj1, *object2, *object3, *object4;
 HeimTexture *tex1, *tex2, *tex3, *tex1normal, *tex1metallic, *tex1roughness, *tex1ao;
 HeimPBRModel model1, model2, model3, model4;
 HeimTransform transform1, transform2, transform3;
@@ -57,7 +57,7 @@ void testbed_init() {
     world_entity = heim_ecs_create_entity();
     skybox = heim_skybox_create("assets/hdr/studio.hdr");
     entity1 = heim_ecs_create_entity();
-    object1 = heim_model_create("assets/models/Brunhilda1.obj");
+    obj1 = heim_model_create("assets/models/Brunhilda1.obj");
     tex1 = heim_texture_create("assets/textures/brunhilda/Brunhild_diffuse2.png");
     uint8_t white[4] = {255, 255, 255, 255};
     tex1normal = heim_texture_create_color(white);
@@ -65,20 +65,14 @@ void testbed_init() {
     tex1roughness = heim_texture_create_color(white);
     tex1ao = heim_texture_create_color(white);
 
-    heim_model_set_albedo(object1, tex1);
-    heim_model_set_normal(object1, tex1normal);
-    heim_model_set_specular(object1, tex1metallic);
-    heim_model_set_roughness(object1, tex1roughness);
-    heim_model_set_ao(object1, tex1ao);
+    heim_model_set_albedo(obj1, tex1);
+    heim_model_set_normal(obj1, tex1normal);
+    heim_model_set_specular(obj1, tex1metallic);
+    heim_model_set_roughness(obj1, tex1roughness);
+    heim_model_set_ao(obj1, tex1ao);
 
     camera_entity = heim_ecs_create_entity();
-    camera = heim_camera_new(
-        80.0f,
-        (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
-        0.1f,
-        100.0f,
-        true,
-        WINDOW_WIDTH, WINDOW_HEIGHT);
+    camera = heim_camera_new(80.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f, true, WINDOW_WIDTH, WINDOW_HEIGHT);
     camera->clear_color = (HeimVec4f){0.1f, 0.1f, 0.1f, 1.0f};
     camera->front = (HeimVec3f){0.0f, 0.0f, -1.0f};
     camera->up = (HeimVec3f){0.0f, 1.0f, 0.0f};
@@ -93,7 +87,7 @@ void testbed_init() {
     heim_ecs_add_component(world_entity, get_world_component(), &world);
 
     model1 = (HeimPBRModel){
-        .model = object1,
+        .model = obj1,
     };
     transform1 = (HeimTransform){
         .position = {-0.5f, -0.5f, 0.0f},
@@ -274,39 +268,33 @@ void testbed_update(float dt) {
     }
 
     if (heim_input_key_pressed(GLFW_KEY_W)) {
-        camera_transform.position = heim_vec3f_add(
-            camera_transform.position,
-            heim_vec3f_mul(heim_vec3f_normalize(camera->front), speed * dt));
+        camera_transform.position =
+            heim_vec3f_add(camera_transform.position, heim_vec3f_mul(heim_vec3f_normalize(camera->front), speed * dt));
     }
 
     if (heim_input_key_pressed(GLFW_KEY_S)) {
-        camera_transform.position = heim_vec3f_sub(
-            camera_transform.position,
-            heim_vec3f_mul(heim_vec3f_normalize(camera->front), speed * dt));
+        camera_transform.position =
+            heim_vec3f_sub(camera_transform.position, heim_vec3f_mul(heim_vec3f_normalize(camera->front), speed * dt));
     }
 
     if (heim_input_key_pressed(GLFW_KEY_A)) {
-        camera_transform.position = heim_vec3f_sub(
-            camera_transform.position,
-            heim_vec3f_mul(heim_vec3f_normalize(heim_vec3f_cross(camera->front, camera->up)),
-                           speed * dt));
+        camera_transform.position =
+            heim_vec3f_sub(camera_transform.position,
+                           heim_vec3f_mul(heim_vec3f_normalize(heim_vec3f_cross(camera->front, camera->up)), speed * dt));
     }
 
     if (heim_input_key_pressed(GLFW_KEY_D)) {
-        camera_transform.position = heim_vec3f_add(
-            camera_transform.position,
-            heim_vec3f_mul(heim_vec3f_normalize(heim_vec3f_cross(camera->front, camera->up)),
-                           speed * dt));
+        camera_transform.position =
+            heim_vec3f_add(camera_transform.position,
+                           heim_vec3f_mul(heim_vec3f_normalize(heim_vec3f_cross(camera->front, camera->up)), speed * dt));
     }
 
     if (heim_input_key_pressed(GLFW_KEY_Q)) {
-        camera_transform.position = heim_vec3f_add(
-            camera_transform.position, heim_vec3f_mul(camera->up, speed * dt));
+        camera_transform.position = heim_vec3f_add(camera_transform.position, heim_vec3f_mul(camera->up, speed * dt));
     }
 
     if (heim_input_key_pressed(GLFW_KEY_E)) {
-        camera_transform.position = heim_vec3f_sub(
-            camera_transform.position, heim_vec3f_mul(camera->up, speed * dt));
+        camera_transform.position = heim_vec3f_sub(camera_transform.position, heim_vec3f_mul(camera->up, speed * dt));
     }
 
     HeimVec2f mouseDelta = heim_input_mouse_delta();
@@ -383,7 +371,7 @@ void testbed_free() {
     heim_texture_free(tex1metallic);
     heim_texture_free(tex1roughness);
     heim_texture_free(tex1ao);
-    heim_model_destroy(object1);
+    heim_model_destroy(obj1);
 
     heim_texture_free(tex2);
     heim_model_destroy(object2);

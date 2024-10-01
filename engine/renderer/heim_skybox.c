@@ -87,10 +87,10 @@ void render_quad() {
     if (quadVAO == 0) {
         float quadVertices[] = {
             // positions        // texture Coords
-            -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // top-left
+            -1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  // top-left
             -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,  // bottom-left
-            1.0f, 1.0f, 0.0f, 1.0f, 1.0f,    // top-right
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,   // bottom-right
+            1.0f,  1.0f,  0.0f, 1.0f, 1.0f,  // top-right
+            1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,  // bottom-right
         };
         // setup plane VAO
         glGenVertexArrays(1, &quadVAO);
@@ -111,12 +111,17 @@ void render_quad() {
 HeimSkybox* heim_skybox_create(const char* path) {
     captureProjection = heim_mat4_perspective(90.0f, 1.0f, 0.1f, 10.0f);
 
-    captureViews[0] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){1.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
-    captureViews[1] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){-1.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
+    captureViews[0] =
+        heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){1.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
+    captureViews[1] =
+        heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){-1.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
     captureViews[2] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 1.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, 1.0f});
-    captureViews[3] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, -1.0f});
-    captureViews[4] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, 1.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
-    captureViews[5] = heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, -1.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
+    captureViews[3] =
+        heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, -1.0f});
+    captureViews[4] =
+        heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, 1.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
+    captureViews[5] =
+        heim_mat4_lookat((HeimVec3f){0.0f, 0.0f, 0.0f}, (HeimVec3f){0.0f, 0.0f, -1.0f}, (HeimVec3f){0.0f, -1.0f, 0.0f});
 
     HeimShader* equirectangularToCubemapShader = heim_shader_create();
     heim_shader_init(equirectangularToCubemapShader, "assets/shaders/cubemap.vert", "assets/shaders/equirect_to_cube.frag");
@@ -268,7 +273,8 @@ HeimSkybox* heim_skybox_create(const char* path) {
         heim_shader_set_uniform1f(prefilterShader, "roughness", roughness);
         for (uint32_t i = 0; i < 6; i++) {
             heim_shader_set_uniform_mat4(prefilterShader, "view", captureViews[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skybox->prefilter_map, mip);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skybox->prefilter_map,
+                                   mip);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             render_cube();

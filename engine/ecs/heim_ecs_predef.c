@@ -49,34 +49,18 @@ void heim_unload_predef_systems() {
     heim_skeletal_model_renderer_free();
 }
 
-uint64_t get_world_component() {
-    return HEIM_COMPONENT_WORLD;
-}
+uint64_t get_world_component() { return HEIM_COMPONENT_WORLD; }
 
-uint64_t get_ui_transform_component() {
-    return HEIM_COMPONENT_UI_TRANSFORM;
-}
+uint64_t get_ui_transform_component() { return HEIM_COMPONENT_UI_TRANSFORM; }
 
-HeimComponent get_transform_component() {
-    return HEIM_COMPONENT_TRANSFORM;
-}
+HeimComponent get_transform_component() { return HEIM_COMPONENT_TRANSFORM; }
 
-HeimComponent get_ui_sprite_component() {
-    return HEIM_COMPONENT_UI_SPRITE;
-}
+HeimComponent get_ui_sprite_component() { return HEIM_COMPONENT_UI_SPRITE; }
 
-HeimComponent get_ui_text_component() {
-    return HEIM_COMPONENT_UI_TEXT;
-}
+HeimComponent get_ui_text_component() { return HEIM_COMPONENT_UI_TEXT; }
 
-HeimComponent get_pbr_model_component() {
-    return HEIM_COMPONENT_PBR_MODEL;
-}
+HeimComponent get_pbr_model_component() { return HEIM_COMPONENT_PBR_MODEL; }
 
-HeimComponent get_skeletal_model_component() {
-    return HEIM_COMPONENT_SKELETAL_MODEL;
-}
+HeimComponent get_skeletal_model_component() { return HEIM_COMPONENT_SKELETAL_MODEL; }
 
-HeimComponent get_camera_component() {
-    return HEIM_COMPONENT_CAMERA;
-}
+HeimComponent get_camera_component() { return HEIM_COMPONENT_CAMERA; }
