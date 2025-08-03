@@ -42,8 +42,8 @@ void set_signal_handlers() {
 
 void heim_engine_new(char *title) {
 #ifdef __linux__
-    setenv("__NV_PRIME_RENDER_OFFLOAD", "1", 1);
-    setenv("__GLX_VENDOR_LIBRARY_NAME", "nvidia", 1);
+    // setenv("__NV_PRIME_RENDER_OFFLOAD", "1", 1);
+    // setenv("__GLX_VENDOR_LIBRARY_NAME", "nvidia", 1);
 #endif
     heim_logger_init(NULL, HEIM_LOG_LEVEL_ALL);
     set_signal_handlers();

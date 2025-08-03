@@ -6,6 +6,8 @@
 #include "core/heim_logger.h"
 #include "core/heim_memory.h"
 
+#include <GL/glew.h>
+
 static HeimWindow heim_window = {0};
 
 void heim_window_new(char *title) {
@@ -26,7 +28,7 @@ bool heim_window_init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, false);
 
     heim_window.window = glfwCreateWindow(heim_window.window_size.x, heim_window.window_size.y, heim_window.title, NULL, NULL);
@@ -40,10 +42,11 @@ bool heim_window_init() {
     glfwMakeContextCurrent(heim_window.window);
 
     // glew: load all OpenGL function pointers
+    glewExperimental = GL_TRUE;  // Allow modern OpenGL functionality
     GLenum err = glewInit();
-    if (glewInit() != GLEW_OK) {
-        HEIM_LOG_ERROR("Failed to initialize GLEW \n %s", glewGetErrorString(err));
-        return false;
+    if (err != GLEW_OK) {
+        HEIM_LOG_ERROR("Failed to initialize GLEW with error_code: %d \n %s", err, glewGetErrorString(err));
+        // return false;
     }
 
     glViewport(0, 0, heim_window.window_size.x, heim_window.window_size.y);
